@@ -2,25 +2,55 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import scheduliIcon from "../assets/schedule.svg";
+import onlyEggrollsIcon from "../assets/eggrolls.jpg";
+import { Icon } from "astro-icon/components";
+import DiscordStatus from "../components/DiscordStatus";
 ---
 
 <Layout title="dsns.dev" description="This is my homepage.">
 	<div class="container px-8 md:px-16 lg:px-32 xl:px-48 mx-auto flex flex-col lg:flex-row gap-6 lg:gap-12 items-center">
-		<div class="bg-viola-50 rounded-lg p-8 m-2 shadow-lg xl:basis-1/4">
-			<h2 class="text-2xl font-bold mb-4">Who am I?</h2>
-			<p>A full-stack developer with an interest in Minecraft.</p>
+		<div class="flex flex-col gap-4 xl:basis-1/4">
+			<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg">
+				<h2 class="text-2xl font-bold mb-4">Who am I?</h2>
+				<p>A full-stack developer with an interest in Minecraft.</p>
+			</div>
+
+			<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg">
+				<h2 class="text-2xl font-bold mb-4">Skills</h2>
+				<div class="flex flex-row justify-evenly">
+					<Icon name="mdi:language-javascript" class="text-2xl text-viola-900" title="JavaScript" aria-label="JavaScript" />
+					<Icon name="mdi:language-python" class="text-2xl text-viola-900" title="Python" aria-label="Python" />
+					<Icon name="mdi:language-java" class="text-2xl text-viola-900" title="Java" aria-label="Java" />
+					<Icon name="mdi:git" class="text-2xl text-viola-900" title="Git" aria-label="Git" />
+					<Icon name="fa6-brands:react" class="text-2xl text-viola-900" title="React" aria-label="React" />
+				</div>
+			</div>
+
+			<DiscordStatus client:idle />
 		</div>
-		<div class="bg-viola-50 rounded-lg p-8 m-2 shadow-lg xl:basis-3/4">
+		<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg xl:basis-3/4">
 			<h2 class="text-2xl font-bold mb-4">Projects</h2>
-			<a href="https://scheduli.dsns.dev/" class="flex flex-row rounded-xl shadow-xl p-8 items-center gap-10 bg-slate-50">
-				<div class="rounded-xl p-4 bg-[#ddeff0]">
-					<Image src={scheduliIcon} alt="Scheduli Icon" width={96} />
-				</div>
-				<div class="flex flex-col">
-					<p class="text-lg font-bold mb-2">Scheduli</p>
-					<p>Scheduli is an app to track complicated school schedules, even during the most chaotic days.</p>
-				</div>
-			</a>
+
+			<div class="flex flex-col gap-4">
+				<a href="https://scheduli.dsns.dev/" class="flex flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-blue-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]">
+					<div class="rounded-xl p-4 bg-[#ddeff0]">
+						<Image src={scheduliIcon} alt="Scheduli Icon" width={96} />
+					</div>
+					<div class="flex flex-col">
+						<p class="text-xl font-bold mb-2">Scheduli</p>
+						<p>An app to track complicated school schedules, even during the most chaotic days.</p>
+					</div>
+				</a>
+				<a href="https://onlyeggrolls.com/" class="flex flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-blue-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]">
+					<div class="rounded-xl p-4 bg-white">
+						<Image src={onlyEggrollsIcon} alt="OnlyEggrolls Icon" width={96} />
+					</div>
+					<div class="flex flex-col">
+						<p class="text-xl font-bold mb-2">Only Eggrolls</p>
+						<p>A proof-of-concept online store built completely in vanilla JavaScript.</p>
+					</div>
+				</a>
+			</div>
 		</div>
 	</div>
 </Layout>
