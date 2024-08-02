@@ -25,5 +25,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwind-scrollbar")({ nocompatible: true, preferredStrategy: "pseudoelements" })]
+	plugins: [require("tailwind-scrollbar")({ nocompatible: true, preferredStrategy: "pseudoelements" }), require("@tailwindcss/typography")]
 };

@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+// https://docs.astro.build/en/tutorials/add-content-collections/
+
+type Props = {
+	post: CollectionEntry<"posts">;
+};
+
+export async function getStaticPaths() {
+	const posts = await getCollection("posts");
+
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: { post }
+	}));
+}
+
+const {
+	post,
+	post: {
+		data: { title, description, date }
+	}
+} = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={title} description={description}>
+	<div class="container px-8 md:px-16 lg:px-32 xl:px-48 mx-auto flex flex-col gap-5">
+		<div class="font-bold text-2xl mb-6 flex flex-row justify-between">
+			<h1>{title}</h1>
+			<p>{date.toLocaleDateString()}</p>
+		</div>
+
+		<div class="flex flex-row">
+			<div class="flex-[0.55]"></div>
+			<article class="prose prose-headings:text-xl">
+				<Content />
+			</article>
+		</div>
+	</div>
+</Layout>
