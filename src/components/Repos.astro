@@ -1,15 +1,24 @@
 ---
-const res = await fetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos").then((res) => res.json());
+interface GithubAPIResponse {
+	name: string;
+	fork: boolean;
+	description: string;
+	language: string;
+	html_url: string;
+	pushed_at: string;
+}
+
+const res = (await fetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos").then((res) => res.json())) as GithubAPIResponse[];
 
 const result = res
-	.filter((repo: any) => repo.fork === false)
-	.sort((a: any, b: any) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
+	.filter((repo) => repo.fork === false)
+	.sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
 	.splice(0, 8);
 ---
 
 <ul>
 	{
-		result.map((repo: any) => (
+		result.map((repo) => (
 			<li class="m-4 p-8 bg-viola-50 rounded-xl">
 				<div class="flex flex-row justify-between">
 					<a href={repo.html_url}>
