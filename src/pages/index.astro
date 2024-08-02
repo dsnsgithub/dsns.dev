@@ -9,7 +9,7 @@ import Repos from "../components/Repos.astro";
 ---
 
 <Layout title="dsns.dev" description="This is my homepage.">
-	<div class="container px-8 md:px-16 lg:px-32 xl:px-48 mx-auto flex flex-col gap-10">
+	<div class="container px-6 md:px-8 lg:px-10 xl:px-48 mx-auto flex flex-col gap-10">
 		<div class="flex flex-col lg:flex-row gap-6 lg:gap-12 items-center">
 			<div class="flex flex-col gap-4 xl:basis-1/4">
 				<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg">
@@ -36,11 +36,10 @@ import Repos from "../components/Repos.astro";
 				<div class="flex flex-col gap-4">
 					<a
 						href="https://scheduli.dsns.dev/"
-						class="flex flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-viola-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]"
+						class="flex flex-col sm:flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-viola-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]"
 					>
-						<div class="rounded-xl p-4 bg-[#ddeff0] w-[128px] h-[128px] basis-1/5">
-							<Image src={scheduliIcon} alt="Scheduli Icon" width={96} />
-						</div>
+						<Image src={scheduliIcon} alt="Scheduli Icon" width={96} class="rounded-xl p-4 bg-[#ddeff0] w-[96px] md:w-[128px] h-[96px] md:h-[128px] basis-1/5 aspect-square" />
+
 						<div class="flex flex-col basis-4/5">
 							<p class="text-xl font-bold mb-2">Scheduli</p>
 							<div>An app to track complicated school schedules, even during the most chaotic days.</div>
@@ -48,11 +47,10 @@ import Repos from "../components/Repos.astro";
 					</a>
 					<a
 						href="https://onlyeggrolls.com/"
-						class="flex flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-viola-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]"
+						class="flex flex-col sm:flex-row rounded-xl shadow-lg p-8 items-center gap-10 bg-viola-50 hover:transition duration-500 hover:duration-500 hover:scale-[1.02]"
 					>
-						<div class="rounded-xl p-2 bg-white w-[128px] h-[128px] basis-1/5">
-							<Image src={onlyEggrollsIcon} alt="OnlyEggrolls Icon" width={120} />
-						</div>
+						<Image src={onlyEggrollsIcon} alt="OnlyEggrolls Icon" width={120} class="rounded-xl p-2 bg-white w-[96px] md:w-[128px] h-[96px] md:h-[128px] basis-1/5 aspect-square" />
+
 						<div class="flex flex-col basis-4/5">
 							<p class="text-xl font-bold mb-2">Only Eggrolls</p>
 							<p>A proof-of-concept online store built completely in vanilla JavaScript.</p>
@@ -62,9 +60,11 @@ import Repos from "../components/Repos.astro";
 			</div>
 		</div>
 
-		<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg">
+		<div class="bg-viola-100 rounded-lg p-4 md:p-6 lg:p-8 m-2 shadow-lg">
 			<h2 class="text-2xl font-bold mb-4">Recently Updated Projects</h2>
-			<div class="scrollbar scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-viola-300 scrollbar-track-viola-200 scrollbar-w-2 overflow-y-scroll max-h-[30vw]">
+			<div
+				class="scrollbar scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-viola-300 scrollbar-track-viola-200 scrollbar-w-2 overflow-y-scroll max-h-[100vw] lg:max-h-[30vw]"
+			>
 				<Repos />
 			</div>
 		</div>

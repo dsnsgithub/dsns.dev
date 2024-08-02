@@ -20,11 +20,11 @@ const result = res
 	{
 		result.map((repo) => (
 			<li class="m-4 p-8 bg-viola-50 rounded-xl">
-				<div class="flex flex-row justify-between">
+				<div class="flex flex-row flex-wrap justify-between">
 					<a href={repo.html_url}>
 						<p class="text-xl font-bold">{repo.name}</p>
 					</a>
-					<div>{repo.language}</div>
+					<div class="rounded-xl bg-viola-200 p-2">{repo.language}</div>
 				</div>
 
 				<p>{repo.description}</p>

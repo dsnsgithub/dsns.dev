@@ -16,14 +16,6 @@ function formatTime(milliseconds: number) {
 	return paddedMinutes + ":" + paddedSeconds;
 }
 
-function cutStrings(string: string, maxLength: number) {
-	if (string.length > maxLength) {
-		return string.substring(0, maxLength) + "...";
-	} else {
-		return string;
-	}
-}
-
 function DiscordCard() {
 	const [secondAnimate] = useAutoAnimate();
 	const { loading, status } = useLanyard({
@@ -58,9 +50,9 @@ function DiscordCard() {
 				<div className="flex items-center space-x-4">
 					<img src={spotify.album_art_url} alt="Album Art" className="w-16 h-16 rounded" />
 					<div>
-						<h4 className="text-sm">{cutStrings(spotify.song, 16)}</h4>
-						<p className="text-xs">by {cutStrings(spotify.artist, 16)}</p>
-						<p className="text-xs">on {cutStrings(spotify.album, 16)}</p>
+						<h4 className="text-sm w-32 truncate">{spotify.song}</h4>
+						<p className="text-xs w-32 truncate">by {spotify.artist}</p>
+						<p className="text-xs w-32 truncate">on {spotify.album}</p>
 					</div>
 				</div>
 
