@@ -49,9 +49,9 @@ function DiscordCard(props: { visible: boolean; }) {
 				<div className="flex items-center space-x-4">
 					<img src={spotify.album_art_url} alt="Album Art" className="w-16 h-16 rounded" />
 					<div>
-						<h4 className="text-sm w-32 truncate">{spotify.song}</h4>
-						<p className="text-xs w-32 truncate">by {spotify.artist}</p>
-						<p className="text-xs w-32 truncate">on {spotify.album}</p>
+						<h4 className="text-sm w-24 truncate" title={spotify.song} aria-label={spotify.song}>{spotify.song}</h4>
+						<p className="text-xs w-24 truncate" title={spotify.artist} aria-label={spotify.artist}>by {spotify.artist}</p>
+						<p className="text-xs w-24 truncate" title={spotify.album} aria-label={spotify.album}>on {spotify.album}</p>
 					</div>
 				</div>
 
