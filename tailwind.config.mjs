@@ -6,18 +6,18 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'viola': {
-					'50': '#faf5f7',
-					'100': '#f6edf1',
-					'200': '#eedce3',
-					'300': '#e2bfcd',
-					'400': '#c98aa2',
-					'500': '#bd7790',
-					'600': '#a85a72',
-					'700': '#8f475b',
-					'800': '#773d4c',
-					'900': '#653642',
-					'950': '#3b1c24',
+				viola: {
+					50: "#faf5f7",
+					100: "#f6edf1",
+					200: "#eedce3",
+					300: "#e2bfcd",
+					400: "#c98aa2",
+					500: "#bd7790",
+					600: "#a85a72",
+					700: "#8f475b",
+					800: "#773d4c",
+					900: "#653642",
+					950: "#3b1c24"
 				}
 			},
 			fontFamily: {
@@ -25,5 +25,5 @@ export default {
 			}
 		}
 	},
-	plugins: []
+	plugins: [require("tailwind-scrollbar")({ nocompatible: true, preferredStrategy: "pseudoelements" })]
 };

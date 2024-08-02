@@ -1,0 +1,31 @@
+---
+import EleventyFetch from "@11ty/eleventy-fetch";
+
+const res = await EleventyFetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos", {
+	duration: "1h",
+	type: "json"
+});
+
+const result = res
+	.filter((repo: any) => repo.fork === false)
+	.sort((a: any, b: any) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
+	.splice(0, 8);
+---
+
+<ul>
+	{
+		result.map((repo: any) => (
+			<li class="m-4 p-8 bg-viola-50 rounded-xl">
+				<div class="flex flex-row justify-between">
+					<a href={repo.html_url}>
+						<p class="text-xl font-bold">{repo.name}</p>
+					</a>
+					<div>{repo.language}</div>
+				</div>
+
+				<p>{repo.description}</p>
+				<p>Last updated: {new Date(repo.pushed_at).toLocaleDateString()}</p>
+			</li>
+		))
+	}
+</ul>

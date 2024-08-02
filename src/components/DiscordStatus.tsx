@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLanyard } from "react-use-lanyard";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
@@ -43,7 +43,7 @@ function DiscordCard() {
 		return <></>;
 	}
 
-	if (activity.name === "Spotify" && status.spotify) {
+	if (status.spotify) {
 		const startTime = status.spotify?.timestamps?.start || 0;
 		const endTime = status.spotify?.timestamps?.end || 0;
 		const songDuration = endTime - startTime;
@@ -52,15 +52,15 @@ function DiscordCard() {
 
 		return (
 			<div className="bg-viola-100 rounded-lg p-8 m-2 shadow-lg">
-				<h2 className="text-2xl font-bold mb-4">Status</h2>
-				<h3 className="font-bold mb-2">Listening to Spotify</h3>
+				<h2 className="text-2xl font-bold mb-2">Status</h2>
+				<h3 className="font-bold mb-2 text-md">Listening to Spotify</h3>
 
 				<div className="flex items-center space-x-4">
 					<img src={spotify.album_art_url} alt="Album Art" className="w-16 h-16 rounded" />
 					<div>
-						<h4>{cutStrings(spotify.song, 16)}</h4>
-						<p className="text-sm">by {cutStrings(spotify.artist, 16)}</p>
-						<p className="text-sm">on {cutStrings(spotify.album, 16)}</p>
+						<h4 className="text-sm">{cutStrings(spotify.song, 16)}</h4>
+						<p className="text-xs">by {cutStrings(spotify.artist, 16)}</p>
+						<p className="text-xs">on {cutStrings(spotify.album, 16)}</p>
 					</div>
 				</div>
 
@@ -69,7 +69,7 @@ function DiscordCard() {
 					<progress
 						value={currentTime - startTime}
 						max={songDuration}
-						className="w-3/4 rounded-xl [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg   [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:bg-lochmara-400 [&::-moz-progress-bar]:bg-lochmara-400"
+						className="w-3/4 rounded-xl [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg   [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:bg-viola-400 [&::-moz-progress-bar]:bg-viola-400"
 					></progress>
 					<span>{formatTime(songDuration)}</span>
 				</div>

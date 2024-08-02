@@ -11,7 +11,7 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scrollbar scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-viola-400 scrollbar-track-viola-200 scrollbar-w-2">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
@@ -20,7 +20,7 @@ const { title, description } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="container mx-auto mt-10 bg-gradient-to-r from-viola-100 to-blue-100">
+	<body class="container mx-auto my-10 bg-viola-50">
 		<Nav />
 		<slot />
 	</body>
