@@ -24,7 +24,7 @@ const result = res
 					<a href={repo.html_url}>
 						<p class="text-xl font-bold">{repo.name}</p>
 					</a>
-					<div class="rounded-xl bg-viola-200 p-2">{repo.language}</div>
+					{repo.language ? <div class="rounded-xl bg-viola-200 p-2">{repo.language}</div> : <></>}
 				</div>
 
 				<p>{repo.description}</p>
