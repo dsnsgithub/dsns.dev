@@ -1,0 +1,30 @@
+---
+import { Image } from "astro:assets";
+import profilePicture from "../assets/kirby.png";
+import NavButton from "./NavButton.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<nav class="flex justify-between px-10 py-6 rounded-xl bg-viola-100 items-center mb-10 shadow-lg">
+	<div class="flex flex-row items-center gap-5">
+		<Image src={profilePicture} alt="kirby profile picture" class="rounded-full" width={48}/>
+		<h1 class="hidden md:block text-3xl font-bold">dsns.dev</h1>
+	</div>
+
+	<div class="flex flex-row gap-5 lg:gap-10 items-center">
+		<NavButton name="Home" iconName="mdi:home" url="/" />
+		<NavButton name="Blog" iconName="mdi:library-books" url="/" />
+
+		<div class="flex flex-col border-2 border-viola-200 rounded-full md:flex-row justify-evenly gap-1 md:gap-5 items-center p-3">
+			<a href="https://github.com/dsnsgithub" class="hover:transition duration-500 hover:duration-500 hover:scale-[1.15]">
+				<Icon name="mdi:github" class="text-2xl text-viola-900" />
+			</a>
+			<a href="https://www.youtube.com/@DSNShypixel" class="hover:transition duration-500 hover:duration-500 hover:scale-[1.15]">
+				<Icon name="mdi:youtube" class="text-2xl text-viola-900" />
+			</a>
+			<a href="mailto:dsns@dsns.dev" class="hover:transition duration-500 hover:duration-500 hover:scale-[1.15]">
+				<Icon name="mdi:email" class="text-2xl text-viola-900" />
+			</a>
+		</div>
+	</div>
+</nav>
