@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanyard } from "react-use-lanyard";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
 
 import rawGames from "../assets/gameList.json";
 const gameList = rawGames as { [key: string]: string };
@@ -16,7 +15,7 @@ function formatTime(milliseconds: number) {
 	return paddedMinutes + ":" + paddedSeconds;
 }
 
-function DiscordCard() {
+function DiscordCard(props: { visible: boolean; }) {
 	const [secondAnimate] = useAutoAnimate();
 	const { loading, status } = useLanyard({
 		userId: "342874998375186432",
@@ -26,7 +25,7 @@ function DiscordCard() {
 	const [currentTime, setCurrentTime] = useState(new Date().getTime());
 	setInterval(() => setCurrentTime(new Date().getTime()), 1000);
 
-	if (loading || !status?.activities || status.activities.length == 0) {
+	if (loading || !props.visible || !status?.activities || status.activities.length == 0) {
 		return <></>;
 	}
 
@@ -108,11 +107,17 @@ function DiscordCard() {
 	);
 }
 
-
 export default function DiscordStatus() {
-	const [animationParent] = useAutoAnimate();
-	
-	return <div ref={animationParent}>
-		<DiscordCard />
-	</div>
+	const [visible, setVisible] = useState(false);
+
+	useEffect(() => {
+		setTimeout(() => setVisible(!visible), 1000);
+	}, [])
+
+	const [animationParent] = useAutoAnimate({duration: 500});
+	return (
+		<div ref={animationParent}>
+			<DiscordCard visible={visible} />
+		</div>
+	);
 }
