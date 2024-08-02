@@ -1,10 +1,5 @@
 ---
-import EleventyFetch from "@11ty/eleventy-fetch";
-
-const res = await EleventyFetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos", {
-	duration: "1h",
-	type: "json"
-});
+const res = await fetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos").then((res) => res.json());
 
 const result = res
 	.filter((repo: any) => repo.fork === false)
