@@ -103,7 +103,7 @@ function DiscordCard(props: { visible: boolean; }) {
 				</div>
 
 				<div>
-					<h4 className="text-sm font-bold">{activity.name}</h4>
+					<h3 className="text-sm font-bold">{activity.name}</h3>
 					<p className="text-xs">{activity.state}</p>
 					<p className="text-xs">{activity.details}</p>
 					<p className="text-xs">{formatTime(currentTime - activity.created_at)} elapsed</p>
@@ -117,7 +117,7 @@ export default function DiscordStatus() {
 	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
-		setTimeout(() => setVisible(!visible), 1000);
+		setTimeout(() => setVisible(!visible), 500);
 	}, [])
 
 	const [animationParent] = useAutoAnimate({duration: 500});
