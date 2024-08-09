@@ -115,15 +115,16 @@ function Product(props: {
 	return (
 		<a href={props.result.url} target="_blank">
 			<div className="bg-viola-50 p-6 rounded-lg shadow-lg relative flex flex-col lg:flex-row justify-around items-center gap-4">
-				<div className="lg:w-1/2">
+				<div className="lg:w-1/2 flex flex-col gap-4 h-56">
 					<h3 className="text-lg font-bold">{props.result.contents.name}</h3>
 					{props["result"]["contents"]["description"] ? (
-						<p className="mb-4 h-32">{props["result"]["contents"]["description"].split(".")[0] + "."}</p>
+						<p className="line-clamp-4 overflow-ellipsis">{props["result"]["contents"]["description"].split(".")[0] + "."}</p>
 					) : (
-						<p className="mb-2 h-32">No description provided.</p>
+						<p className="h-32">No description provided.</p>
 					)}
+
 					<div className="grid grid-cols-2 items-center text-xs gap-1">
-						<div className="rounded-lg bg-viola-500 text-white p-2">
+						<div className="rounded-lg bg-viola-500 text-white p-2 text-center">
 							{props["result"]["contents"]["pricePerOunce"].toLocaleString("en-US", {
 								style: "currency",
 								currency: "USD"
@@ -133,9 +134,9 @@ function Product(props: {
 						{props["result"]["contents"]["nutritionPercentage"] ? (
 							<>
 								{/* <div className="rounded-xl bg-orange-600 text-white p-2 ml-2 md:mb-3 lg:mb-0">{props["result"]["contents"]["caloriesPer100G"]} cal/100g</div> */}
-								<div className="rounded-lg bg-green-500 text-white p-2">Carbs: {props["result"]["contents"]["nutritionPercentage"]["carbs"]}%</div>
-								<div className="rounded-lg bg-yellow-500 text-white p-2">Fat: {props["result"]["contents"]["nutritionPercentage"]["fat"]}%</div>
-								<div className="rounded-lg bg-red-500 text-white p-2">Protein: {props["result"]["contents"]["nutritionPercentage"]["protein"]}%</div>
+								<div className="rounded-lg bg-green-500 text-white p-2 text-center">Carbs: {props["result"]["contents"]["nutritionPercentage"]["carbs"]}%</div>
+								<div className="rounded-lg bg-yellow-500 text-white p-2 text-center">Fat: {props["result"]["contents"]["nutritionPercentage"]["fat"]}%</div>
+								<div className="rounded-lg bg-red-500 text-white p-2 text-center">Protein: {props["result"]["contents"]["nutritionPercentage"]["protein"]}%</div>
 							</>
 						) : (
 							<></>
