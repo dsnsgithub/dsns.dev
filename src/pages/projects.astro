@@ -1,0 +1,49 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import mcHead from "../assets/mchead.png";
+import betterHudIcon from "../assets/betterhud.png";
+import { Icon } from "astro-icon/components";
+import ProjectDescription from "../components/ProjectCard.astro";
+---
+
+<Layout title="dsns.dev" description="Check out what I do, and explore some of my projects.">
+	<div class="container px-6 md:px-8 lg:px-10 xl:px-48 mx-auto flex flex-col gap-10">
+		<div class="bg-viola-100 p-8 rounded-xl">
+			<h1 class="text-3xl font-bold">Other Projects</h1>
+
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
+					<Image
+						src={mcHead}
+						alt={`Recent Games Icon`}
+						width={96}
+						class={`rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square"`}
+						loading={"eager"}
+					/>
+				</ProjectDescription>
+
+				<ProjectDescription
+					title="BetterHUD"
+					url="https://modrinth.com/mod/betterhudfabric"
+					description="A Minecraft Fabric mod providing a HUD with essential information."
+					tags={["Java", "Minecraft"]}
+				>
+					<Image src={betterHudIcon} alt={`Recent Games Icon`} width={128} class={`rounded-xl p-3 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+				</ProjectDescription>
+
+				<ProjectDescription title="Market DB" url="/marketdb" description="Explore a wide range of products and their prices." tags={["React"]}>
+					<div>
+						<Icon name="mdi:shopping-cart" class="rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square text-3xl text-viola-600" />
+					</div>
+				</ProjectDescription>
+
+				<ProjectDescription title="Birthdays" url="/birthdays" description="Lists upcoming birthdays." tags={["React"]}>
+					<div>
+						<Icon name="mdi:cake-variant" class="rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square text-3xl text-viola-600" />
+					</div>
+				</ProjectDescription>
+			</div>
+		</div>
+	</div>
+</Layout>

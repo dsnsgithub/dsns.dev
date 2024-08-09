@@ -11,8 +11,8 @@ const { name, iconName, url } = Astro.props;
 ---
 
 <a href={url} aria-label={name + " icon"}>
-	<div class="flex flex-row items-center rounded-lg p-2 justify-between gap-2 hover:bg-viola-200 hover:transition duration-500 hover:duration-500 hover:scale-105">
-		<Icon name={iconName} class="text-3xl md:text-2xl text-viola-900" />
-		<span class="hidden md:block text-lg">{name}</span>
+	<div class="flex flex-row items-center rounded-lg p-2 justify-between gap-2 hover:bg-viola-200 hover:transition duration-500 hover:duration-500 hover:scale-[1.03]">
+		<Icon name={iconName} class="text-2xl sm:text-3xl md:text-2xl text-viola-900" />
+		<span class="hidden md:block text-md">{name}</span>
 	</div>
 </a>
