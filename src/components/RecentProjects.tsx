@@ -48,7 +48,7 @@ export default function RecentProjects() {
 	return (
 		<ul>
 			{result.map((repo) => (
-				<li className="m-4 p-8 bg-viola-50 rounded-xl" key={repo.html_url}>
+				<li className="m-4 p-8 bg-viola-50 rounded-xl hover:transition duration-500 hover:duration-500 hover:scale-[1.01]" key={repo.html_url}>
 					<a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="block">
 						<div className="flex flex-row flex-wrap justify-between">
 							<p className="text-xl font-bold">{repo.name}</p>

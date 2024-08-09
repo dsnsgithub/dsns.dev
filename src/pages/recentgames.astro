@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RecentGames from "../components/port/RecentGames";
+---
+
+<Layout title="Recent Games" description="Find status and recent games of any Hypixel player.">
+	<div class="container px-6 md:px-8 lg:px-10 xl:px-48 mx-auto flex flex-col gap-10">
+		<RecentGames client:load />
+	</div>
+</Layout>
