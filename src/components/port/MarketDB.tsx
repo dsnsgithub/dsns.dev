@@ -118,9 +118,9 @@ function Product(props: {
 				<div className="lg:w-1/2">
 					<h3 className="text-lg font-bold">{props.result.contents.name}</h3>
 					{props["result"]["contents"]["description"] ? (
-						<p className="mb-4">{props["result"]["contents"]["description"].split(".")[0] + "."}</p>
+						<p className="mb-4 h-32">{props["result"]["contents"]["description"].split(".")[0] + "."}</p>
 					) : (
-						<p className="mb-2">No description provided.</p>
+						<p className="mb-2 h-32">No description provided.</p>
 					)}
 					<div className="grid grid-cols-2 items-center text-xs gap-1">
 						<div className="rounded-lg bg-viola-500 text-white p-2">
@@ -143,11 +143,7 @@ function Product(props: {
 					</div>
 				</div>
 
-				{props["result"]["contents"]["imageURL"] ? (
-					<img src={props["result"]["contents"]["imageURL"]} alt={props.result.contents.name} className="rounded-lg w-48 h-48" />
-				) : (
-					<></>
-				)}
+				{props["result"]["contents"]["imageURL"] ? <img src={props["result"]["contents"]["imageURL"]} alt={props.result.contents.name} className="rounded-lg w-48 h-48" /> : <></>}
 			</div>
 		</a>
 	);
@@ -190,32 +186,33 @@ export default function FoodDB() {
 					.
 				</h2>
 
-				<h2 className="text-lg mt-4">Statistics</h2>
-				<ul className="list-disc list-inside">
-					<li>{analysis.itemCount} items</li>
-					<li>
-						Lowest cost item by weight: {analysis.lowestCostItem} at{" "}
-						{analysis.lowestCost.toLocaleString("en-US", {
-							style: "currency",
-							currency: "USD"
-						})}
-						/oz
-					</li>
-					<li>
-						Highest cost item by weight: {analysis.highestCostItem} at{" "}
-						{analysis.highestCost.toLocaleString("en-US", {
-							style: "currency",
-							currency: "USD"
-						})}
-						/oz
-					</li>
-					{/* <li>
-						Least Calories Per 100g: {analysis.lowestCalPerKgItem} at {analysis.lowestCalPerKg} cal/100G
-					</li>
-					<li>
-						Highest cost item by weight: {analysis.highestCalPerKgItem} at {analysis.highestCalPerKg} cal/100G
-					</li> */}
-				</ul>
+				<div className="flex flex-row gap-4 flex-wrap mt-4">
+					<div className="p-2 px-4 rounded-xl bg-viola-200 flex justify-center items-center">
+						<span className="font-bold mr-1">{analysis.itemCount}</span> items
+					</div>
+					<div className="p-2 px-4 rounded-xl bg-viola-200 text-center">
+						Cheapest item by weight:
+						<div className="font-bold">
+							{analysis.lowestCostItem} at{" "}
+							{analysis.lowestCost.toLocaleString("en-US", {
+								style: "currency",
+								currency: "USD"
+							})}
+							/oz
+						</div>
+					</div>
+					<div className="p-2 px-4 rounded-xl bg-viola-200 text-center">
+						Most expensive item by weight:
+						<div className="font-bold">
+							{analysis.highestCostItem} at{" "}
+							{analysis.highestCost.toLocaleString("en-US", {
+								style: "currency",
+								currency: "USD"
+							})}
+							/oz
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div className="mb-4">
@@ -230,7 +227,7 @@ export default function FoodDB() {
 				></input>
 			</div>
 
-			<div id="results" className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+			<div id="results" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{results}
 			</div>
 		</div>
