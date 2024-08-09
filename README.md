@@ -1,5 +1,7 @@
 # astro.dsns.dev
-![image](https://github.com/user-attachments/assets/564ef7a8-44fc-4ca2-a7e9-8258266fa687)
+![image](https://github.com/user-attachments/assets/6b21a6a3-961e-4bb1-b09f-68e440649566)
+
+
 
 Check out what I do, and explore some of my projects. (remade in Astro)
 
