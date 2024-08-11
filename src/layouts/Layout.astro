@@ -1,6 +1,7 @@
 ---
 import "@fontsource-variable/dm-sans";
 import Nav from "../components/Nav.astro";
+import { ViewTransitions } from "astro:transitions";
 
 interface Props {
 	title: string;
@@ -11,7 +12,7 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="scrollbar scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-viola-400 scrollbar-track-viola-200 scrollbar-w-2">
+<html lang="en" class="scrollbar scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-viola-400 scrollbar-track-viola-200 scrollbar-w-2 overflow-y-scroll">
 	<head>
 		<meta charset="UTF-8" />
 		<meta property="og:type" content="website" />
@@ -24,6 +25,8 @@ const { title, description } = Astro.props;
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<ViewTransitions />
 	</head>
 	<body class="container mx-auto my-10 bg-viola-50">
 		<Nav />
