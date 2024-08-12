@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-// import { FaSearch } from "react-icons/fa";
+import { useState } from "react";
 
 interface StatusData {
 	success: boolean;
@@ -44,7 +42,7 @@ interface HypixelAPIResponse {
 	};
 }
 
-export default function RecentGames() {
+export default function RecentGames({ children }: { children: JSX.Element }) {
 	const [username, setUsername] = useState("");
 	const [actualUsername, setActualUsername] = useState<String | number>("");
 	const [uuid, setUUID] = useState("");
@@ -102,7 +100,7 @@ export default function RecentGames() {
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
 					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
-						{/* <FaSearch title="Search" className="mr-3"></FaSearch> */}
+						{children}
 						Lookup
 					</button>
 				</div>

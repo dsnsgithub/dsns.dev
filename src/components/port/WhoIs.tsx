@@ -13,7 +13,7 @@ function camelCaseToTitleCase(input: string): string {
 	);
 }
 
-export default function WhoIs() {
+export default function WhoIs({ children }: { children: JSX.Element }) {
 	const [domain, setDomain] = useState("");
 	const [results, setResults] = useState<JSX.Element[]>();
 	const [parent] = useAutoAnimate();
@@ -62,6 +62,7 @@ export default function WhoIs() {
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
 					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
+						{children}
 						Lookup
 					</button>
 				</div>
