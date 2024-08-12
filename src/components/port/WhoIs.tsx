@@ -63,13 +63,13 @@ export default function WhoIs({ children }: { children: JSX.Element }) {
 					></input>
 					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
 						{children}
-						Lookup
+						<div className="hidden md:block">Lookup</div>
 					</button>
 				</div>
 
 				<div ref={parent}>
 					{(results?.length || 0) > 1 ? (
-						<div className="bg-viola-100 border-2 border-viola-300 p-4 rounded-xl">{results}</div>
+						<div className="bg-viola-100 border-2 border-viola-300 p-4 rounded-xl overflow-scroll">{results}</div>
 					) : (results?.length || 0) == 1 ? (
 						<div className="bg-viola-100 border-2 border-viola-300 p-4 rounded-xl text-center">
 							<h2 className="text-2xl text-red-500">Invalid domain name. Please try again.</h2>

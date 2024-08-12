@@ -101,7 +101,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 					></input>
 					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
 						{children}
-						Lookup
+						<div className="hidden md:block">Lookup</div>
 					</button>
 				</div>
 
@@ -197,7 +197,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 
 						{actualUsername != -1 && uuid && (statusData || recentGamesData) ? (
 							<div className="flex flex-col ">
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2">
+								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2 flex justify-center items-center">
 									<img src={`https://mc-heads.net/body/${uuid}`} alt="Minecraft Player Model" className="min-w-[180px] min-h-[432px]"></img>
 								</div>
 							</div>
