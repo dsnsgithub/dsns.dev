@@ -150,29 +150,29 @@ export default function RecentGames() {
 									<div className="overflow-x-auto">
 										<table className="w-full table-auto">
 											<thead>
-												<tr className="bg-viola-200 border-2 border-viola-400">
-													<th className="border border-viola-400 px-4 py-2 text-center">Game Type</th>
-													<th className="border border-viola-400 px-4 py-2 text-center">Mode</th>
-													<th className="border border-viola-400 px-4 py-2 text-center">Map</th>
-													<th className="border border-viola-400 px-4 py-2 text-center">Start Time</th>
-													<th className="border border-viola-400 px-4 py-2 text-center">End Time</th>
+												<tr className="bg-viola-200 border-2 border-viola-300">
+													<th className="border border-viola-300 px-4 py-2 text-center">Game Type</th>
+													<th className="border border-viola-300 px-4 py-2 text-center">Mode</th>
+													<th className="border border-viola-300 px-4 py-2 text-center">Map</th>
+													<th className="border border-viola-300 px-4 py-2 text-center">Start Time</th>
+													<th className="border border-viola-300 px-4 py-2 text-center">End Time</th>
 												</tr>
 											</thead>
 											<tbody>
 												{recentGamesData.success &&
 													recentGamesData.games.map((game, index) => (
-														<tr key={index} className="bg-viola-200 border-2 border-viola-400">
-															<td className="border border-viola-400 px-4 py-2 text-center">
+														<tr key={index} className="bg-viola-200 border-2 border-viola-300">
+															<td className="border border-viola-300 px-4 py-2 text-center">
 																{gamesList && gamesList["games"][game.gameType] ? gamesList["games"][game.gameType]["name"] : game.gameType}
 															</td>
-															<td className="border border-viola-400 px-4 py-2 text-center">
+															<td className="border border-viola-300 px-4 py-2 text-center">
 																{gamesList && gamesList["games"][game.gameType]["modeNames"]?.[game.mode || ""]
 																	? gamesList["games"][game.gameType]["modeNames"]?.[game.mode || ""]
 																	: game.mode}
 															</td>
-															<td className="border border-viola-400 px-4 py-2 text-center">{game.map || "-"}</td>
-															<td className="border border-viola-400 px-4 py-2 text-center">{new Date(game.date).toLocaleString()}</td>
-															<td className="border border-viola-400 px-4 py-2 text-center">{game.ended ? new Date(game.ended).toLocaleString() : "Still Playing"}</td>
+															<td className="border border-viola-300 px-4 py-2 text-center">{game.map || "-"}</td>
+															<td className="border border-viola-300 px-4 py-2 text-center">{new Date(game.date).toLocaleString()}</td>
+															<td className="border border-viola-300 px-4 py-2 text-center">{game.ended ? new Date(game.ended).toLocaleString() : "Still Playing"}</td>
 														</tr>
 													))}
 											</tbody>

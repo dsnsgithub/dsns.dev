@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import WhoIs from "../components/port/WhoIs";
+---
+
+<Layout title="WHOIS Lookup" description="A WHOIS search without censorship.">
+	<div class="container px-6 md:px-8 lg:px-10 xl:px-48 mx-auto flex flex-col gap-10">
+		<WhoIs client:load />
+	</div>
+</Layout>

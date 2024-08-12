@@ -21,6 +21,7 @@
     "@iconify-json/mdi": "^1.1.67",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/whois-json": "^2.0.4",
     "astro": "^4.13.0",
     "astro-icon": "^1.1.0",
     "react": "^18.3.1",
@@ -30,7 +31,8 @@
     "react-use-lanyard": "^0.3.1",
     "sharp": "^0.33.4",
     "tailwindcss": "^3.4.7",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "whois-json": "^2.0.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
