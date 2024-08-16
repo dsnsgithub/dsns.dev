@@ -3,7 +3,7 @@ import whois from "whois-json";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async ({ params }) => {
 	const { domain } = params;
 	if (typeof domain != "string") {
 		return new Response(JSON.stringify({ error: "Not a valid domain." }), {
