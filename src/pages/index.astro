@@ -4,8 +4,8 @@ import { Image } from "astro:assets";
 import scheduliIcon from "../assets/schedule.svg";
 import onlyEggrollsIcon from "../assets/eggrolls.svg";
 import { Icon } from "astro-icon/components";
-import DiscordStatus from "../components/DiscordStatus";
-import RecentProjects from "../components/RecentProjects";
+import DiscordStatus from "../components/DiscordStatus.svelte";
+import RecentProjects from "../components/RecentProjects.svelte";
 ---
 
 <Layout title="dsns.dev" description="Check out what I do, and explore some of my projects.">
@@ -28,7 +28,7 @@ import RecentProjects from "../components/RecentProjects";
 					</div>
 				</div>
 
-				<DiscordStatus client:idle />
+				<DiscordStatus client:idle/>
 			</div>
 			<div class="bg-viola-100 rounded-lg p-8 m-2 shadow-lg basis-2/3">
 				<h2 class="text-2xl font-bold mb-4">Projects</h2>
