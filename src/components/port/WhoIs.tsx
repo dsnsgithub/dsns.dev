@@ -46,7 +46,7 @@ export default function WhoIs({ children }: { children: JSX.Element }) {
 
 	return (
 		<div>
-			<div className="lg:p-8 p-4 shadow-xl rounded-xl bg-viola-100">
+			<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
 				<div className="mb-4">
 					<h1 className="text-3xl font-semibold">WHOIS Lookup</h1>
 					<h2>A WHOIS search without censorship.</h2>
@@ -57,11 +57,11 @@ export default function WhoIs({ children }: { children: JSX.Element }) {
 						type="text"
 						id="inputBox"
 						placeholder="Search..."
-						className="px-6 py-4 border rounded-lg focus:outline-none focus:border-viola-500 text-xl flex-grow w-5/6"
+						className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
 						onInput={(e) => setDomain((e.target as HTMLInputElement).value)}
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
-					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
+					<button className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-200 p-5 shadow-xl" onClick={() => handleInput()}>
 						{children}
 						<div className="hidden md:block">Lookup</div>
 					</button>
@@ -69,9 +69,9 @@ export default function WhoIs({ children }: { children: JSX.Element }) {
 
 				<div ref={parent}>
 					{(results?.length || 0) > 1 ? (
-						<div className="bg-viola-100 border-2 border-viola-300 p-4 rounded-xl overflow-scroll">{results}</div>
+						<div className="overflow-scroll rounded-xl border-2 border-viola-300 bg-viola-100 p-4">{results}</div>
 					) : (results?.length || 0) == 1 ? (
-						<div className="bg-viola-100 border-2 border-viola-300 p-4 rounded-xl text-center">
+						<div className="rounded-xl border-2 border-viola-300 bg-viola-100 p-4 text-center">
 							<h2 className="text-2xl text-red-500">Invalid domain name. Please try again.</h2>
 						</div>
 					) : (

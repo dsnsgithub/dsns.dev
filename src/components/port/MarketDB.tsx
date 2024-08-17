@@ -114,8 +114,8 @@ function Product(props: {
 }) {
 	return (
 		<a href={props.result.url} target="_blank">
-			<div className="bg-viola-50 p-6 rounded-lg shadow-lg relative flex flex-col lg:flex-row justify-around items-center gap-4">
-				<div className="lg:w-1/2 flex flex-col gap-4 h-56">
+			<div className="relative flex flex-col items-center justify-around gap-4 rounded-lg bg-viola-50 p-6 shadow-lg lg:flex-row">
+				<div className="flex h-56 flex-col gap-4 lg:w-1/2">
 					<h3 className="text-lg font-bold">{props.result.contents.name}</h3>
 					{props["result"]["contents"]["description"] ? (
 						<p className="line-clamp-4 overflow-ellipsis">{props["result"]["contents"]["description"].split(".")[0] + "."}</p>
@@ -123,8 +123,8 @@ function Product(props: {
 						<p className="h-32">No description provided.</p>
 					)}
 
-					<div className="grid grid-cols-2 items-center text-xs gap-1">
-						<div className="rounded-lg bg-viola-500 text-white p-2 text-center">
+					<div className="grid grid-cols-2 items-center gap-1 text-xs">
+						<div className="rounded-lg bg-viola-500 p-2 text-center text-white">
 							{props["result"]["contents"]["pricePerOunce"].toLocaleString("en-US", {
 								style: "currency",
 								currency: "USD"
@@ -134,9 +134,9 @@ function Product(props: {
 						{props["result"]["contents"]["nutritionPercentage"] ? (
 							<>
 								{/* <div className="rounded-xl bg-orange-600 text-white p-2 ml-2 md:mb-3 lg:mb-0">{props["result"]["contents"]["caloriesPer100G"]} cal/100g</div> */}
-								<div className="rounded-lg bg-green-500 text-white p-2 text-center">Carbs: {props["result"]["contents"]["nutritionPercentage"]["carbs"]}%</div>
-								<div className="rounded-lg bg-yellow-500 text-white p-2 text-center">Fat: {props["result"]["contents"]["nutritionPercentage"]["fat"]}%</div>
-								<div className="rounded-lg bg-red-500 text-white p-2 text-center">Protein: {props["result"]["contents"]["nutritionPercentage"]["protein"]}%</div>
+								<div className="rounded-lg bg-green-500 p-2 text-center text-white">Carbs: {props["result"]["contents"]["nutritionPercentage"]["carbs"]}%</div>
+								<div className="rounded-lg bg-yellow-500 p-2 text-center text-white">Fat: {props["result"]["contents"]["nutritionPercentage"]["fat"]}%</div>
+								<div className="rounded-lg bg-red-500 p-2 text-center text-white">Protein: {props["result"]["contents"]["nutritionPercentage"]["protein"]}%</div>
 							</>
 						) : (
 							<></>
@@ -144,7 +144,7 @@ function Product(props: {
 					</div>
 				</div>
 
-				{props["result"]["contents"]["imageURL"] ? <img src={props["result"]["contents"]["imageURL"]} alt={props.result.contents.name} className="rounded-lg w-48 h-48" /> : <></>}
+				{props["result"]["contents"]["imageURL"] ? <img src={props["result"]["contents"]["imageURL"]} alt={props.result.contents.name} className="h-48 w-48 rounded-lg" /> : <></>}
 			</div>
 		</a>
 	);
@@ -174,10 +174,10 @@ export default function FoodDB() {
 	const analysis = analyzeItems(database);
 
 	return (
-		<div className="lg:p-8 p-4 shadow-xl rounded-xl bg-viola-100">
-			<h1 className="text-3xl font-semibold mb-4">Generic Supermarket Database</h1>
+		<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
+			<h1 className="mb-4 text-3xl font-semibold">Generic Supermarket Database</h1>
 
-			<div className="p-5 rounded-lg mt-4 mb-4 shadow-xl bg-viola-50">
+			<div className="mb-4 mt-4 rounded-lg bg-viola-50 p-5 shadow-xl">
 				<h2>Explore a wide range of products and their prices.</h2>
 				<h2>
 					Using a web-scraped DB from{" "}
@@ -187,11 +187,11 @@ export default function FoodDB() {
 					.
 				</h2>
 
-				<div className="flex flex-row gap-4 flex-wrap mt-4">
-					<div className="p-2 px-4 rounded-xl bg-viola-200 flex justify-center items-center">
-						<span className="font-bold mr-1">{analysis.itemCount}</span> items
+				<div className="mt-4 flex flex-row flex-wrap gap-4">
+					<div className="flex items-center justify-center rounded-xl bg-viola-200 p-2 px-4">
+						<span className="mr-1 font-bold">{analysis.itemCount}</span> items
 					</div>
-					<div className="p-2 px-4 rounded-xl bg-viola-200 text-center">
+					<div className="rounded-xl bg-viola-200 p-2 px-4 text-center">
 						Cheapest item by weight:
 						<div className="font-bold">
 							{analysis.lowestCostItem} at{" "}
@@ -202,7 +202,7 @@ export default function FoodDB() {
 							/oz
 						</div>
 					</div>
-					<div className="p-2 px-4 rounded-xl bg-viola-200 text-center">
+					<div className="rounded-xl bg-viola-200 p-2 px-4 text-center">
 						Most expensive item by weight:
 						<div className="font-bold">
 							{analysis.highestCostItem} at{" "}
@@ -224,11 +224,11 @@ export default function FoodDB() {
 					onInput={(e) => {
 						handleInput(e, setResults);
 					}}
-					className="px-6 py-4 border rounded-lg focus:outline-none focus:border-viola-500 w-full text-xl"
+					className="w-full rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
 				></input>
 			</div>
 
-			<div id="results" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<div id="results" className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 				{results}
 			</div>
 		</div>

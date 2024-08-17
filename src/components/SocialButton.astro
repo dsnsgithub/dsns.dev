@@ -10,6 +10,6 @@ interface Props {
 const { name, iconName, url } = Astro.props;
 ---
 
-<a href={url} class="hover:transition duration-500 hover:duration-500 hover:scale-[1.15]" target="_blank" rel="noopener noreferrer" aria-label={name} title={name}>
+<a href={url} class="duration-500 hover:scale-[1.15] hover:transition hover:duration-500" target="_blank" rel="noopener noreferrer" aria-label={name} title={name}>
 	<Icon name={iconName} class="text-2xl text-viola-900" />
 </a>

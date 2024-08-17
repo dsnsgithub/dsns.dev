@@ -28,24 +28,24 @@
 {#if !delayOver || !result.length}
 	<ul>
 		{#each Array(8) as _, i}
-			<li class="m-4 p-8 bg-viola-50 rounded-xl h-32">
+			<li class="m-4 h-32 rounded-xl bg-viola-50 p-8">
 				<div class="flex justify-between">
-					<div class="bg-viola-200 w-32 h-6 rounded-xl animate-pulse" />
-					<div class="bg-viola-200 w-16 h-6 rounded-xl animate-pulse" />
+					<div class="h-6 w-32 animate-pulse rounded-xl bg-viola-200" />
+					<div class="h-6 w-16 animate-pulse rounded-xl bg-viola-200" />
 				</div>
-				<div class="bg-viola-100 h-10 mt-4 rounded-xl animate-pulse" />
+				<div class="mt-4 h-10 animate-pulse rounded-xl bg-viola-100" />
 			</li>
 		{/each}
 	</ul>
 {:else}
 	<ul>
 		{#each result as repo}
-			<li class="m-4 p-8 bg-viola-50 rounded-xl hover:scale-[1.01] transition duration-500">
+			<li class="m-4 rounded-xl bg-viola-50 p-8 transition duration-500 hover:scale-[1.01]">
 				<a href={repo.html_url} target="_blank" rel="noopener noreferrer" class="block">
 					<div class="flex justify-between">
 						<p class="text-xl font-bold">{repo.name}</p>
 						{#if repo.language}
-							<div class="bg-viola-200 p-2 rounded-xl">{repo.language}</div>
+							<div class="rounded-xl bg-viola-200 p-2">{repo.language}</div>
 						{/if}
 					</div>
 					{#if repo.description}

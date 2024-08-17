@@ -38,6 +38,9 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-svelte": "^3.2.6",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwind-scrollbar": "^3.1.0"
   }
 }

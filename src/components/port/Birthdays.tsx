@@ -67,15 +67,15 @@ export default function BirthdaysElem() {
 
 	return (
 		<>
-			{birthdayToday && width && height ? <Confetti width={width} height={height} className="w-full h-full"></Confetti> : <></>}
-			<div className="lg:p-8 p-4 shadow-xl rounded-xl bg-viola-100">
-				<h1 className="text-3xl font-semibold mb-4">Birthdays</h1>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			{birthdayToday && width && height ? <Confetti width={width} height={height} className="h-full w-full"></Confetti> : <></>}
+			<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
+				<h1 className="mb-4 text-3xl font-semibold">Birthdays</h1>
+				<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{birthdays.map((birthday) => (
-						<div key={birthday.name} className="bg-viola-50 rounded-xl shadow-md p-6">
+						<div key={birthday.name} className="rounded-xl bg-viola-50 p-6 shadow-md">
 							<div className="flex">
 								<Tooltip id={birthday.date.toLocaleDateString()}></Tooltip>
-								<h2 className="text-xl font-semibold mb-2" data-tooltip-id={birthday.date.toLocaleDateString()} data-tooltip-content={birthday.date.toLocaleDateString()}>
+								<h2 className="mb-2 text-xl font-semibold" data-tooltip-id={birthday.date.toLocaleDateString()} data-tooltip-content={birthday.date.toLocaleDateString()}>
 									{birthday.name}
 								</h2>
 							</div>
@@ -89,8 +89,8 @@ export default function BirthdaysElem() {
 									</p>
 								)}
 							</div>
-							<div className="h-4 bg-viola-50 border border-viola-300 rounded-full overflow-hidden">
-								<div className="bg-viola-400 h-full" style={{ width: `${calculatePercent(birthday.date)}%` }}></div>
+							<div className="h-4 overflow-hidden rounded-full border border-viola-300 bg-viola-50">
+								<div className="h-full bg-viola-400" style={{ width: `${calculatePercent(birthday.date)}%` }}></div>
 							</div>
 						</div>
 					))}

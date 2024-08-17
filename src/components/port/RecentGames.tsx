@@ -84,7 +84,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 
 	return (
 		<div>
-			<div className="lg:p-8 p-4 shadow-xl rounded-xl bg-viola-100">
+			<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
 				<div className="mb-4">
 					<h1 className="text-3xl font-semibold">Recent Games Finder</h1>
 					<h2>Find the status and recent games of any Hypixel player.</h2>
@@ -95,11 +95,11 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						type="text"
 						id="inputBox"
 						placeholder="Search..."
-						className="px-6 py-4 border rounded-lg focus:outline-none focus:border-viola-500 flex-grow text-xl w-5/6"
+						className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
 						onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
-					<button className="p-5 shadow-xl bg-viola-200 border-2 border-viola-300 rounded-xl ml-4 flex flex-row items-center" onClick={() => handleInput()}>
+					<button className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-200 p-5 shadow-xl" onClick={() => handleInput()}>
 						{children}
 						<div className="hidden md:block">Lookup</div>
 					</button>
@@ -109,31 +109,31 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 					{actualUsername != -1 ? (
 						<></>
 					) : (
-						<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2 text-center">
+						<div className="m-2 rounded-xl border-2 border-viola-300 bg-viola-100 p-6 text-center shadow-xl">
 							<h2 className="text-2xl text-red-500">Invalid IGN. Please try again.</h2>
 						</div>
 					)}
 
-					<div className={`lg:flex lg:flex-row lg:justify-around mt-1 items-center ${statusVisible ? "block" : "hidden"}`}>
+					<div className={`mt-1 items-center lg:flex lg:flex-row lg:justify-around ${statusVisible ? "block" : "hidden"}`}>
 						<div className="flex flex-col">
 							{actualUsername != -1 && statusData ? (
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl lg:m-2 mt-1">
-									<h2 className="text-2xl font-semibold mb-3">Status</h2>
+								<div className="mt-1 rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl lg:m-2">
+									<h2 className="mb-3 text-2xl font-semibold">Status</h2>
 
 									{statusData.success && statusData.session && statusData.session.online && gamesList ? (
 										statusData.session.mode == "LOBBY" ? (
-											<p className="text-xl text-center">
+											<p className="text-center text-xl">
 												{actualUsername} is <span className="text-green-600">online</span>. They are in a{" "}
 												{gamesList["games"][statusData.session.gameType] ? gamesList["games"][statusData.session.gameType]["name"] : statusData.session.gameType} lobby.
 											</p>
 										) : (
-											<p className="text-xl text-center">
+											<p className="text-center text-xl">
 												{actualUsername} is <span className="text-green-600">online</span>. They are playing{" "}
 												{gamesList["games"][statusData.session.gameType] ? gamesList["games"][statusData.session.gameType]["name"] : statusData.session.gameType}.
 											</p>
 										)
 									) : (
-										<p className="text-xl text-center">
+										<p className="text-center text-xl">
 											{actualUsername} is <span className="text-red-600">offline</span>.
 										</p>
 									)}
@@ -143,12 +143,12 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 							)}
 
 							{actualUsername != -1 && recentGamesData && (recentGamesData?.games?.length || -1) > 0 ? (
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl lg:m-2 mt-1">
-									<h2 className="text-2xl font-semibold mb-3">Recent Games</h2>
+								<div className="mt-1 rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl lg:m-2">
+									<h2 className="mb-3 text-2xl font-semibold">Recent Games</h2>
 									<div className="overflow-x-auto">
 										<table className="w-full table-auto">
 											<thead>
-												<tr className="bg-viola-200 border-2 border-viola-300">
+												<tr className="border-2 border-viola-300 bg-viola-200">
 													<th className="border border-viola-300 px-4 py-2 text-center">Game Type</th>
 													<th className="border border-viola-300 px-4 py-2 text-center">Mode</th>
 													<th className="border border-viola-300 px-4 py-2 text-center">Map</th>
@@ -159,7 +159,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 											<tbody>
 												{recentGamesData.success &&
 													recentGamesData.games.map((game, index) => (
-														<tr key={index} className="bg-viola-200 border-2 border-viola-300">
+														<tr key={index} className="border-2 border-viola-300 bg-viola-200">
 															<td className="border border-viola-300 px-4 py-2 text-center">
 																{gamesList && gamesList["games"][game.gameType] ? gamesList["games"][game.gameType]["name"] : game.gameType}
 															</td>
@@ -178,17 +178,17 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 									</div>
 								</div>
 							) : recentGamesData?.success && actualUsername != -1 ? (
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2">
-									<h2 className="text-2xl font-semibold mb-3">Recent Games</h2>
-									<p className="text-xl text-center">{actualUsername} has no recent games.</p>
+								<div className="m-2 rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl">
+									<h2 className="mb-3 text-2xl font-semibold">Recent Games</h2>
+									<p className="text-center text-xl">{actualUsername} has no recent games.</p>
 								</div>
 							) : (
 								<></>
 							)}
 
 							{actualUsername != -1 && uuid && (statusData || recentGamesData) ? (
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2 overflow-scroll scrollbar-none">
-									<img src={`https://hypixel.paniek.de/signature/${uuid}/general-tooltip`} alt="Hypixel Player Information" className="min-w-[430px] min-h-[170px]"></img>
+								<div className="m-2 overflow-scroll rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl scrollbar-none">
+									<img src={`https://hypixel.paniek.de/signature/${uuid}/general-tooltip`} alt="Hypixel Player Information" className="min-h-[170px] min-w-[430px]"></img>
 								</div>
 							) : (
 								<></>
@@ -196,9 +196,9 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						</div>
 
 						{actualUsername != -1 && uuid && (statusData || recentGamesData) ? (
-							<div className="flex flex-col ">
-								<div className="p-6 shadow-xl bg-viola-100 border-2 border-viola-300 rounded-xl m-2 flex justify-center items-center">
-									<img src={`https://mc-heads.net/body/${uuid}`} alt="Minecraft Player Model" className="min-w-[180px] min-h-[432px]"></img>
+							<div className="flex flex-col">
+								<div className="m-2 flex items-center justify-center rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl">
+									<img src={`https://mc-heads.net/body/${uuid}`} alt="Minecraft Player Model" className="min-h-[432px] min-w-[180px]"></img>
 								</div>
 							</div>
 						) : (
