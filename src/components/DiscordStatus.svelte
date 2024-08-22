@@ -106,8 +106,16 @@
 
 					<div>
 						<h3 class="text-sm font-bold">{activity.name}</h3>
-						<p class="text-xs">{activity.state}</p>
-						<p class="text-xs">{activity.details}</p>
+						<p class="text-xs">
+							{#if activity.state}
+								{activity.state}
+							{/if}
+						</p>
+						<p class="text-xs">
+							{#if activity.details}
+								{activity.details}
+							{/if}
+						</p>
 						<p class="text-xs">{formatTime(currentTime - activity.created_at)} elapsed</p>
 					</div>
 				</div>
