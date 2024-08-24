@@ -37,9 +37,9 @@
 
 	$: largeImage = gameList[activity?.application_id || ""]
 		? `${internalIconsLink}${activity?.application_id}/${gameList[activity?.application_id || ""]}.png`
-		: handleExternalLinks(activity?.assets.large_image);
+		: handleExternalLinks(activity?.assets?.large_image);
 
-	$: smallImage = handleExternalLinks(activity?.assets.small_image);
+	$: smallImage = handleExternalLinks(activity?.assets?.small_image);
 
 	setTimeout(() => {
 		visible = true;
@@ -95,6 +95,9 @@
 					<div class="relative flex-shrink-0">
 						{#if largeImage}
 							<img src={largeImage} alt="Large Activity Icon" class="h-16 w-16 rounded" />
+						{/if}
+						{#if !largeImage && !smallImage && activity?.emoji?.name}
+							<span class="text-3xl">{activity.emoji.name}</span>
 						{/if}
 						{#if smallImage && !largeImage}
 							<img src={smallImage} alt="Activity Icon" class="h-16 w-16 rounded" />
