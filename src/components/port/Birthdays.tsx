@@ -27,8 +27,8 @@ export default function BirthdaysElem() {
 
 	useEffect(() => {
 		const updateDimensions = () => {
-			setHeight(document.body.scrollHeight);
-			setWidth(document.body.scrollWidth);
+			setHeight(document.body.scrollHeight + 100);
+			setWidth(window.innerWidth);
 		};
 
 		updateDimensions();
@@ -67,7 +67,7 @@ export default function BirthdaysElem() {
 
 	return (
 		<>
-			{birthdayToday && width && height ? <Confetti width={width} height={height} className="h-full w-full"></Confetti> : <></>}
+			{birthdayToday && width && height ? <Confetti width={width} height={height}></Confetti> : <></>}
 			<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
 				<h1 className="mb-4 text-3xl font-semibold">Birthdays</h1>
 				<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
