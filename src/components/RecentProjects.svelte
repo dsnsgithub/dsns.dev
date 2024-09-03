@@ -42,7 +42,7 @@
 		{#each result as repo}
 			<li class="m-4 rounded-xl bg-viola-50 p-8 transition duration-500 hover:scale-[1.01]">
 				<a href={repo.html_url} target="_blank" rel="noopener noreferrer" class="block">
-					<div class="flex justify-between">
+					<div class="flex flex-wrap justify-between mb-2">
 						<p class="text-xl font-bold">{repo.name}</p>
 						{#if repo.language}
 							<div class="rounded-xl bg-viola-200 p-2">{repo.language}</div>
