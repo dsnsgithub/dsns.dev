@@ -28,7 +28,7 @@ export default function BirthdaysElem() {
 	useEffect(() => {
 		const updateDimensions = () => {
 			setHeight(document.body.scrollHeight + 100);
-			setWidth(window.innerWidth);
+			setWidth(window.innerWidth - 8); // 8px for the scrollbar
 		};
 
 		updateDimensions();
