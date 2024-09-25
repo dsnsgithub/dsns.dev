@@ -7,12 +7,16 @@
 	const gameList = rawGames as { [key: string]: string };
 
 	function formatTime(milliseconds: number) {
-		const minutes = Math.floor(milliseconds / 1000 / 60);
-		const seconds = Math.floor((milliseconds / 1000) % 60);
+		const totalSeconds = Math.floor(milliseconds / 1000);
 
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds % 60;
+		
 		const paddedMinutes = minutes < 10 ? "0" + minutes : minutes;
 		const paddedSeconds = seconds < 10 ? "0" + seconds : seconds;
 
+		if (hours > 0) return hours + ":" + paddedMinutes + ":" + paddedSeconds;
 		return paddedMinutes + ":" + paddedSeconds;
 	}
 
