@@ -83,13 +83,13 @@
 				</div>
 
 				<div class="mt-2 flex items-center space-x-2">
-					<span>{formatTime(Math.min(currentTime - $status.spotify.timestamps.start, $status.spotify.timestamps.end - $status.spotify.timestamps.start))}</span>
+					<span class="w-14">{formatTime(Math.min(currentTime - $status.spotify.timestamps.start, $status.spotify.timestamps.end - $status.spotify.timestamps.start))}</span>
 					<progress
 						value={currentTime - $status.spotify.timestamps.start}
 						max={$status.spotify.timestamps.end - $status.spotify.timestamps.start}
 						class="w-3/4 rounded-xl [&::-moz-progress-bar]:bg-viola-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-viola-400"
 					></progress>
-					<span>{formatTime($status.spotify.timestamps.end - $status.spotify.timestamps.start)}</span>
+					<span class="w-14">{formatTime($status.spotify.timestamps.end - $status.spotify.timestamps.start)}</span>
 				</div>
 			</div>
 		{:else}
