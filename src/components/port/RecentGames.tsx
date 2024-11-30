@@ -1,3 +1,4 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useState } from "react";
 
 interface StatusData {
@@ -53,6 +54,9 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 
 	const [statusVisible, setStatusVisible] = useState(false);
 
+	const [outerAnimateRef] = useAutoAnimate();
+	const [innerAnimateRef] = useAutoAnimate();
+
 	async function handleInput() {
 		try {
 			const response = await fetch(`https://cors.dsns.dev/api.mojang.com/users/profiles/minecraft/${username}`);
@@ -66,16 +70,16 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 			setUUID(data["id"]);
 			setActualUsername(data["name"]);
 
-			const status = await fetch(`https://hypixel.dsns.dev/status/${data["id"]}`);
-			const recentGames = await fetch(`https://hypixel.dsns.dev/recentgames/${data["id"]}`);
+			const status = await fetch(`https://hypixel.dsns.dev/status/${data["id"]}`).then((res) => res.json());
+			const recentGames = await fetch(`https://hypixel.dsns.dev/recentgames/${data["id"]}`).then((res) => res.json());
 
 			if (!gamesList) {
-				const games = await fetch(`https://api.hypixel.net/resources/games`);
-				setGamesList(await games.json());
+				const games = await fetch(`https://api.hypixel.net/resources/games`).then((res) => res.json());
+				setGamesList(games);
 			}
 
-			setStatusData(await status.json());
-			setRecentGamesData(await recentGames.json());
+			setStatusData(status);
+			setRecentGamesData(recentGames);
 			setStatusVisible(true);
 		} catch (error) {
 			console.error("Error fetching recent games data:", error);
@@ -114,8 +118,8 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						</div>
 					)}
 
-					<div className={`mt-1 items-center lg:flex lg:flex-row lg:justify-around ${statusVisible ? "block" : "hidden"}`}>
-						<div className="flex flex-col">
+					<div className={`mt-1 items-center lg:flex lg:flex-row lg:justify-around ${statusVisible ? "block" : "hidden"}`} ref={outerAnimateRef}>
+						<div className="flex flex-col" ref={innerAnimateRef}>
 							{actualUsername != -1 && statusData ? (
 								<div className="mt-1 rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl lg:m-2">
 									<h2 className="mb-3 text-2xl font-semibold">Status</h2>
