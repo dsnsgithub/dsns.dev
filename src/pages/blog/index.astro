@@ -10,7 +10,9 @@ const allBlogPosts = await getCollection("posts");
 		<div class="bg-viola-100 rounded-xl p-8 flex flex-col gap-5">
 			<h1 class="text-3xl font-bold">Blog</h1>
 			{
-				allBlogPosts.map((post) => (
+				allBlogPosts.sort((a, b) => {
+					return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+				}).map((post) => (
 					<a href={`/blog/${post.slug}`} class="bg-viola-50 rounded-lg p-8 m-2 shadow-lg">
 						<div class="flex flex-row justify-between items-center mb-4">
 							<span class="text-lg font-bold">{post.data.title}</span>

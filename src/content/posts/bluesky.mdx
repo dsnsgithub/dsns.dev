@@ -1,0 +1,31 @@
+---
+title: "Embracing the Future of Social Media - BlueSky and Blog Comments"
+description: "Bluesky is the newest decentralized social media platform that attempts to replace Twitter. A clever implementation of Bluesky allows us to create a comment section that uses Bluesky posts as blog comments."
+date: "1/19/2025"
+---
+import 'bluesky-comments/bluesky-comments.css'
+import { BlueskyComments } from 'bluesky-comments';
+
+
+## Bluesky: The Future of Social Media
+
+Bluesky is the newest decentralized social media platform that attempts to replace Twitter. With anyone being able to host their own server, Bluesky is a "billionaire-proof" platform that is free from the control of any one company. New social media comes with benefits, like being able to set your username as your domain name.
+
+
+## With freedom comes features (comments)
+Bluesky allows us to create a comment section that [uses Bluesky posts as blog comments](https://emilyliu.me/blog/comments).
+[Cory Zue](https://www.coryzue.com/writing/bluesky-comments/) even created an npm package called [bluesky-comments](https://www.npmjs.com/package/bluesky-comments) that allows us to easily add Bluesky comments to our blog (huge thanks to him!!). 
+
+This would not have been possible with Twitter in its current state, as Twitter is a centralized platform that now charges money for access to its API.
+
+
+## Enjoy the comments section!!
+
+This will be the first blog on my website to have a comment section. I am excited to see how this will turn out. Feel free to leave a comment below and follow me on Bluesky!
+
+
+---
+
+<div class="not-prose">
+	<BlueskyComments client:load client:only="react" author="dsns.dev" uri="https://bsky.app/profile/dsns.dev/post/3lg5m72ukis2b"/>
+</div>
