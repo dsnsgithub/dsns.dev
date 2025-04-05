@@ -3,24 +3,32 @@ import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import mcHead from "../assets/mchead.png";
 import betterHudIcon from "../assets/betterhud.png";
+import onlyEggrollsIcon from "../assets/eggrolls.svg";
 import { Icon } from "astro-icon/components";
 import ProjectDescription from "../components/ProjectCard.astro";
+import scheduliIcon from "../assets/schedule.svg";
+import calopolyIcon from "../assets/calopoly.png";
 ---
 
 <Layout title="dsns.dev" description="Check out what I do, and explore some of my projects.">
 	<div class="container mx-auto flex flex-col gap-10 px-6 md:px-8 lg:px-10 xl:px-48">
 		<div class="rounded-xl bg-viola-100 p-8">
-			<h1 class="text-3xl font-bold">Other Projects</h1>
+			<h1 class="text-3xl font-bold">Current Projects</h1>
 
 			<div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
+				<ProjectDescription
+					title="Scheduli"
+					url="https://scheduli.dsns.dev/"
+					description="An app to track complicated school schedules, even during the most chaotic days."
+					tags={["Next.js", "Expo"]}
+				>
 					<Image
-						src={mcHead}
-						alt={`Recent Games Icon`}
-						width={96}
-						class={`rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square"`}
-						loading={"eager"}
-					/>
+							src={scheduliIcon}
+							alt="Scheduli Icon"
+							width={96}
+							class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
+							loading={"eager"}
+						/>
 				</ProjectDescription>
 
 				<ProjectDescription
@@ -29,7 +37,25 @@ import ProjectDescription from "../components/ProjectCard.astro";
 					description="A Minecraft Fabric mod providing a HUD with essential information."
 					tags={["Java", "Minecraft"]}
 				>
-					<Image src={betterHudIcon} alt={`Recent Games Icon`} width={128} class={`rounded-xl p-3 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+				</ProjectDescription>
+
+				<ProjectDescription title="Cal-opoly" url="https://calopoly.dsns.dev/" description="A multiplayer online board game inspired by Monopoly, set in California." tags={["Next.js", "Socket.io"]}>
+					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+				</ProjectDescription>
+
+				<ProjectDescription title="Only Eggrolls" url="https://onlyeggrolls.com/" description="A proof-of-concept online store built completely in vanilla JavaScript." tags={["Express"]}>
+					<Image src={onlyEggrollsIcon} alt={`Only Eggrolls Icon`} width={128} class={`rounded-xl p-3 bg-white w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+				</ProjectDescription>
+
+				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
+					<Image
+						src={mcHead}
+						alt={`Recent Games Icon`}
+						width={96}
+						class={`rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square"`}
+						loading={"eager"}
+					/>
 				</ProjectDescription>
 
 				<ProjectDescription title="Market DB" url="/marketdb" description="Explore a wide range of products and their prices." tags={["React"]}>

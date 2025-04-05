@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import scheduliIcon from "../assets/schedule.svg";
-import onlyEggrollsIcon from "../assets/eggrolls.svg";
+import betterHudIcon from "../assets/betterhud.png";
 import { Icon } from "astro-icon/components";
 import DiscordStatus from "../components/DiscordStatus.svelte";
 import RecentProjects from "../components/RecentProjects.svelte";
@@ -31,7 +31,7 @@ import RecentProjects from "../components/RecentProjects.svelte";
 				<DiscordStatus client:idle />
 			</div>
 			<div class="m-2 basis-2/3 rounded-lg bg-viola-100 p-8 shadow-lg">
-				<h2 class="mb-4 text-2xl font-bold">Projects</h2>
+				<h2 class="mb-4 text-2xl font-bold">Major Projects</h2>
 
 				<div class="flex flex-col gap-4">
 					<a
@@ -52,20 +52,14 @@ import RecentProjects from "../components/RecentProjects.svelte";
 						</div>
 					</a>
 					<a
-						href="https://onlyeggrolls.com/"
+						href="https://modrinth.com/mod/betterhudfabric"
 						class="flex flex-col items-center gap-10 rounded-xl bg-viola-50 p-8 shadow-lg duration-500 hover:scale-[1.01] hover:transition hover:duration-500 sm:flex-row"
 					>
-						<Image
-							src={onlyEggrollsIcon}
-							alt="OnlyEggrolls Icon"
-							width={120}
-							class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-white p-2 md:h-[128px] md:w-[128px]"
-							loading={"eager"}
-						/>
+						<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
 
 						<div class="flex basis-4/5 flex-col">
-							<p class="mb-2 text-xl font-bold">Only Eggrolls</p>
-							<p>A proof-of-concept online store built completely in vanilla JavaScript.</p>
+							<p class="mb-2 text-xl font-bold">BetterHUD</p>
+							<p>A Minecraft Fabric mod providing a HUD with essential information.</p>
 						</div>
 					</a>
 				</div>
