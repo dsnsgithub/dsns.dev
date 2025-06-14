@@ -3,14 +3,15 @@
 		JavaScript: "#f1e05a",
 		TypeScript: "#3178c6",
 		Python: "#3572A5",
-		HTML: "#e34c26",
+		HTML: "#d35728",
 		CSS: "#563d7c",
-		Java: "#b07219",
+		Java: "#d14233",
 		C: "#555555",
 		"C++": "#f34b7d",
 		Shell: "#89e051",
 		Go: "#00ADD8",
-		Rust: "#dea584"
+		Rust: "#e45a14",
+		Astro: "#5d17ac"
 	};
 
 	interface GithubAPIResponse {
