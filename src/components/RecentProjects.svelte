@@ -1,4 +1,18 @@
 <script lang="ts">
+	const languageColors: Record<string, string> = {
+		JavaScript: "#f1e05a",
+		TypeScript: "#3178c6",
+		Python: "#3572A5",
+		HTML: "#e34c26",
+		CSS: "#563d7c",
+		Java: "#b07219",
+		C: "#555555",
+		"C++": "#f34b7d",
+		Shell: "#89e051",
+		Go: "#00ADD8",
+		Rust: "#dea584"
+	};
+
 	interface GithubAPIResponse {
 		name: string;
 		fork: boolean;
@@ -42,16 +56,19 @@
 		{#each result as repo}
 			<li class="m-4 rounded-xl bg-viola-50 p-8 transition duration-500 hover:scale-[1.01]">
 				<a href={repo.html_url} target="_blank" rel="noopener noreferrer" class="block">
-					<div class="flex flex-wrap justify-between mb-2">
+					<div class="mb-2 flex flex-wrap justify-between">
 						<p class="text-xl font-bold">{repo.name}</p>
 						{#if repo.language}
-							<div class="rounded-xl bg-viola-200 p-2">{repo.language}</div>
+							<div class="flex items-center gap-2 rounded-xl bg-viola-200 px-3 py-1">
+								<span class="inline-block h-3 w-3 rounded-full" style="background-color: {languageColors[repo.language] || '#999'}" />
+								<span>{repo.language}</span>
+							</div>
 						{/if}
 					</div>
 					{#if repo.description}
 						<p>{repo.description}</p>
 					{/if}
-					<p title={new Date(repo.pushed_at).toLocaleString()}>
+					<p title={new Date(repo.pushed_at).toLocaleString()} class="mt-2 text-sm text-gray-500">
 						Last updated: {new Date(repo.pushed_at).toLocaleDateString()}
 					</p>
 				</a>
