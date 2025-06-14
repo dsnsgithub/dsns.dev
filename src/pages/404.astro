@@ -1,20 +1,24 @@
 ---
+import { Icon } from "astro-icon/components";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="404 - Page Not Found" description="404 - Page Not Found">
-	<div class="container mx-auto flex flex-col gap-10 px-1 md:px-8 lg:px-10 xl:px-48">
-		<div class="flex h-full flex-col items-center gap-12 rounded-xl bg-viola-100 p-8 shadow-lg">
-			<h1 class="text-4xl font-bold">404 - Page Not Found</h1>
-			<p class="mb-6 text-center">Oops! The page you're looking for doesn't exist.</p>
-			<div class="flex flex-col gap-4">
-				<a href="/" class="m-2 rounded-lg bg-viola-500 p-4 text-center text-white shadow-md transition duration-300 ease-in-out hover:bg-viola-600">Go Back Home</a>
-				<a href="https://next.dsns.dev" class="m-2 rounded-lg bg-viola-500 p-4 text-center text-white shadow-md transition duration-300 ease-in-out hover:bg-viola-600"
-					>Visit Previous Site (next.dsns.dev)</a
-				>
-				<a href="https://old.dsns.dev" class="m-2 rounded-lg bg-viola-500 p-4 text-center text-white shadow-md transition duration-300 ease-in-out hover:bg-viola-600"
-					>Visit OLD Site (old.dsns.dev)</a
-				>
+	<div class="container mx-auto flex flex-col items-center justify-center px-4 py-16 md:px-8 lg:px-10 xl:px-48">
+		<div class="w-full max-w-3xl rounded-2xl bg-viola-100 p-10 text-center shadow-xl">
+			<h1 class="mb-4 text-5xl font-extrabold text-gray-900">404</h1>
+			<h2 class="mb-2 text-2xl font-semibold text-gray-800">Page Not Found</h2>
+			<p class="mb-10 text-gray-600">The page you're looking for doesn’t exist. It may have been moved or never existed.</p>
+
+			<div class="flex flex-col items-center gap-6 md:flex-row md:justify-center">
+				<!-- Home Card -->
+				<a href="/" class="flex flex-col items-start rounded-xl border border-viola-300 bg-white p-6 text-left shadow-md transition hover:bg-viola-50 hover:shadow-xl">
+					<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-viola-100 text-viola-600 transition group-hover:bg-viola-200">
+						<Icon name="mdi:home" class="h-6 w-6" />
+					</div>
+					<h3 class="mb-1 text-lg font-bold text-viola-700">Go Home</h3>
+					<p class="text-sm text-gray-600">Return to the homepage and continue exploring.</p>
+				</a>
 			</div>
 		</div>
 	</div>

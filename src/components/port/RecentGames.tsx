@@ -103,7 +103,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
-					<button className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-200 p-5 shadow-xl" onClick={() => handleInput()}>
+					<button className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-100 p-5 shadow-xl" onClick={() => handleInput()}>
 						{children}
 						<div className="hidden md:block">Lookup</div>
 					</button>
