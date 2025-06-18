@@ -10,9 +10,7 @@ const servers = {
 	],
 	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io" }],
 	"orchardlakehouse.com": [{ name: "Main Website", url: "orchardlakehouse.com", icon: "orchardlakehouse.com" }],
-	"mseung.dev": [
-		{ name: "Main Website", url: "mseung.dev", icon: "mseung.dev" }
-	]
+	"mseung.dev": [{ name: "Main Website", url: "mseung.dev", icon: "mseung.dev" }]
 };
 
 export default function ServerStatus() {
@@ -61,9 +59,36 @@ export default function ServerStatus() {
 		return () => clearInterval(intervalId);
 	}, []);
 
+	// Check if all servers are operational after loading is complete
+	const allSystemsOperational = !loading && Object.values(statusData).length > 0 && Object.values(statusData).every((status) => status);
+
 	return (
 		<div className="min-h-screen rounded-lg bg-viola-100 p-8">
-			<h1 className="mb-10 text-3xl font-bold">Server Status</h1>
+			<h1 className="mb-6 text-3xl font-bold">Server Status</h1>
+
+			{/* All Systems Operational Banner */}
+			{!loading && allSystemsOperational && (
+				<div className="mb-8 flex items-center rounded-lg border-l-4 border-green-500 bg-green-100 p-4 text-green-800 shadow" role="alert">
+					<svg className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+						<path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<div className="ml-3">
+						<p className="font-semibold">All systems operational.</p>
+					</div>
+				</div>
+			)}
+
+			{/* Not all systems operation issue banner */}
+			{!loading && !allSystemsOperational && (
+				<div className="mb-8 flex items-center rounded-lg border-l-4 border-red-500 bg-red-100 p-4 text-red-800 shadow" role="alert">
+					<svg className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+						<path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<div className="ml-3">
+						<p className="font-semibold">One or more systems are not operational.</p>
+					</div>
+				</div>
+			)}
 
 			{loading ? (
 				<div className="flex h-48 items-center justify-center space-x-4">
@@ -74,7 +99,7 @@ export default function ServerStatus() {
 				<div className="space-y-10" ref={listRef}>
 					{Object.entries(servers).map(([domain, services]) => (
 						<section key={domain} className="rounded-xl bg-white p-6 shadow-lg transition-shadow hover:shadow-2xl" aria-labelledby={`${domain}-heading`}>
-							<h2 id={`${domain}-heading`} className="mb-6 border-b border-viola-200 pb-2 text-3xl font-semibold text-viola-800">
+							<h2 id={`${domain}-heading`} className="mb-6 border-b border-viola-200 pb-2 text-3xl font-semibold">
 								{domain}
 							</h2>
 
