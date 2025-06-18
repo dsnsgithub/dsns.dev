@@ -8,9 +8,7 @@ const servers = {
 		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn" },
 		{ name: "Calopoly Server", url: "calopoly-server.dsns.dev", icon: "calopoly.dsns.dev" }
 	],
-	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io" }],
-	"orchardlakehouse.com": [{ name: "Main Website", url: "orchardlakehouse.com", icon: "orchardlakehouse.com" }],
-	"mseung.dev": [{ name: "Main Website", url: "mseung.dev", icon: "mseung.dev" }]
+	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io" }]
 };
 
 export default function ServerStatus() {
