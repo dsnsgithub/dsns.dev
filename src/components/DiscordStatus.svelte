@@ -12,7 +12,7 @@
 		const hours = Math.floor(totalSeconds / 3600);
 		const minutes = Math.floor((totalSeconds % 3600) / 60);
 		const seconds = totalSeconds % 60;
-		
+
 		const paddedMinutes = minutes < 10 ? "0" + minutes : minutes;
 		const paddedSeconds = seconds < 10 ? "0" + seconds : seconds;
 
@@ -82,14 +82,29 @@
 					</div>
 				</div>
 
-				<div class="mt-2 flex items-center space-x-2">
-					<span class="w-14">{formatTime(Math.min(currentTime - $status.spotify.timestamps.start, $status.spotify.timestamps.end - $status.spotify.timestamps.start))}</span>
-					<progress
-						value={currentTime - $status.spotify.timestamps.start}
-						max={$status.spotify.timestamps.end - $status.spotify.timestamps.start}
-						class="w-3/4 rounded-xl [&::-moz-progress-bar]:bg-viola-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-viola-400"
-					></progress>
-					<span class="w-14">{formatTime($status.spotify.timestamps.end - $status.spotify.timestamps.start)}</span>
+				<div class="mt-2 flex items-center">
+					<!-- current time -->
+					<span class="relative inline-block text-left tabular-nums">
+						<span aria-hidden="true" class="invisible block">00:00</span>
+						<span class="absolute inset-0">
+							{formatTime(Math.min(currentTime - $status.spotify.timestamps.start, $status.spotify.timestamps.end - $status.spotify.timestamps.start))}
+						</span>
+					</span>
+
+					<div class="mx-1 h-3 flex-1 overflow-hidden rounded-xl bg-slate-300">
+						<div
+							class="h-full rounded-xl bg-viola-400"
+							style="width: {((currentTime - $status.spotify.timestamps.start) / ($status.spotify.timestamps.end - $status.spotify.timestamps.start)) * 100}%"
+						></div>
+					</div>
+
+					<!-- total time -->
+					<span class="relative inline-block text-right tabular-nums">
+						<span aria-hidden="true" class="invisible block">00:00</span>
+						<span class="absolute inset-0">
+							{formatTime($status.spotify.timestamps.end - $status.spotify.timestamps.start)}
+						</span>
+					</span>
 				</div>
 			</div>
 		{:else}
