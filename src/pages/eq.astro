@@ -8,8 +8,17 @@ import Layout from "../layouts/Layout.astro";
 			<h1 class="text-3xl font-bold">Audio Frequency Visualizer</h1>
 			<p>
 				Test headphones/speakers by uploading an MP3 and sculpting the sound.
-				<a href="/symbolism.mp3" download class="underline">🌌</a>
-				<a href="/invincible.mp3" download class="underline">🎷</a>
+				<div class="flex gap-3 mt-2">
+					<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
+						🌌 <span>Symbolism</span>
+					</a>
+					<a href="/invincible.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
+						💪 <span>Invincible</span>
+					</a>
+					<a href="/mortals.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
+						🥁 <span>Mortals</span>
+					</a>
+				</div>
 			</p>
 
 			<div class="flex flex-col md:flex-row items-center gap-4">
@@ -517,7 +526,7 @@ import Layout from "../layouts/Layout.astro";
 				}
 
 				// Await user interaction for autoplay policy
-				document.getElementById("audio-file").addEventListener("click", initApp, { once: true });
+				document.body.addEventListener("click", initApp, { once: true });
 			}
 		</script>
 	</div>
