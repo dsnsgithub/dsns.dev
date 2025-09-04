@@ -8,7 +8,7 @@ import Layout from "../layouts/Layout.astro";
 			<h1 class="text-3xl font-bold">Audio Frequency Visualizer</h1>
 			<p>
 				Test headphones/speakers by uploading an MP3 and sculpting the sound.
-				<div class="flex gap-3 mt-2">
+				<div class="flex flex-wrap gap-3 mt-2">
 					<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
 						🌌 <span>Symbolism</span>
 					</a>
@@ -21,7 +21,7 @@ import Layout from "../layouts/Layout.astro";
 				</div>
 			</p>
 
-			<div class="flex flex-col md:flex-row items-center gap-4">
+			<div class="flex flex-row flex-wrap items-center gap-4">
 				<input
 					type="file"
 					id="audio-file"
