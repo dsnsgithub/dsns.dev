@@ -1,0 +1,528 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Audio Frequency Visualizer" description="Test headphones/speakers by uploading an MP3 and sculpting the sound.">
+	<div class="container mx-auto flex flex-col gap-10 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
+		<div id="app-container" class="w-full space-y-4 rounded-2xl bg-viola-100 p-10 shadow-2xl">
+			<h1 class="text-3xl font-bold">Audio Frequency Visualizer</h1>
+			<p>
+				Test headphones/speakers by uploading an MP3 and sculpting the sound.
+				<a href="/rave.mp3" download class="underline">🦀</a>
+			</p>
+
+			<div class="flex flex-col md:flex-row items-center gap-4">
+				<input
+					type="file"
+					id="audio-file"
+					accept=".mp3"
+					class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-none focus:ring-2 focus:ring-viola-400"
+				/>
+
+				<!-- Audio Controls -->
+				<div class="flex flex-1 flex-col items-center rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
+					<audio id="audio-player" controls class="hidden"></audio>
+					<div class="flex w-full items-center gap-4">
+						<button id="play-pause-btn" class="rounded-full" disabled>
+							<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M8 5v14l11-7z"></path>
+							</svg>
+							<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden">
+								<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+							</svg>
+						</button>
+						<span id="current-time" class="w-12 text-center text-sm">0:00</span>
+						<input type="range" id="seek-bar" value="0" class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-viola-300" disabled />
+						<span id="duration" class="w-12 text-center text-sm">0:00</span>
+					</div>
+				</div>
+			</div>
+
+			<div id="visualizer-wrapper" class="relative h-96 w-full overflow-hidden rounded-lg border border-viola-300 bg-viola-200">
+				<canvas id="visualizer-canvas"></canvas>
+			</div>
+
+			<div class="text-center text-sm">
+				<p>
+					Drag on the visualizer to isolate a frequency range. <button id="reset-selection-btn" class="ml-2 hidden font-bold">(Reset Selection)</button>
+				</p>
+			</div>
+
+			<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
+		</div>
+
+		<script is:inline>
+
+			document.addEventListener("DOMContentLoaded", () => {
+				run();
+			});
+
+			document.addEventListener("astro:page-load", () => {
+				run();
+			});
+
+			function run() {
+				// DOM Elements
+				const audioFileInput = document.getElementById("audio-file");
+				const audioPlayer = document.getElementById("audio-player");
+				const visualizerWrapper = document.getElementById("visualizer-wrapper");
+				const canvas = document.getElementById("visualizer-canvas");
+				const eqDetailsContainer = document.getElementById("eq-details");
+				const playPauseBtn = document.getElementById("play-pause-btn");
+				const playIcon = document.getElementById("play-icon");
+				const pauseIcon = document.getElementById("pause-icon");
+				const seekBar = document.getElementById("seek-bar");
+				const currentTimeDisplay = document.getElementById("current-time");
+				const durationDisplay = document.getElementById("duration");
+				const resetSelectionBtn = document.getElementById("reset-selection-btn");
+
+				const ctx = canvas.getContext("2d");
+
+				// Audio Context and Nodes
+				let audioContext;
+				let sourceNode;
+				let analyserNode;
+				let gainNode;
+				let filters = [];
+				let selectionFilters = { highpass: null, lowpass: null };
+
+				// State
+				let isPlaying = false;
+				let isDraggingPoint = null;
+				let isSelectingRange = false;
+				let selectionRect = { startX: 0, endX: 0, startFreq: 0, endFreq: 0 };
+
+				const EQ_BANDS = [
+					{ f: 32, type: "lowshelf" },
+					{ f: 64, type: "peaking" },
+					{ f: 250, type: "peaking" },
+					{ f: 1000, type: "peaking" },
+					{ f: 4000, type: "peaking" },
+					{ f: 8000, type: "peaking" },
+					{ f: 16000, type: "highshelf" }
+				];
+
+				// --- Initialization ---
+
+				function initAudioContext() {
+					if (audioContext) return;
+
+					audioContext = new (window.AudioContext || window.webkitAudioContext)();
+					analyserNode = audioContext.createAnalyser();
+					analyserNode.fftSize = 2048;
+					gainNode = audioContext.createGain();
+
+					// Create selection filters (initially disabled)
+					selectionFilters.highpass = audioContext.createBiquadFilter();
+					selectionFilters.highpass.type = "highpass";
+					selectionFilters.highpass.frequency.value = 20; // Pass everything above 20Hz
+
+					selectionFilters.lowpass = audioContext.createBiquadFilter();
+					selectionFilters.lowpass.type = "lowpass";
+					selectionFilters.lowpass.frequency.value = 20000; // Pass everything below 20kHz
+
+					// Create EQ filters
+					filters = EQ_BANDS.map((band) => {
+						const filter = audioContext.createBiquadFilter();
+						filter.type = band.type;
+						filter.frequency.value = band.f;
+						filter.Q.value = 1.41;
+						filter.gain.value = 0;
+						return filter;
+					});
+				}
+
+				function connectAudioNodes() {
+					if (!sourceNode) return;
+					// Disconnect to avoid multiple connections
+					sourceNode.disconnect();
+
+					let lastNode = sourceNode;
+
+					// Chain EQ filters
+					for (const filter of filters) {
+						lastNode.connect(filter);
+						lastNode = filter;
+					}
+
+					// Chain selection filters
+					lastNode.connect(selectionFilters.highpass);
+					selectionFilters.highpass.connect(selectionFilters.lowpass);
+
+					// Connect to analyser, gain, and destination
+					selectionFilters.lowpass.connect(analyserNode);
+					analyserNode.connect(gainNode);
+					gainNode.connect(audioContext.destination);
+				}
+
+				// --- File Handling ---
+
+				audioFileInput.addEventListener("change", (e) => {
+					const file = e.target.files[0];
+					if (file) {
+						if (isPlaying) {
+							audioPlayer.pause();
+							isPlaying = false;
+						}
+
+						const objectUrl = URL.createObjectURL(file);
+						audioPlayer.src = objectUrl;
+						playPauseBtn.disabled = false;
+						seekBar.disabled = false;
+
+						if (!audioContext) {
+							initAudioContext();
+						}
+
+						if (!sourceNode) {
+							sourceNode = audioContext.createMediaElementSource(audioPlayer);
+						}
+
+						connectAudioNodes();
+					}
+				});
+
+				// --- Canvas and Visualization ---
+
+				function resizeCanvas() {
+					canvas.width = visualizerWrapper.clientWidth;
+					canvas.height = visualizerWrapper.clientHeight;
+				}
+				window.addEventListener("resize", resizeCanvas);
+				resizeCanvas();
+
+				function freqToX(freq, maxFreq) {
+					const logFreq = Math.log10(freq);
+					const minLogFreq = Math.log10(20); // Min audible frequency
+					const maxLogFreq = Math.log10(maxFreq);
+					const percent = (logFreq - minLogFreq) / (maxLogFreq - minLogFreq);
+					return percent * canvas.width;
+				}
+
+				function xToFreq(x, maxFreq) {
+					const percent = x / canvas.width;
+					const minLogFreq = Math.log10(20);
+					const maxLogFreq = Math.log10(maxFreq);
+					const logFreq = minLogFreq + percent * (maxLogFreq - minLogFreq);
+					return Math.pow(10, logFreq);
+				}
+
+				function draw() {
+					requestAnimationFrame(draw);
+					if (!analyserNode) return;
+
+					const bufferLength = analyserNode.frequencyBinCount;
+					const dataArray = new Uint8Array(bufferLength);
+					analyserNode.getByteFrequencyData(dataArray);
+
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+					// Gradient for bars
+					const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+					gradient.addColorStop(0, "#fbcfe8");
+					gradient.addColorStop(1, "#f9a8d4");
+					ctx.fillStyle = gradient;
+
+					const barWidth = 2.5;
+					let x = 0;
+					const maxFreq = audioContext.sampleRate / 2;
+
+					for (let i = 0; i < bufferLength; i++) {
+						const barHeight = (dataArray[i] / 255) * canvas.height;
+						const freq = (i * maxFreq) / bufferLength;
+						const posX = freqToX(freq, maxFreq);
+						const nextFreq = ((i + 1) * maxFreq) / bufferLength;
+						const nextPosX = freqToX(nextFreq, maxFreq);
+						const width = Math.max(2, nextPosX - posX);
+
+						if (posX < canvas.width) {
+							ctx.fillRect(posX, canvas.height - barHeight, width, barHeight);
+						}
+					}
+
+					// Draw frequency labels
+					drawFreqLabels(maxFreq);
+
+					// Draw selection rectangle
+					if (isSelectingRange || selectionRect.startX !== selectionRect.endX) {
+						ctx.fillStyle = "rgba(59, 130, 246, 0.2)";
+						const start = Math.min(selectionRect.startX, selectionRect.endX);
+						const width = Math.abs(selectionRect.endX - selectionRect.startX);
+						ctx.fillRect(start, 0, width, canvas.height);
+
+						ctx.strokeStyle = "rgba(96, 165, 250, 0.8)";
+						ctx.lineWidth = 1;
+						ctx.strokeRect(start, 0, width, canvas.height);
+					}
+				}
+
+				function drawFreqLabels(maxFreq) {
+					const labels = [30, 60, 100, 250, 500, 1000, 2000, 5000, 10000, 20000];
+					ctx.fillStyle = "#000000";
+					ctx.font = "10px DM Sans Variable";
+					ctx.textAlign = "center";
+
+					labels.forEach((freq) => {
+						if (freq < maxFreq) {
+							const x = freqToX(freq, maxFreq);
+							ctx.fillText(`${freq < 1000 ? freq : freq / 1000 + "k"}Hz`, x, canvas.height - 10);
+							// Draw vertical line
+							ctx.beginPath();
+							ctx.moveTo(x, 0);
+							ctx.lineTo(x, canvas.height - 25);
+							ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+							ctx.stroke();
+						}
+					});
+				}
+
+				// --- EQ Controls ---
+
+				function createEQControls() {
+					visualizerWrapper.querySelectorAll(".eq-point").forEach((p) => p.remove());
+					eqDetailsContainer.innerHTML = "";
+
+					const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050;
+
+					filters.forEach((filter, index) => {
+						// Create draggable point
+						const point = document.createElement("div");
+						point.className = "eq-point";
+						point.dataset.index = index;
+						visualizerWrapper.appendChild(point);
+
+						// Create detail card
+						const card = document.createElement("div");
+						card.className = "bg-viola-200 p-3 rounded-lg text-sm border border-viola-300";
+						card.innerHTML = `
+                        <p class="font-bold text-center">${filter.frequency.value < 1000 ? filter.frequency.value + " Hz" : filter.frequency.value / 1000 + " kHz"}</p>
+                        <div class="mt-2">
+                            <label for="gain-${index}" class="block text-xs">Gain: <span id="gain-val-${index}">0 dB</span></label>
+                            <input type="range" id="gain-${index}" min="-20" max="20" value="0" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        ${
+							filter.type === "peaking"
+								? `
+                        <div class="mt-2">
+                            <label for="q-${index}" class="block text-xs">Q: <span id="q-val-${index}">1.41</span></label>
+                            <input type="range" id="q-${index}" min="0.1" max="18" value="1.41" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        `
+								: ""
+						}
+                    `;
+						eqDetailsContainer.appendChild(card);
+
+						updatePointPosition(index);
+
+						// Event listeners for card controls
+						const gainSlider = card.querySelector(`#gain-${index}`);
+						gainSlider.addEventListener("input", (e) => {
+							const newGain = parseFloat(e.target.value);
+							filter.gain.value = newGain;
+							updatePointPosition(index);
+							card.querySelector(`#gain-val-${index}`).textContent = `${newGain.toFixed(1)} dB`;
+						});
+
+						if (filter.type === "peaking") {
+							const qSlider = card.querySelector(`#q-${index}`);
+							qSlider.addEventListener("input", (e) => {
+								const newQ = parseFloat(e.target.value);
+								filter.Q.value = newQ;
+								card.querySelector(`#q-val-${index}`).textContent = newQ.toFixed(2);
+							});
+						}
+					});
+
+					addPointEventListeners();
+				}
+
+				function updatePointPosition(index) {
+					const point = visualizerWrapper.querySelector(`.eq-point[data-index='${index}']`);
+					const filter = filters[index];
+					const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050;
+
+					const x = freqToX(filter.frequency.value, maxFreq);
+					const y = (-filter.gain.value / 20 + 1) * (canvas.height / 2); // Map gain (-20 to 20) to canvas height
+
+					point.style.left = `${x - point.offsetWidth / 2}px`;
+					point.style.top = `${y - point.offsetHeight / 2}px`;
+				}
+
+				function addPointEventListeners() {
+					const points = visualizerWrapper.querySelectorAll(".eq-point");
+					points.forEach((point) => {
+						point.addEventListener("mousedown", (e) => {
+							isDraggingPoint = e.target;
+							e.target.style.cursor = "grabbing";
+						});
+						point.addEventListener(
+							"touchstart",
+							(e) => {
+								isDraggingPoint = e.target;
+								e.preventDefault();
+							},
+							{ passive: false }
+						);
+					});
+				}
+
+				visualizerWrapper.addEventListener("mousemove", (e) => {
+					if (isDraggingPoint) {
+						handlePointMove(e.clientY);
+					} else if (isSelectingRange) {
+						selectionRect.endX = e.clientX - visualizerWrapper.getBoundingClientRect().left;
+					}
+				});
+				visualizerWrapper.addEventListener(
+					"touchmove",
+					(e) => {
+						if (isDraggingPoint) {
+							handlePointMove(e.touches[0].clientY);
+						} else if (isSelectingRange) {
+							selectionRect.endX = e.touches[0].clientX - visualizerWrapper.getBoundingClientRect().left;
+						}
+						e.preventDefault();
+					},
+					{ passive: false }
+				);
+
+				function handlePointMove(clientY) {
+					const rect = visualizerWrapper.getBoundingClientRect();
+					const y = clientY - rect.top;
+					const percent = y / rect.height;
+					const gain = (1 - 2 * percent) * 20; // Map y to gain (-20 to 20)
+
+					const index = isDraggingPoint.dataset.index;
+					const gainValue = Math.max(-20, Math.min(20, gain));
+					filters[index].gain.value = gainValue;
+
+					updatePointPosition(index);
+
+					// Update detail card
+					const gainSlider = eqDetailsContainer.querySelector(`#gain-${index}`);
+					const gainValSpan = eqDetailsContainer.querySelector(`#gain-val-${index}`);
+					gainSlider.value = gainValue;
+					gainValSpan.textContent = `${gainValue.toFixed(1)} dB`;
+				}
+
+				window.addEventListener("mouseup", () => {
+					if (isDraggingPoint) {
+						isDraggingPoint.style.cursor = "grab";
+						isDraggingPoint = null;
+					}
+				});
+				window.addEventListener("touchend", () => {
+					if (isDraggingPoint) {
+						isDraggingPoint.style.cursor = "grab";
+						isDraggingPoint = null;
+					}
+				});
+
+				// --- Frequency Range Selection ---
+
+				visualizerWrapper.addEventListener("mousedown", (e) => {
+					// Only start selection if not dragging a point
+					if (!e.target.classList.contains("eq-point")) {
+						isSelectingRange = true;
+						selectionRect.startX = e.clientX - visualizerWrapper.getBoundingClientRect().left;
+						selectionRect.endX = selectionRect.startX;
+					}
+				});
+
+				window.addEventListener("mouseup", (e) => {
+					if (isSelectingRange) {
+						isSelectingRange = false;
+						const maxFreq = audioContext.sampleRate / 2;
+						const freq1 = xToFreq(selectionRect.startX, maxFreq);
+						const freq2 = xToFreq(selectionRect.endX, maxFreq);
+
+						selectionRect.startFreq = Math.min(freq1, freq2);
+						selectionRect.endFreq = Math.max(freq1, freq2);
+
+						// Don't apply if selection is too small
+						if (Math.abs(selectionRect.endX - selectionRect.startX) > 5) {
+							applyFrequencySelection();
+						} else {
+							resetFrequencySelection();
+						}
+					}
+				});
+
+				function applyFrequencySelection() {
+					if (!audioContext) return;
+					selectionFilters.highpass.frequency.setValueAtTime(selectionRect.startFreq, audioContext.currentTime);
+					selectionFilters.lowpass.frequency.setValueAtTime(selectionRect.endFreq, audioContext.currentTime);
+					resetSelectionBtn.classList.remove("hidden");
+				}
+
+				function resetFrequencySelection() {
+					if (!audioContext) return;
+					selectionFilters.highpass.frequency.setValueAtTime(20, audioContext.currentTime);
+					selectionFilters.lowpass.frequency.setValueAtTime(20000, audioContext.currentTime);
+					selectionRect = { startX: 0, endX: 0, startFreq: 0, endFreq: 0 };
+					resetSelectionBtn.classList.add("hidden");
+				}
+
+				resetSelectionBtn.addEventListener("click", resetFrequencySelection);
+
+				// --- Playback Controls ---
+				playPauseBtn.addEventListener("click", () => {
+					if (!audioContext) return;
+
+					if (audioContext.state === "suspended") {
+						audioContext.resume();
+					}
+
+					if (isPlaying) {
+						audioPlayer.pause();
+					} else {
+						audioPlayer.play();
+					}
+				});
+
+				audioPlayer.addEventListener("play", () => {
+					isPlaying = true;
+					playIcon.classList.add("hidden");
+					pauseIcon.classList.remove("hidden");
+				});
+
+				audioPlayer.addEventListener("pause", () => {
+					isPlaying = false;
+					playIcon.classList.remove("hidden");
+					pauseIcon.classList.add("hidden");
+				});
+
+				audioPlayer.addEventListener("timeupdate", () => {
+					seekBar.value = audioPlayer.currentTime;
+					currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+				});
+
+				audioPlayer.addEventListener("loadedmetadata", () => {
+					durationDisplay.textContent = formatTime(audioPlayer.duration);
+					seekBar.max = audioPlayer.duration;
+				});
+
+				seekBar.addEventListener("input", () => {
+					audioPlayer.currentTime = seekBar.value;
+				});
+
+				function formatTime(seconds) {
+					const minutes = Math.floor(seconds / 60);
+					const secs = Math.floor(seconds % 60);
+					return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+				}
+
+				// --- Initial App State ---
+				function initApp() {
+					initAudioContext();
+					createEQControls();
+					draw();
+				}
+
+				// Await user interaction for autoplay policy
+				document.getElementById("audio-file").addEventListener("click", initApp, { once: true });
+			}
+		</script>
+	</div>
+</Layout>

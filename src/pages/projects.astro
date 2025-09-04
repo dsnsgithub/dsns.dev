@@ -23,12 +23,12 @@ import calopolyIcon from "../assets/calopoly.png";
 					tags={["Next.js", "Expo"]}
 				>
 					<Image
-							src={scheduliIcon}
-							alt="Scheduli Icon"
-							width={96}
-							class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
-							loading={"eager"}
-						/>
+						src={scheduliIcon}
+						alt="Scheduli Icon"
+						width={96}
+						class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
+						loading={"eager"}
+					/>
 				</ProjectDescription>
 
 				<ProjectDescription
@@ -40,7 +40,12 @@ import calopolyIcon from "../assets/calopoly.png";
 					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
 				</ProjectDescription>
 
-				<ProjectDescription title="Cal-opoly" url="https://calopoly.dsns.dev/" description="A multiplayer online board game inspired by Monopoly, set in California." tags={["Next.js", "Socket.io"]}>
+				<ProjectDescription
+					title="Cal-opoly"
+					url="https://calopoly.dsns.dev/"
+					description="A multiplayer online board game inspired by Monopoly, set in California."
+					tags={["Next.js", "Socket.io"]}
+				>
 					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
 				</ProjectDescription>
 
@@ -56,6 +61,12 @@ import calopolyIcon from "../assets/calopoly.png";
 						class={`rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square"`}
 						loading={"eager"}
 					/>
+				</ProjectDescription>
+
+				<ProjectDescription title="Audio Frequency Visualizer" url="/eq" description="Test headphones/speakers by uploading an MP3 and sculpting the sound." tags={["Astro"]}>
+					<div>
+						<Icon name="mdi:equalizer" class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-viola-200 p-7 text-3xl text-viola-600 md:h-[128px] md:w-[128px]" />
+					</div>
 				</ProjectDescription>
 			</div>
 		</div>
