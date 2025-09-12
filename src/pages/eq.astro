@@ -39,7 +39,7 @@ import Layout from "../layouts/Layout.astro";
 							id="detail-slider"
 							min="8"
 							max="15"
-							value="13"
+							value="12"
 							class="h-2 w-32 cursor-pointer appearance-none rounded-lg bg-viola-300 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600"
 							oninput="document.getElementById('detail-tooltip').textContent = Math.pow(2, this.value); document.getElementById('detail-tooltip').style.opacity = 1;"
 							onchange="document.getElementById('detail-tooltip').style.opacity = 0;"
@@ -50,7 +50,7 @@ import Layout from "../layouts/Layout.astro";
 							class="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 rounded bg-viola-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200"
 							style="white-space:nowrap;"
 						>
-							8192
+							4096
 						</span>
 					</div>
 
