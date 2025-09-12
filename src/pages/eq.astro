@@ -4,61 +4,76 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Audio Frequency Visualizer" description="Test headphones/speakers by uploading an MP3 and sculpting the sound.">
 	<div class="container mx-auto flex flex-col gap-10 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
-		<div id="app-container" class="w-full space-y-4 rounded-2xl bg-viola-100 p-10 shadow-2xl">
-			<h1 class="text-3xl font-bold">Audio Frequency Visualizer</h1>
-			<p>
-				Test headphones/speakers by uploading an MP3 and sculpting the sound.
-				<div class="flex flex-wrap gap-3 mt-2">
-					<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
-						🌌 <span>Symbolism</span>
-					</a>
-					<a href="/invincible.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
-						💪 <span>Invincible</span>
-					</a>
-					<a href="/mortals.mp3" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-viola-200 hover:bg-viola-300 transition text-sm font-medium shadow">
-						🥁 <span>Mortals</span>
-					</a>
-				</div>
-			</p>
+		<div id="app-container" class="w-full rounded-2xl bg-viola-100 p-10 shadow-2xl">
+			<section class="space-y-2">
+				<h1 class="text-3xl font-bold">Audio Frequency Visualizer</h1>
+				<p>
+					Test headphones/speakers by uploading an MP3 and sculpting the sound.
+					<div class="mt-2 flex flex-wrap gap-3">
+						<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+							🌌 <span>Symbolism</span>
+						</a>
+						<a href="/invincible.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+							💪 <span>Invincible</span>
+						</a>
+						<a href="/mortals.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+							🥁 <span>Mortals</span>
+						</a>
+					</div>
+				</p>
+			</section>
 
-			<div class="flex flex-row flex-wrap items-center gap-4">
-				<input
-					type="file"
-					id="audio-file"
-					accept=".mp3"
-					class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-none focus:ring-2 focus:ring-viola-400"
-				/>
+			<section class="mt-8 space-y-4">
+				<div class="flex flex-row flex-wrap items-center gap-4">
+					<input
+						type="file"
+						id="audio-file"
+						accept=".mp3"
+						class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-none focus:ring-2 focus:ring-viola-400"
+					/>
 
-				<!-- Audio Controls -->
-				<div class="flex flex-1 flex-col items-center rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
-					<audio id="audio-player" controls class="hidden"></audio>
-					<div class="flex w-full items-center gap-4">
-						<button id="play-pause-btn" class="rounded-full" disabled>
-							<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-								<path d="M8 5v14l11-7z"></path>
-							</svg>
-							<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden">
-								<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
-							</svg>
-						</button>
-						<span id="current-time" class="w-12 text-center text-sm">0:00</span>
-						<input type="range" id="seek-bar" value="0" class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-viola-300" disabled />
-						<span id="duration" class="w-12 text-center text-sm">0:00</span>
+					<!-- Audio Controls -->
+					<div class="flex flex-1 flex-col items-center rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
+						<audio id="audio-player" controls class="hidden"></audio>
+						<div class="flex w-full items-center gap-4">
+							<button id="play-pause-btn" class="rounded-full" disabled>
+								<svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M8 5v14l11-7z"></path>
+								</svg>
+								<svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden">
+									<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+								</svg>
+							</button>
+							<span id="current-time" class="w-12 text-center text-sm">0:00</span>
+							<input type="range" id="seek-bar" value="0" class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-viola-300" disabled />
+							<span id="duration" class="w-12 text-center text-sm">0:00</span>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div id="visualizer-wrapper" class="relative h-96 w-full overflow-hidden rounded-lg border border-viola-300 bg-viola-200">
-				<canvas id="visualizer-canvas"></canvas>
-			</div>
+				<div id="visualizer-wrapper" class="relative h-96 w-full overflow-hidden rounded-lg border border-viola-300 bg-viola-200">
+					<canvas id="visualizer-canvas"></canvas>
+				</div>
 
-			<div class="text-center text-sm">
-				<p>
-					Drag on the visualizer to isolate a frequency range. <button id="reset-selection-btn" class="ml-2 hidden font-bold">(Reset Selection)</button>
-				</p>
-			</div>
+				<div class="text-center text-sm">
+					<p>
+						Drag EQ points to adjust frequency and gain. Drag on empty space to isolate frequency ranges. <button id="reset-selection-btn" class="ml-2 hidden font-bold"
+							>(Reset Selection)</button
+						>
+					</p>
+				</div>
+			</section>
 
-			<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
+			<section class="mt-12 space-y-4">
+				<div class="flex items-center justify-between">
+					<h3 class="text-lg font-semibold">Parametric EQ</h3>
+					<div class="flex gap-2">
+						<button id="add-band-btn" class="rounded-lg bg-viola-300 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-400"> + Add Band </button>
+						<button id="reset-eq-btn" class="rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300"> Reset EQ </button>
+					</div>
+				</div>
+				<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
+			</section>
 		</div>
 
 		<script is:inline>
@@ -80,6 +95,8 @@ import Layout from "../layouts/Layout.astro";
 				const currentTimeDisplay = document.getElementById("current-time");
 				const durationDisplay = document.getElementById("duration");
 				const resetSelectionBtn = document.getElementById("reset-selection-btn");
+				const addBandBtn = document.getElementById("add-band-btn");
+				const resetEqBtn = document.getElementById("reset-eq-btn");
 
 				const ctx = canvas.getContext("2d");
 
@@ -97,15 +114,7 @@ import Layout from "../layouts/Layout.astro";
 				let isSelectingRange = false;
 				let selectionRect = { startX: 0, endX: 0, startFreq: 0, endFreq: 0 };
 
-				const EQ_BANDS = [
-					{ f: 32, type: "lowshelf" },
-					{ f: 64, type: "peaking" },
-					{ f: 250, type: "peaking" },
-					{ f: 1000, type: "peaking" },
-					{ f: 4000, type: "peaking" },
-					{ f: 8000, type: "peaking" },
-					{ f: 16000, type: "highshelf" }
-				];
+				const EQ_BANDS = [];
 
 				// --- Initialization ---
 
@@ -292,35 +301,57 @@ import Layout from "../layouts/Layout.astro";
 					filters.forEach((filter, index) => {
 						// Create draggable point
 						const point = document.createElement("div");
-						point.className = "eq-point";
+						point.className =
+							"eq-point absolute w-4 h-4 bg-viola-800 border-2 border-white rounded-full cursor-grab shadow-lg transform -translate-x-1/2 -translate-y-1/2 hover:bg-viola-900 transition-colors";
 						point.dataset.index = index;
 						visualizerWrapper.appendChild(point);
 
 						// Create detail card
 						const card = document.createElement("div");
-						card.className = "bg-viola-200 p-3 rounded-lg text-sm border border-viola-300";
+						card.className = "bg-viola-200 p-3 rounded-lg text-sm border border-viola-300 relative";
 						card.innerHTML = `
-                        <p class="font-bold text-center">${filter.frequency.value < 1000 ? filter.frequency.value + " Hz" : filter.frequency.value / 1000 + " kHz"}</p>
-                        <div class="mt-2">
-                            <label for="gain-${index}" class="block text-xs">Gain: <span id="gain-val-${index}">0 dB</span></label>
-                            <input type="range" id="gain-${index}" min="-20" max="20" value="0" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="font-bold text-center flex-1" id="freq-display-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</p>
+                            <button class="remove-band-btn ml-2 px-2 py-1 bg-red-400 hover:bg-red-500 rounded text-xs font-medium text-white transition" data-index="${index}">×</button>
                         </div>
-                        ${
-							filter.type === "peaking"
-								? `
                         <div class="mt-2">
-                            <label for="q-${index}" class="block text-xs">Q: <span id="q-val-${index}">1.41</span></label>
-                            <input type="range" id="q-${index}" min="0.1" max="18" value="1.41" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                            <label for="freq-${index}" class="block text-xs">Frequency: <span id="freq-val-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</span></label>
+                            <input type="range" id="freq-${index}" min="20" max="${Math.min(maxFreq, 20000)}" value="${filter.frequency.value}" step="1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
                         </div>
-                        `
-								: ""
-						}
+                        <div class="mt-2">
+                            <label for="gain-${index}" class="block text-xs">Gain: <span id="gain-val-${index}">${filter.gain.value.toFixed(1)} dB</span></label>
+                            <input type="range" id="gain-${index}" min="-20" max="20" value="${filter.gain.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div class="mt-2">
+                            <label for="type-${index}" class="block text-xs">Type:</label>
+                            <select id="type-${index}" class="w-full mt-1 px-2 py-1 bg-viola-50 border border-viola-300 rounded text-xs">
+                                <option value="peaking" ${filter.type === "peaking" ? "selected" : ""}>Peaking</option>
+                                <option value="lowshelf" ${filter.type === "lowshelf" ? "selected" : ""}>Low Shelf</option>
+                                <option value="highshelf" ${filter.type === "highshelf" ? "selected" : ""}>High Shelf</option>
+                                <option value="lowpass" ${filter.type === "lowpass" ? "selected" : ""}>Low Pass</option>
+                                <option value="highpass" ${filter.type === "highpass" ? "selected" : ""}>High Pass</option>
+                            </select>
+                        </div>
+                        <div class="mt-2" id="q-container-${index}" ${filter.type === "peaking" || filter.type === "lowpass" || filter.type === "highpass" ? "" : 'style="display: none;"'}>
+                            <label for="q-${index}" class="block text-xs">Q: <span id="q-val-${index}">${filter.Q.value.toFixed(2)}</span></label>
+                            <input type="range" id="q-${index}" min="0.1" max="18" value="${filter.Q.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                        </div>
                     `;
 						eqDetailsContainer.appendChild(card);
 
 						updatePointPosition(index);
 
 						// Event listeners for card controls
+						const freqSlider = card.querySelector(`#freq-${index}`);
+						freqSlider.addEventListener("input", (e) => {
+							const newFreq = parseFloat(e.target.value);
+							filter.frequency.value = newFreq;
+							updatePointPosition(index);
+							const freqText = newFreq < 1000 ? Math.round(newFreq) + " Hz" : (newFreq / 1000).toFixed(1) + " kHz";
+							card.querySelector(`#freq-val-${index}`).textContent = freqText;
+							card.querySelector(`#freq-display-${index}`).textContent = freqText;
+						});
+
 						const gainSlider = card.querySelector(`#gain-${index}`);
 						gainSlider.addEventListener("input", (e) => {
 							const newGain = parseFloat(e.target.value);
@@ -329,14 +360,30 @@ import Layout from "../layouts/Layout.astro";
 							card.querySelector(`#gain-val-${index}`).textContent = `${newGain.toFixed(1)} dB`;
 						});
 
-						if (filter.type === "peaking") {
-							const qSlider = card.querySelector(`#q-${index}`);
-							qSlider.addEventListener("input", (e) => {
-								const newQ = parseFloat(e.target.value);
-								filter.Q.value = newQ;
-								card.querySelector(`#q-val-${index}`).textContent = newQ.toFixed(2);
-							});
-						}
+						const typeSelect = card.querySelector(`#type-${index}`);
+						typeSelect.addEventListener("change", (e) => {
+							const newType = e.target.value;
+							filter.type = newType;
+							const qContainer = card.querySelector(`#q-container-${index}`);
+							if (newType === "peaking" || newType === "lowpass" || newType === "highpass") {
+								qContainer.style.display = "block";
+							} else {
+								qContainer.style.display = "none";
+							}
+						});
+
+						const qSlider = card.querySelector(`#q-${index}`);
+						qSlider.addEventListener("input", (e) => {
+							const newQ = parseFloat(e.target.value);
+							filter.Q.value = newQ;
+							card.querySelector(`#q-val-${index}`).textContent = newQ.toFixed(2);
+						});
+
+						// Remove band button
+						const removeBtn = card.querySelector(".remove-band-btn");
+						removeBtn.addEventListener("click", () => {
+							removeBand(index);
+						});
 					});
 
 					addPointEventListeners();
@@ -374,7 +421,7 @@ import Layout from "../layouts/Layout.astro";
 
 				visualizerWrapper.addEventListener("mousemove", (e) => {
 					if (isDraggingPoint) {
-						handlePointMove(e.clientY);
+						handlePointMove(e.clientX, e.clientY);
 					} else if (isSelectingRange) {
 						selectionRect.endX = e.clientX - visualizerWrapper.getBoundingClientRect().left;
 					}
@@ -383,7 +430,7 @@ import Layout from "../layouts/Layout.astro";
 					"touchmove",
 					(e) => {
 						if (isDraggingPoint) {
-							handlePointMove(e.touches[0].clientY);
+							handlePointMove(e.touches[0].clientX, e.touches[0].clientY);
 						} else if (isSelectingRange) {
 							selectionRect.endX = e.touches[0].clientX - visualizerWrapper.getBoundingClientRect().left;
 						}
@@ -392,21 +439,40 @@ import Layout from "../layouts/Layout.astro";
 					{ passive: false }
 				);
 
-				function handlePointMove(clientY) {
+				function handlePointMove(clientX, clientY) {
 					const rect = visualizerWrapper.getBoundingClientRect();
+					const x = clientX - rect.left;
 					const y = clientY - rect.top;
-					const percent = y / rect.height;
-					const gain = (1 - 2 * percent) * 20; // Map y to gain (-20 to 20)
-
 					const index = isDraggingPoint.dataset.index;
+
+					// Update gain (vertical movement)
+					const yPercent = y / rect.height;
+					const gain = (1 - 2 * yPercent) * 20; // Map y to gain (-20 to 20)
 					const gainValue = Math.max(-20, Math.min(20, gain));
 					filters[index].gain.value = gainValue;
+
+					// Update frequency (horizontal movement)
+					const maxFreq = audioContext ? audioContext.sampleRate / 2 : 22050;
+					const newFreq = xToFreq(x, maxFreq);
+					const freqValue = Math.max(20, Math.min(Math.min(maxFreq, 20000), newFreq));
+					filters[index].frequency.value = freqValue;
 
 					updatePointPosition(index);
 
 					// Update detail card
+					const freqSlider = eqDetailsContainer.querySelector(`#freq-${index}`);
+					const freqValSpan = eqDetailsContainer.querySelector(`#freq-val-${index}`);
+					const freqDisplaySpan = eqDetailsContainer.querySelector(`#freq-display-${index}`);
 					const gainSlider = eqDetailsContainer.querySelector(`#gain-${index}`);
 					const gainValSpan = eqDetailsContainer.querySelector(`#gain-val-${index}`);
+
+					if (freqSlider) {
+						freqSlider.value = freqValue;
+						const freqText = freqValue < 1000 ? Math.round(freqValue) + " Hz" : (freqValue / 1000).toFixed(1) + " kHz";
+						freqValSpan.textContent = freqText;
+						freqDisplaySpan.textContent = freqText;
+					}
+
 					gainSlider.value = gainValue;
 					gainValSpan.textContent = `${gainValue.toFixed(1)} dB`;
 				}
@@ -470,6 +536,68 @@ import Layout from "../layouts/Layout.astro";
 				}
 
 				resetSelectionBtn.addEventListener("click", resetFrequencySelection);
+
+				// --- Parametric EQ Functions ---
+
+				function addBand() {
+					if (!audioContext) return;
+					if (filters.length >= 12) {
+						alert("Maximum of 12 EQ bands allowed");
+						return;
+					}
+
+					// Create new filter at 1kHz
+					const newFilter = audioContext.createBiquadFilter();
+					newFilter.type = "peaking";
+					newFilter.frequency.value = 1000;
+					newFilter.Q.value = 1.41;
+					newFilter.gain.value = 0;
+
+					filters.push(newFilter);
+					connectAudioNodes();
+					createEQControls();
+				}
+
+				function removeBand(index) {
+					if (filters.length <= 1) {
+						alert("Cannot remove the last EQ band");
+						return;
+					}
+
+					// Disconnect the filter
+					filters[index].disconnect();
+
+					// Remove from array
+					filters.splice(index, 1);
+
+					// Reconnect audio chain and recreate controls
+					connectAudioNodes();
+					createEQControls();
+				}
+
+				function resetEQ() {
+					if (!audioContext) return;
+
+					// Disconnect all existing filters
+					filters.forEach((filter) => filter.disconnect());
+
+					// Recreate default EQ bands
+					filters = EQ_BANDS.map((band) => {
+						const filter = audioContext.createBiquadFilter();
+						filter.type = band.type;
+						filter.frequency.value = band.f;
+						filter.Q.value = 1.41;
+						filter.gain.value = 0;
+						return filter;
+					});
+
+					connectAudioNodes();
+					createEQControls();
+				}
+
+				// Event listeners for parametric controls
+				addBandBtn.addEventListener("click", addBand);
+				resetEqBtn.addEventListener("click", resetEQ);
 
 				// --- Playback Controls ---
 				playPauseBtn.addEventListener("click", () => {

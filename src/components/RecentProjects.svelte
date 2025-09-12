@@ -27,7 +27,7 @@
 	let delayOver = false;
 
 	(async () => {
-		const res = await fetch("https://cors.dsns.dev/api.github.com/users/dsnsgithub/repos");
+		const res = await fetch("https://api.github.com/users/dsnsgithub/repos");
 		const data = (await res.json()) as GithubAPIResponse[];
 		result = data
 			.filter((repo) => !repo.fork)
