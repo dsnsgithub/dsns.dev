@@ -541,10 +541,6 @@ import Layout from "../layouts/Layout.astro";
 
 				function addBand() {
 					if (!audioContext) return;
-					if (filters.length >= 12) {
-						alert("Maximum of 12 EQ bands allowed");
-						return;
-					}
 
 					// Create new filter at 1kHz
 					const newFilter = audioContext.createBiquadFilter();
