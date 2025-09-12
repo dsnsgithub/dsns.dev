@@ -569,17 +569,11 @@ import Layout from "../layouts/Layout.astro";
 				function resetEQ() {
 					if (!audioContext) return;
 
-					// Disconnect all existing filters
-					filters.forEach((filter) => filter.disconnect());
-
-					// Recreate default EQ bands
-					filters = EQ_BANDS.map((band) => {
-						const filter = audioContext.createBiquadFilter();
-						filter.type = band.type;
-						filter.frequency.value = band.f;
-						filter.Q.value = 1.41;
+					// Reset all existing filters' gain and Q
+					filters.forEach((filter) => {
 						filter.gain.value = 0;
-						return filter;
+						filter.Q.value = 1.41;
+						filter.type = "peaking";
 					});
 
 					connectAudioNodes();
