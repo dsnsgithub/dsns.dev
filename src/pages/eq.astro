@@ -32,6 +32,28 @@ import Layout from "../layouts/Layout.astro";
 						class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-none focus:ring-2 focus:ring-viola-400"
 					/>
 
+					<div class="relative flex items-center gap-2 rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
+						<label for="detail-slider" class="text-sm">Detail:</label>
+						<input
+							type="range"
+							id="detail-slider"
+							min="8"
+							max="15"
+							value="13"
+							class="h-2 w-32 cursor-pointer appearance-none rounded-lg bg-viola-300 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600"
+							oninput="document.getElementById('detail-tooltip').textContent = Math.pow(2, this.value); document.getElementById('detail-tooltip').style.opacity = 1;"
+							onchange="document.getElementById('detail-tooltip').style.opacity = 0;"
+							onblur="document.getElementById('detail-tooltip').style.opacity = 0;"
+						/>
+						<span
+							id="detail-tooltip"
+							class="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 rounded bg-viola-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200"
+							style="white-space:nowrap;"
+						>
+							8192
+						</span>
+					</div>
+
 					<!-- Audio Controls -->
 					<div class="flex flex-1 flex-col items-center rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
 						<audio id="audio-player" controls class="hidden"></audio>
@@ -45,7 +67,13 @@ import Layout from "../layouts/Layout.astro";
 								</svg>
 							</button>
 							<span id="current-time" class="w-12 text-center text-sm">0:00</span>
-							<input type="range" id="seek-bar" value="0" class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-viola-300" disabled />
+							<input
+								type="range"
+								id="seek-bar"
+								value="0"
+								class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-viola-300 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&:disabled::-moz-range-thumb]:bg-slate-300 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600 [&:disabled::-webkit-slider-thumb]:bg-slate-300 [&::-webkit-slider-thumb]:hover:cursor-not-allowed [&::-moz-range-thumb]:hover:cursor-not-allowed"
+								disabled
+							/>
 							<span id="duration" class="w-12 text-center text-sm">0:00</span>
 						</div>
 					</div>
@@ -65,17 +93,19 @@ import Layout from "../layouts/Layout.astro";
 			</section>
 
 			<section class="mt-12 space-y-4">
-				<div class="flex items-center justify-between">
-					<h3 class="text-lg font-semibold">Parametric EQ</h3>
-					<div class="flex gap-2">
-						<button id="add-band-btn" class="rounded-lg bg-viola-300 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-400"> + Add Band </button>
-						<button id="reset-eq-btn" class="rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300"> Reset EQ </button>
-					</div>
+			<div id="eq-header" class="flex items-center justify-between hidden">
+				<h3 class="text-lg font-semibold">Parametric EQ</h3>
+				<div class="flex gap-2">
+					<button id="add-band-btn" class="px-3 py-1 bg-viola-300 hover:bg-viola-400 rounded-lg text-sm font-medium transition shadow">
+						+ Add Band
+					</button>
+					<button id="reset-eq-btn" class="px-3 py-1 bg-viola-200 hover:bg-viola-300 rounded-lg text-sm font-medium transition shadow">
+						Reset EQ
+					</button>
 				</div>
-				<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
-			</section>
-		</div>
-
+			</div>
+			<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
+		</section>
 		<script is:inline>
 			document.addEventListener("astro:page-load", () => {
 				run();
@@ -116,6 +146,34 @@ import Layout from "../layouts/Layout.astro";
 
 				const EQ_BANDS = [];
 
+				const detailSlider = document.getElementById("detail-slider");
+				const detailTooltip = document.getElementById("detail-tooltip");
+				if (detailSlider && detailTooltip) {
+					detailSlider.addEventListener("input", () => {
+						detailTooltip.textContent = Math.pow(2, detailSlider.value);
+						detailTooltip.style.opacity = 1;
+
+						setTimeout(() => {
+							detailTooltip.style.opacity = 0;
+						}, 1000);
+					});
+
+					detailSlider.addEventListener("mouseover", () => {
+						detailTooltip.style.opacity = 1;
+					});
+
+					detailSlider.addEventListener("mouseout", () => {
+						detailTooltip.style.opacity = 0;
+					});
+
+					detailSlider.addEventListener("change", () => {
+						detailTooltip.style.opacity = 0;
+					});
+					detailSlider.addEventListener("blur", () => {
+						detailTooltip.style.opacity = 0;
+					});
+				}
+
 				// --- Initialization ---
 
 				function initAudioContext() {
@@ -123,8 +181,13 @@ import Layout from "../layouts/Layout.astro";
 
 					audioContext = new (window.AudioContext || window.webkitAudioContext)();
 					analyserNode = audioContext.createAnalyser();
-					analyserNode.fftSize = 2048;
+					analyserNode.fftSize = 16384;
 					gainNode = audioContext.createGain();
+
+					const detailSlider = document.getElementById("detail-slider");
+					detailSlider.addEventListener("input", () => {
+						analyserNode.fftSize = 2 ** detailSlider.value;
+					});
 
 					// Create selection filters (initially disabled)
 					selectionFilters.highpass = audioContext.createBiquadFilter();
@@ -179,10 +242,20 @@ import Layout from "../layouts/Layout.astro";
 							isPlaying = false;
 						}
 
+						// Reset play button to show play icon when new song is loaded
+						playIcon.classList.remove("hidden");
+						pauseIcon.classList.add("hidden");
+
 						const objectUrl = URL.createObjectURL(file);
 						audioPlayer.src = objectUrl;
 						playPauseBtn.disabled = false;
 						seekBar.disabled = false;
+
+						// Show EQ header when file is loaded
+						const eqHeader = document.getElementById("eq-header");
+						if (eqHeader) {
+							eqHeader.classList.remove("hidden");
+						}
 
 						if (!audioContext) {
 							initAudioContext();
@@ -210,7 +283,7 @@ import Layout from "../layouts/Layout.astro";
 					const minLogFreq = Math.log10(20); // Min audible frequency
 					const maxLogFreq = Math.log10(maxFreq);
 					const percent = (logFreq - minLogFreq) / (maxLogFreq - minLogFreq);
-					return percent * canvas.width;
+					return percent * (canvas.width - 20) + 20;
 				}
 
 				function xToFreq(x, maxFreq) {
@@ -237,13 +310,12 @@ import Layout from "../layouts/Layout.astro";
 					gradient.addColorStop(1, "#f9a8d4");
 					ctx.fillStyle = gradient;
 
-					const barWidth = 2.5;
-					let x = 0;
 					const maxFreq = audioContext.sampleRate / 2;
 
 					for (let i = 0; i < bufferLength; i++) {
 						const barHeight = (dataArray[i] / 255) * canvas.height;
-						const freq = (i * maxFreq) / bufferLength;
+						let freq = (i * maxFreq) / bufferLength;
+						if (freq < 20) freq = 20; // Clamp to 20 Hz for mapping
 						const posX = freqToX(freq, maxFreq);
 						const nextFreq = ((i + 1) * maxFreq) / bufferLength;
 						const nextPosX = freqToX(nextFreq, maxFreq);
@@ -271,9 +343,9 @@ import Layout from "../layouts/Layout.astro";
 				}
 
 				function drawFreqLabels(maxFreq) {
-					const labels = [30, 60, 100, 250, 500, 1000, 2000, 5000, 10000, 20000];
+					const labels = [20, 30, 60, 100, 250, 500, 1000, 2000, 5000, 10000, 20000];
 					ctx.fillStyle = "#000000";
-					ctx.font = "10px DM Sans Variable";
+					ctx.font = "bold 10px DM Sans Variable";
 					ctx.textAlign = "center";
 
 					labels.forEach((freq) => {
@@ -312,15 +384,15 @@ import Layout from "../layouts/Layout.astro";
 						card.innerHTML = `
                         <div class="flex items-center justify-between mb-2">
                             <p class="font-bold text-center flex-1" id="freq-display-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</p>
-                            <button class="remove-band-btn ml-2 px-2 py-1 bg-red-400 hover:bg-red-500 rounded text-xs font-medium text-white transition" data-index="${index}">×</button>
+                            <button class="remove-band-btn ml-2 px-2 py-1 bg-viola-600 hover:bg-viola-700 rounded text-xs font-medium text-white transition" data-index="${index}">×</button>
                         </div>
                         <div class="mt-2">
                             <label for="freq-${index}" class="block text-xs">Frequency: <span id="freq-val-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</span></label>
-                            <input type="range" id="freq-${index}" min="20" max="${Math.min(maxFreq, 20000)}" value="${filter.frequency.value}" step="1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                            <input type="range" id="freq-${index}" min="20" max="${Math.min(maxFreq, 20000)}" value="${filter.frequency.value}" step="1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600">
                         </div>
                         <div class="mt-2">
                             <label for="gain-${index}" class="block text-xs">Gain: <span id="gain-val-${index}">${filter.gain.value.toFixed(1)} dB</span></label>
-                            <input type="range" id="gain-${index}" min="-20" max="20" value="${filter.gain.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                            <input type="range" id="gain-${index}" min="-20" max="20" value="${filter.gain.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600">
                         </div>
                         <div class="mt-2">
                             <label for="type-${index}" class="block text-xs">Type:</label>
@@ -334,7 +406,7 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                         <div class="mt-2" id="q-container-${index}" ${filter.type === "peaking" || filter.type === "lowpass" || filter.type === "highpass" ? "" : 'style="display: none;"'}>
                             <label for="q-${index}" class="block text-xs">Q: <span id="q-val-${index}">${filter.Q.value.toFixed(2)}</span></label>
-                            <input type="range" id="q-${index}" min="0.1" max="18" value="${filter.Q.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer">
+                            <input type="range" id="q-${index}" min="0.1" max="18" value="${filter.Q.value}" step="0.1" class="w-full h-1.5 bg-viola-50 rounded-lg appearance-none cursor-pointer [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600">
                         </div>
                     `;
 						eqDetailsContainer.appendChild(card);
