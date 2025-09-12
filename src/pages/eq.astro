@@ -559,11 +559,6 @@ import Layout from "../layouts/Layout.astro";
 				}
 
 				function removeBand(index) {
-					if (filters.length <= 1) {
-						alert("Cannot remove the last EQ band");
-						return;
-					}
-
 					// Disconnect the filter
 					filters[index].disconnect();
 
