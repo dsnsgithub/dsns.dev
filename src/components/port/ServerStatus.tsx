@@ -3,12 +3,12 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const servers = {
 	"dsns.dev": [
-		{ name: "Main Website", url: "dsns.dev", icon: "dsns.dev" },
-		{ name: "Immich", url: "immich.dsns.dev", icon: "immich" },
-		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn" },
-		{ name: "Calopoly Server", url: "calopoly-server.dsns.dev", icon: "calopoly.dsns.dev" }
+		{ name: "Main Website", url: "dsns.dev", icon: "dsns.dev", image: "/kirby.png" },
+		{ name: "Immich", url: "immich.dsns.dev", icon: "immich", image: "/immich.png" },
+		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn", image: "/v2ray.png" },
+		{ name: "Calopoly Server", url: "calopoly-server.dsns.dev", icon: "calopoly.dsns.dev", image: "/calopoly2.jpg" }
 	],
-	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io" }]
+	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io", image: "/tetrio.jpg" }]
 };
 
 export default function ServerStatus() {
@@ -102,7 +102,7 @@ export default function ServerStatus() {
 							</h2>
 
 							<ul className="space-y-4">
-								{services.map(({ name, url, icon }) => {
+								{services.map(({ name, url, image }) => {
 									const isOnline = statusData[url];
 									return (
 										<li
@@ -115,13 +115,7 @@ export default function ServerStatus() {
 											aria-atomic="true"
 										>
 											<div className="flex items-center space-x-4">
-												<img
-													src={`https://decision-day-calendar.armaan.cc/get-favicon/${icon}`}
-													alt={`${name} favicon`}
-													width={48}
-													height={48}
-													className="rounded-md shadow-sm"
-												/>
+												<img src={image} alt={`${name} favicon`} width={48} className="rounded-full shadow-sm" />
 												<div>
 													<p className="text-lg font-semibold">{name}</p>
 													<p className="break-words text-sm text-gray-600">{url}</p>
