@@ -93,7 +93,7 @@ import Layout from "../layouts/Layout.astro";
 			</section>
 
 			<section class="mt-12 space-y-4">
-			<div id="eq-header" class="flex items-center justify-between hidden">
+			<div id="eq-header" class="hidden items-center justify-between ">
 				<h3 class="text-lg font-semibold">Parametric EQ</h3>
 				<div class="flex gap-2">
 					<button id="add-band-btn" class="px-3 py-1 bg-viola-300 hover:bg-viola-400 rounded-lg text-sm font-medium transition shadow">
@@ -255,6 +255,7 @@ import Layout from "../layouts/Layout.astro";
 						const eqHeader = document.getElementById("eq-header");
 						if (eqHeader) {
 							eqHeader.classList.remove("hidden");
+							eqHeader.style.display = "flex";
 						}
 
 						if (!audioContext) {
