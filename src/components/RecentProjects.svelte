@@ -28,6 +28,9 @@
 
 	(async () => {
 		const res = await fetch("https://api.github.com/users/dsnsgithub/repos");
+		if (!res.ok) {
+			return;
+		}
 		const data = (await res.json()) as GithubAPIResponse[];
 		result = data
 			.filter((repo) => !repo.fork)
