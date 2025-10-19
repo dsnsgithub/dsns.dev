@@ -574,7 +574,7 @@ import Layout from "../layouts/Layout.astro";
 					}
 				});
 
-				window.addEventListener("mouseup", (e) => {
+				window.addEventListener("mouseup", () => {
 					if (isSelectingRange) {
 						isSelectingRange = false;
 						const maxFreq = audioContext.sampleRate / 2;
