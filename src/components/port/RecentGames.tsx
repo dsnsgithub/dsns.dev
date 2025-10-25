@@ -53,17 +53,21 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 	const [gamesList, setGamesList] = useState<HypixelAPIResponse>();
 
 	const [statusVisible, setStatusVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(false);
 
 	const [outerAnimateRef] = useAutoAnimate();
 	const [innerAnimateRef] = useAutoAnimate();
 
 	async function handleInput() {
 		try {
+			setLoading(true);
 			const response = await fetch(`https://cors.dsns.dev/api.mojang.com/users/profiles/minecraft/${username}`);
 			const data = await response.json();
 
 			if (!data["id"]) {
 				setActualUsername(-1);
+				setLoading(false);
 				return;
 			}
 
@@ -81,8 +85,11 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 			setStatusData(status);
 			setRecentGamesData(recentGames);
 			setStatusVisible(true);
+			setLoading(false);
 		} catch (error) {
 			console.error("Error fetching recent games data:", error);
+			setLoading(false);
+			setError(true);
 		}
 	}
 
@@ -193,6 +200,22 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 							{actualUsername != -1 && uuid && (statusData || recentGamesData) ? (
 								<div className="m-2 overflow-scroll rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl scrollbar-none">
 									<img src={`https://hypixel.paniek.de/signature/${uuid}/general-tooltip`} alt="Hypixel Player Information" className="min-h-[170px] min-w-[430px]"></img>
+								</div>
+							) : (
+								<></>
+							)}
+
+							{loading ? (
+								<div className="m-2 flex items-center justify-center rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl">
+									<p>Loading...</p>
+								</div>
+							) : (
+								<></>
+							)}
+
+							{!loading && error ? (
+								<div className="m-2 flex items-center justify-center rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl">
+									<p>Error fetching data. Please try again later.</p>
 								</div>
 							) : (
 								<></>
