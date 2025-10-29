@@ -1,0 +1,71 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Server Status" description="Check the status of various servers.">
+	<div class="container mx-auto flex flex-col gap-10 px-4 py-10 sm:px-8 lg:px-16 xl:px-32 2xl:px-48">
+		<div class="rounded-2xl bg-gradient-to-br from-viola-100 to-viola-200 p-8 shadow-lg md:p-12">
+			<h1 class="mb-10 text-4xl font-extrabold text-gray-900 md:text-5xl">How to Play</h1>
+
+			<ol class="list-decimal space-y-8 pl-5 text-lg leading-relaxed text-gray-700">
+				<li>
+					Download, extract, and run{" "}
+					<a href="https://multimc.org/#Download" class="font-semibold text-blue-600 transition hover:text-blue-700 hover:underline" target="_blank"> MultiMC </a>.
+				</li>
+
+				<li>
+					Click <strong>Add Instance</strong> → <strong>Import from zip</strong>.
+					<div class="mt-4">
+						<img
+							src="https://mcsrranked.com/_app/immutable/assets/import-from-zip-tab.qz6thSPO.avif"
+							alt="Import from zip tab screenshot"
+							class="w-full max-w-lg rounded-xl border border-gray-200 shadow-md"
+						/>
+					</div>
+				</li>
+
+				<li>
+					Copy the link below, paste it into MultiMC, and click OK.
+					<div class="mt-4 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+						<button
+							id="copy-button"
+							onclick="copyToClipboard(event)"
+							class="rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition-all duration-200 hover:bg-blue-700 active:scale-95"
+						>
+							Copy
+						</button>
+					</div>
+				</li>
+
+				<li>Launch the instance and start playing!</li>
+			</ol>
+		</div>
+	</div>
+
+	<script is:inline>
+		function copyToClipboard(event) {
+			const link = "https://dsns.dev/mc.dsns.dev.mrpack";
+			const button = event.target;
+
+			navigator.clipboard
+				.writeText(link)
+				.then(() => {
+					button.innerText = "✅ Copied!";
+					button.classList.add("bg-green-600");
+					setTimeout(() => {
+						button.innerText = "Copy";
+						button.classList.remove("bg-green-600");
+					}, 2000);
+				})
+				.catch((err) => {
+					console.error("Failed to copy:", err);
+					button.innerText = "❌ Error";
+					button.classList.add("bg-red-600");
+					setTimeout(() => {
+						button.innerText = "Copy";
+						button.classList.remove("bg-red-600");
+					}, 2000);
+				});
+		}
+	</script>
+</Layout>
