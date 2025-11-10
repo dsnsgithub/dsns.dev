@@ -28,7 +28,13 @@
 
 	(async () => {
 		const res = await fetch("https://api.github.com/users/dsnsgithub/repos");
-		const data = (await res.json()) as GithubAPIResponse[];
+		
+		if (!res.ok) {
+			console.error("Failed to fetch data");
+			return;
+		}
+		
+		const data = (await res.json()) as GithubAPIResponse[]; 
 		result = data
 			.filter((repo) => !repo.fork)
 			.sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())

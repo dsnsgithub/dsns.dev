@@ -1,15 +1,15 @@
 ---
 import { Image } from "astro:assets";
-import profilePicture from "../assets/kirby.svg";
+import profilePicture from "../assets/avatar.jpg";
 
 import NavButton from "./NavButton.astro";
 import SocialButton from "./SocialButton.astro";
 ---
 
-<nav class="mb-10 flex flex-col sm:flex-row items-center justify-between rounded-xl bg-viola-100 px-10 py-6 shadow-lg gap-2">
+<nav class="mb-10 flex flex-col items-center justify-between gap-2 rounded-xl bg-viola-100 px-10 py-6 shadow-lg sm:flex-row">
 	<a class="flex flex-row items-center gap-5" href="/">
-		<Image src={profilePicture} alt="kirby" class="rounded-full" width={48} loading={"eager"} />
-		<h1 class="text-3xl font-bold">dsns.dev</h1>
+		<Image src={profilePicture} alt="avatar" class="h-12 w-12 rounded-full" loading={"eager"} quality={70} />
+		<h1 class="text-2xl font-semibold">dominic@seung.dev</span></h1>
 	</a>
 
 	<div class="flex flex-row items-center gap-2 md:gap-5">
