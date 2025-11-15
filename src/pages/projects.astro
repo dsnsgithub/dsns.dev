@@ -49,10 +49,6 @@ import calopolyIcon from "../assets/calopoly.png";
 					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
 				</ProjectDescription>
 
-				<!-- <ProjectDescription title="Only Eggrolls" url="https://onlyeggrolls.com/" description="A proof-of-concept online store built in Remix." tags={["Remix", "MongoDB"]}>
-					<Image src={onlyEggrollsIcon} alt={`Only Eggrolls Icon`} width={128} class={`rounded-xl p-3 bg-white w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
-				</ProjectDescription> -->
-
 				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
 					<Image
 						src={mcHead}
@@ -66,6 +62,17 @@ import calopolyIcon from "../assets/calopoly.png";
 				<ProjectDescription title="Audio Frequency Visualizer" url="/eq" description="Test headphones/speakers by uploading an MP3 and sculpting the sound." tags={["Astro"]}>
 					<div>
 						<Icon name="mdi:equalizer" class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-viola-200 p-7 text-3xl text-viola-600 md:h-[128px] md:w-[128px]" />
+					</div>
+				</ProjectDescription>
+
+				<ProjectDescription
+					title="YouTube Video Downloader"
+					url="/youtube"
+					description="A simple interface to download YouTube videos in highest quality, both video and audio, using yt-dlp."
+					tags={["Flask", "yt-dlp"]}
+				>
+					<div>
+						<Icon name="mdi:youtube" class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-viola-200 p-7 text-3xl text-viola-600 md:h-[128px] md:w-[128px]" />
 					</div>
 				</ProjectDescription>
 			</div>

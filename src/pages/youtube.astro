@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="YouTube Video Downloader" description="Provides a simple interface to download YouTube videos in highest quality, both video and audio, using yt-dlp.">
+	<div class="container mx-auto flex flex-col gap-10 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
+		<div class="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
+			<div class="mb-4">
+				<h1 class="text-3xl font-semibold">YouTube Video Downloader</h1>
+				<h2>A simple interface to download YouTube videos in highest quality, both video and audio, using yt-dlp.</h2>
+			</div>
+
+			<form method="post" action="https://youtube.dsns.dev/download" class="mb-4 flex flex-row gap-x-4">
+				<input type="text" name="url" placeholder="https://www.youtube.com/watch?v=khy_ltiFBN0" class="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none" />
+
+				<select name="format" class="rounded-xl p-4">
+					<option value="video">Best Video (MP4)</option>
+					<option value="audio">Best Audio (MP3)</option>
+				</select>
+
+				<button type="submit" class="flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-100 p-5 shadow-xl">Download</button>
+			</form>
+		</div>
+	</div>
+</Layout>
