@@ -30,7 +30,7 @@ Even with these massive obstacles in the way, Google attempted to get rid of the
 
 ![adblock image](/adblock.webp)
 
-Almost immediately, volunteers from adblocker extensions like uBlock Origin immediately put out patches to bypass YouTube's adblock detection. This initiated an all-out war between the Adblock developers and YouTube. You could draw a connection to the fight between David and Goliath, where Google, a multi-billion dollar corporation, is fighting a determined group of volunteers (who don't accept donations) who believe no one should have to watch these ads.
+Almost immediately, volunteers from adblocker extensions like uBlock Origin immediately put out patches to bypass YouTube's adblock detection. This initiated an all-out war between the adblock developers and YouTube. You could draw a connection to the fight between David and Goliath, where Google, a multi-billion dollar corporation, is fighting a determined group of volunteers (who don't accept donations) who believe no one should have to watch these ads.
 
 ## How is YouTube Detecting Ad Blockers?
 
@@ -42,7 +42,7 @@ This is one of many [rules](https://raw.githubusercontent.com/uBlockOrigin/uAsse
 ```
 www.youtube.com##+js(trusted-replace-fetch-response, /(contextParams":"Q0F[A-Z]U.?)"adPlacements.?"}}}],/, $1, player?key=)
 ```
-scriptlet, which was [created](https://github.com/uBlockOrigin/uBlock-issues/issues/2742") specifically for fighting back against YouTube, to search for specific places in the YouTube script where this adblock detection starts, then replace it with new code that effectively neutralizes it. These filters constantly change as YouTube continues to modify its script in an attempt to outpace the Adblock developers. You might have noticed that YouTube was able to bypass your adblock detection for a few hours, but [updating your filters](https://www.reddit.com/r/uBlockOrigin/comments/17j6ygs/youtube_antiadblock_and_ads_october_29_2023_mega/) and [checking if the developers have fixed their filters](https://drhyperion451.github.io/does-uBO-bypass-yt/) is your best bet in staying ahead of YouTube.
+This rule, which calls `trusted-replace-fetch-response`, a scriptlet [created](https://github.com/uBlockOrigin/uBlock-issues/issues/2742") in part to fight back against YouTube, searches for specific places in the YouTube script where this adblock detection starts, then replaces it with new code that effectively neutralizes it. These filters constantly change as YouTube continues to modify its script in an attempt to outpace the adblock developers. You might have noticed that YouTube was able to bypass your adblock detection for a few hours, but [updating your filters](https://www.reddit.com/r/uBlockOrigin/comments/17j6ygs/youtube_antiadblock_and_ads_october_29_2023_mega/) and [checking if the developers have fixed their filters](https://drhyperion451.github.io/does-uBO-bypass-yt/) is your best bet in staying ahead of YouTube.
 
 ## Why This War is Unwinnable for YouTube
 
