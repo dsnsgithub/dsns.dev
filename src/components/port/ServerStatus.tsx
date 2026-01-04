@@ -7,8 +7,7 @@ const servers = {
 		{ name: "Immich", url: "immich.dsns.dev", icon: "immich", image: "/immich.png" },
 		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn", image: "/v2ray.png" },
 		{ name: "Calopoly Server", url: "calopoly-server.dsns.dev", icon: "calopoly.dsns.dev", image: "/calopoly2.jpg" }
-	],
-	"onlyeggrolls.com": [{ name: "tetr.io Proxy", url: "tetr.onlyeggrolls.com", icon: "tetr.io", image: "/tetrio.jpg" }]
+	]
 };
 
 export default function ServerStatus() {
