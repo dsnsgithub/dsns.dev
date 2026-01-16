@@ -131,18 +131,18 @@
 {:else}
 	<div class="flex flex-col space-y-3">
 		{#each events as item (item.id)}
-			<div class="group mx-4 rounded-xl border border-transparent bg-viola-50 p-5 transition-all hover:border-viola-200 hover:bg-viola-100/40">
-				<a href={item.url} target="_blank" rel="noopener noreferrer" class="flex items-start space-x-4">
-					<img src={item.actor.avatar_url} alt="" class="h-10 w-10 rounded-full border-2 border-white shadow-sm" />
+			<div class="group mx-2 rounded-xl border border-transparent bg-viola-50 p-4 transition-all hover:border-viola-200 hover:bg-viola-100/40 sm:mx-4 sm:p-5">
+				<a href={item.url} target="_blank" rel="noopener noreferrer" class="flex items-start space-x-3 sm:space-x-4">
+					<img src={item.actor.avatar_url} alt="" class="h-8 w-8 shrink-0 rounded-full border-2 border-white shadow-sm sm:h-10 sm:w-10" />
 
-					<div class="flex-1 overflow-hidden">
-						<div class="flex items-center justify-between">
-							<p class="truncate pr-2 text-sm font-bold text-gray-900">
+					<div class="min-w-0 flex-1">
+						<div class="mb-1 flex flex-col sm:mb-0 sm:flex-row sm:items-center sm:justify-between">
+							<p class="text-sm font-bold leading-tight text-gray-900">
 								{item.actor.login}
-								<span class="mx-1 font-normal text-gray-500">{item.verb}</span>
-								<span class="text-viola-700">{item.object}</span>
+								<span class="mx-0.5 font-normal text-gray-500">{item.verb}</span>
+								<span class="break-words text-viola-700">{item.object}</span>
 							</p>
-							<span class="shrink-0 text-xs text-gray-400">
+							<span class="mt-1 shrink-0 text-[10px] text-gray-400 sm:mt-0 sm:text-xs">
 								{item.timestamp}
 							</span>
 						</div>
@@ -155,7 +155,7 @@
 							</div>
 						{/if}
 
-						<p class="mt-2 text-[11px] font-semibold tracking-wide text-viola-600/80">
+						<p class="mt-2 truncate text-[10px] font-semibold tracking-wide text-viola-700/80 sm:text-[11px]">
 							{item.repo}
 						</p>
 					</div>
