@@ -5,7 +5,7 @@ import scheduliIcon from "../assets/schedule.svg";
 import betterHudIcon from "../assets/betterhud.png";
 import { Icon } from "astro-icon/components";
 import DiscordStatus from "../components/DiscordStatus.svelte";
-import RecentProjects from "../components/RecentProjects.svelte";
+import GithubFeed from "../components/GithubFeed.svelte";
 ---
 
 <Layout title="dsns.dev" description="Check out what I do, and explore some of my projects.">
@@ -67,12 +67,8 @@ import RecentProjects from "../components/RecentProjects.svelte";
 		</div>
 
 		<div class="m-2 rounded-lg bg-viola-100 p-6 px-4 shadow-lg md:px-6 lg:p-8">
-			<h2 class="mb-4 text-2xl font-bold">Recently Updated Projects</h2>
-			<div
-				class="max-h-[100vw] overflow-y-scroll scrollbar scrollbar-track-viola-200 scrollbar-thumb-viola-300 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-w-2 lg:max-h-[30vw]"
-			>
-				<RecentProjects client:idle />
-			</div>
+			<h2 class="mb-4 text-2xl font-bold">GitHub Feed</h2>
+			<GithubFeed client:idle />
 		</div>
 	</div>
 </Layout>
