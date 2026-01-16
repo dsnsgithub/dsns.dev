@@ -91,7 +91,7 @@
 					tempEvents.push({
 						...base,
 						verb: verb + " pull request",
-						object: `${details.title} (#${pr.number}).`,
+						object: `${details.title} (#${pr.number})`,
 						description: details.body,
 						url: details.url
 					});
@@ -101,14 +101,14 @@
 					tempEvents.push({
 						...base,
 						verb: payload.action + " issue",
-						object: `${details.title} (#${payload.issue.number}).`,
+						object: `${details.title} (#${payload.issue.number})`,
 						description: details.body,
 						url: details.url
 					});
 				} else if (type === "WatchEvent") {
 					tempEvents.push({ ...base, verb: "starred", object: repo.name, url: `https://github.com/${repo.name}` });
 				} else if (type === "ForkEvent") {
-					tempEvents.push({ ...base, verb: "forked", object: repo.name, description: `To ${payload.forkee.full_name}`, url: payload.forkee.html_url });
+					tempEvents.push({ ...base, verb: "forked", object: repo.name, description: `Original repository created by ${payload.forkee.full_name}`, url: payload.forkee.html_url });
 				}
 			}
 			events = tempEvents;
