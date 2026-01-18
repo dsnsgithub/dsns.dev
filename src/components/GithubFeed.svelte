@@ -73,21 +73,23 @@
 					const prKey = `${repo.name}#${pr.number}`;
 					if (processedPRs.has(prKey)) continue;
 
-					const details = await fetchDetails(pr.url);
-
 					let verb = "";
-					if (details.merged) {
+
+					if (type === "PullRequestEvent" && payload.action === "closed" && pr.merged) {
 						verb = "merged";
 					} else if (type === "PullRequestReviewEvent") {
 						const state = payload.review.state.toLowerCase();
 						if (state === "commented") continue;
 						verb = state.replace("_", " ");
-					} else {
-						if (!allowedActions.includes(payload.action)) continue;
+					} else if (type === "PullRequestEvent" && allowedActions.includes(payload.action)) {
 						verb = payload.action;
+					} else {
+						continue;
 					}
 
+					const details = await fetchDetails(pr.url);
 					processedPRs.add(prKey);
+
 					tempEvents.push({
 						...base,
 						verb: verb + " pull request",
@@ -123,9 +125,27 @@
 </script>
 
 {#if loading}
-	<div class="space-y-4 p-4">
-		{#each Array(3) as _}
-			<div class="h-28 w-full animate-pulse rounded-xl bg-viola-50" />
+	<div class="flex flex-col space-y-3">
+		{#each Array(8) as _}
+			<div class="mx-2 animate-pulse rounded-xl bg-viola-50 p-4 sm:mx-4 sm:p-5">
+				<div class="flex items-start space-x-3 sm:space-x-4">
+					<div class="h-8 w-8 shrink-0 rounded-full bg-viola-200 sm:h-10 sm:w-10" />
+
+					<div class="min-w-0 flex-1">
+						<div class="mb-1 flex flex-col sm:mb-0 sm:flex-row sm:items-center sm:justify-between">
+							<div class="h-4 w-3/4 rounded bg-viola-200 sm:w-1/2" />
+							<div class="mt-2 h-3 w-16 rounded bg-viola-100 sm:mt-0" />
+						</div>
+
+						<div class="mt-3 space-y-2">
+							<div class="h-3 w-full rounded bg-viola-100/70" />
+							<div class="h-3 w-5/6 rounded bg-viola-100/70" />
+						</div>
+
+						<div class="mt-4 h-3 w-24 rounded bg-viola-200/60" />
+					</div>
+				</div>
+			</div>
 		{/each}
 	</div>
 {:else}
