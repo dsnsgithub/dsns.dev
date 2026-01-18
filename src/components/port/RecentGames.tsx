@@ -17,7 +17,7 @@ interface Game {
 	gameType: string;
 	mode: string | null;
 	map: string | null;
-	ended?: number; // Optional property
+	ended?: number;
 }
 
 interface RecentGamesData {
