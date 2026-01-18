@@ -93,7 +93,7 @@ const LanyardStatus = () => {
 								00:00
 							</span>
 							<span className="absolute inset-0">
-								{formatTime(Math.min(currentTime - status.spotify.timestamps.start, status.spotify.timestamps.end - status.spotify.timestamps.start))}
+								{formatTime(Math.max(0, Math.min(currentTime - status.spotify.timestamps.start, status.spotify.timestamps.end - status.spotify.timestamps.start)))}
 							</span>
 						</span>
 
