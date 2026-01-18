@@ -6,24 +6,22 @@ const allBlogPosts = await getCollection("posts");
 ---
 
 <Layout title="Blog" description="Explore my blog posts.">
-	<div class="container mx-auto flex flex-col gap-10 px-1 md:px-16 lg:px-32 xl:px-32 2xl:px-48">
-		<div class="flex flex-col gap-5 rounded-xl bg-viola-100 p-8">
+	<div class="container px-1 md:px-16 lg:px-32 xl:px-32 2xl:px-48 mx-auto flex flex-col gap-10">
+		<div class="bg-viola-100 rounded-xl p-8 flex flex-col gap-5">
 			<h1 class="text-3xl font-bold">Blog</h1>
 			{
-				allBlogPosts
-					.sort((a, b) => {
-						return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
-					})
-					.map((post) => (
-						<a href={`/blog/${post.slug}`} class="m-2 rounded-lg bg-viola-50 p-8 shadow-lg">
-							<div class="mb-4 flex flex-row items-center justify-between">
-								<span class="text-lg font-bold">{post.data.title}</span>
-								<span>{post.data.date.toLocaleDateString()}</span>
-							</div>
+				allBlogPosts.sort((a, b) => {
+					return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+				}).map((post) => (
+					<a href={`/blog/${post.slug}`} class="bg-viola-50 rounded-lg p-8 m-2 shadow-lg">
+						<div class="flex flex-row justify-between items-center mb-4">
+							<span class="text-lg font-bold">{post.data.title}</span>
+							<span>{post.data.date.toLocaleDateString()}</span>
+						</div>
 
-							<p>{post.data.description}</p>
-						</a>
-					))
+						<p>{post.data.description}</p>
+					</a>
+				))
 			}
 		</div>
 	</div>
