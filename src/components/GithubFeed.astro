@@ -146,7 +146,7 @@ if (eventsCache.data && now - eventsCache.timestamp < eventsCache.TTL) {
 
 	{
 		events.map((item) => (
-			<div class="group mx-2 rounded-xl bg-viola-50 p-4 transition-transform hover:scale-[1.01] sm:mx-4 sm:p-5">
+			<div class="group mx-2 rounded-xl bg-viola-50 p-4 transition-transform duration-500 hover:scale-[1.01] hover:transition hover:duration-500 sm:mx-4 sm:p-5">
 				<a href={item.url} target="_blank" rel="noopener noreferrer" class="flex items-start space-x-3 sm:space-x-4">
 					<img src={item.actor.avatar_url} alt={item.actor.login} class="h-8 w-8 shrink-0 rounded-full border-2 border-white bg-viola-100 shadow-sm sm:h-10 sm:w-10" />
 
