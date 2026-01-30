@@ -1,0 +1,18 @@
+<div class="flex flex-col space-y-3">
+  {Array.from({ length: 5 }).map(() => (
+    <div class="mx-2 rounded-xl bg-viola-50 p-4 sm:mx-4 sm:p-5 animate-pulse">
+      <div class="flex items-start space-x-3 sm:space-x-4">
+        <div class="h-8 w-8 shrink-0 rounded-full bg-viola-200 sm:h-10 sm:w-10"></div>
+
+        <div class="min-w-0 flex-1 space-y-3">
+          <div class="flex justify-between">
+            <div class="h-4 w-2/3 rounded bg-viola-200"></div>
+            <div class="h-3 w-12 rounded bg-viola-200"></div>
+          </div>
+          <div class="h-3 w-full rounded bg-viola-200"></div>
+          <div class="h-3 w-24 rounded bg-viola-200"></div>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
