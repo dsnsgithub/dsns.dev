@@ -2,9 +2,9 @@
 export const prerender = false;
 
 import { Octokit } from "@octokit/rest";
+import type { components } from "@octokit/openapi-types";
 
 interface DisplayEvent {
-	id: string;
 	actor: { login: string; avatar_url: string };
 	verb: string;
 	object: string;
@@ -18,20 +18,28 @@ const octokit = new Octokit({
 	auth: import.meta.env.GITHUB_TOKEN
 });
 
-const detailCache = new Map<string, { title: string; body: string; merged?: boolean; url: string }>();
+export type EventPayloadMap = {
+	CreateEvent: components["schemas"]["create-event"];
+	DeleteEvent: components["schemas"]["delete-event"];
+	DiscussionEvent: components["schemas"]["discussion-event"];
+	IssuesEvent: components["schemas"]["issues-event"];
+	IssueCommentEvent: components["schemas"]["issue-comment-event"];
+	ForkEvent: components["schemas"]["fork-event"];
+	GollumEvent: components["schemas"]["gollum-event"];
+	MemberEvent: components["schemas"]["member-event"];
+	PublicEvent: components["schemas"]["public-event"];
+	PushEvent: components["schemas"]["push-event"];
+	PullRequestEvent: components["schemas"]["pull-request-event"];
+	PullRequestReviewCommentEvent: components["schemas"]["pull-request-review-comment-event"];
+	PullRequestReviewEvent: components["schemas"]["pull-request-review-event"];
+	CommitCommentEvent: components["schemas"]["commit-comment-event"];
+	ReleaseEvent: components["schemas"]["release-event"];
+	WatchEvent: components["schemas"]["watch-event"];
+};
 
-// Use globalThis to persist cache across requests
-const globalCache = globalThis as any;
-if (!globalCache.__githubEventsCache) {
-	globalCache.__githubEventsCache = {
-		data: null as DisplayEvent[] | null,
-		timestamp: 0,
-		TTL: 5 * 60 * 1000 // 5 minutes in milliseconds
-	};
+function isEvent<T extends keyof EventPayloadMap>(event: components["schemas"]["event"], type: T): event is components["schemas"]["event"] & { type: T; payload: EventPayloadMap[T] } {
+	return event.type === type;
 }
-const eventsCache = globalCache.__githubEventsCache;
-
-const cleanDescription = (text: string | null | undefined) => (text ? text.replace(/[#*`_]/g, "").trim() : "");
 
 const formatDate = (iso: string) =>
 	new Date(iso).toLocaleDateString(undefined, {
@@ -41,104 +49,55 @@ const formatDate = (iso: string) =>
 		minute: "numeric"
 	});
 
-async function fetchDetails(apiUrl: string) {
-	if (detailCache.has(apiUrl)) return detailCache.get(apiUrl)!;
-	try {
-		const res = await octokit.request(`GET ${apiUrl}`);
-		const data = {
-			title: (res.data as any).title ?? "Untitled",
-			body: cleanDescription((res.data as any).body),
-			merged: (res.data as any).merged,
-			url: (res.data as any).html_url
-		};
-		detailCache.set(apiUrl, data);
-		return data;
-	} catch {
-		return { title: "Private or Deleted Content", body: "", url: "#" };
-	}
-}
-
 async function fetchGitHubEvents(): Promise<DisplayEvent[]> {
 	const events: DisplayEvent[] = [];
 
-	try {
-		const res = await octokit.rest.activity.listPublicEventsForUser({
-			username: "dsnsgithub",
-			per_page: 30,
-			headers: { "X-GitHub-Api-Version": "2022-11-28" }
-		});
+	const res = await octokit.rest.activity.listPublicEventsForUser({
+		username: "dsnsgithub"
+	});
 
-		const allowedActions = ["opened", "closed", "reopened"];
-		const ignoredTypes = ["PushEvent", "IssueCommentEvent", "PullRequestReviewCommentEvent", "CommitCommentEvent"];
-		const rawEvents = res.data.filter((e) => !ignoredTypes.includes(e.type!));
+	for (const event of res.data) {
+		if (isEvent(event, "PullRequestEvent")) {
+			const pullRequest = event.payload.pull_request;
 
-		const processedPRs = new Set<string>();
+			events.push({
+				actor: event.actor,
+				verb: `${event.payload.action} pull request`,
+				object: `#${pullRequest.number} ${"N/A"}`,
+				description: "N/A",
+				repo: event.repo.name,
+				url: "N/A",
+				timestamp: formatDate(event.created_at!)
+			});
+		} else if (isEvent(event, "IssuesEvent")) {
+			const issue = event.payload.issue;
 
-		for (const event of rawEvents) {
-			const { payload, actor, repo, created_at, id, type } = event;
-			if (!created_at || !id) continue;
-
-			const base = {
-				id,
-				actor: { login: actor.login, avatar_url: actor.avatar_url },
-				repo: repo.name,
-				timestamp: formatDate(created_at)
-			};
-
-			if (type === "PullRequestEvent" || type === "PullRequestReviewEvent") {
-				const pr = (payload as any).pull_request;
-				const prKey = `${repo.name}#${pr.number}`;
-				if (!pr || processedPRs.has(prKey)) continue;
-
-				let verb = "";
-				if (type === "PullRequestEvent" && (payload as any).action === "closed" && pr.merged) {
-					verb = "merged";
-				} else if (type === "PullRequestReviewEvent") {
-					const state = (payload as any).review.state?.toLowerCase();
-					if (state === "commented") continue;
-					verb = state.replace("_", " ");
-				} else if (type === "PullRequestEvent" && allowedActions.includes((payload as any).action)) {
-					verb = (payload as any).action;
-				} else continue;
-
-				const details = await fetchDetails(pr.url);
-				processedPRs.add(prKey);
-				events.push({ ...base, verb: verb + " pull request", object: `${details.title} (#${pr.number})`, description: details.body, url: details.url });
-			} else if (type === "IssuesEvent") {
-				const issue = (payload as any).issue;
-				if (!issue) continue;
-				const details = await fetchDetails(issue.url);
-				events.push({ ...base, verb: (payload as any).action + " issue", object: `${details.title} (#${issue.number})`, description: details.body, url: details.url });
-			} else if (type === "WatchEvent") {
-				events.push({ ...base, verb: "starred", object: repo.name, url: `https://github.com/${repo.name}` });
-			} else if (type === "ForkEvent") {
-				const forkee = (payload as any).forkee;
-				if (!forkee) continue;
-				events.push({ ...base, verb: "forked", object: repo.name, description: `Original repository created by ${forkee.full_name}`, url: forkee.html_url });
-			}
+			events.push({
+				actor: event.actor,
+				verb: `${event.payload.action} issue`,
+				object: `#${issue.number} ${issue.title}`,
+				description: issue.body ?? undefined,
+				repo: event.repo.name,
+				url: issue.html_url,
+				timestamp: formatDate(event.created_at!)
+			});
+		} else if (isEvent(event, "ForkEvent")) {
+			events.push({
+				actor: event.actor,
+				verb: "forked",
+				object: event.repo.name,
+				description: `Created ${event.payload.forkee.full_name}`,
+				repo: event.repo.name,
+				url: event.payload.forkee.html_url!,
+				timestamp: formatDate(event.created_at!)
+			});
 		}
-	} catch (err) {
-		console.error("GitHub fetch error:", err);
 	}
 
 	return events;
 }
 
-// Check cache and fetch if expired
-let events: DisplayEvent[] = [];
-const now = Date.now();
-
-if (eventsCache.data && now - eventsCache.timestamp < eventsCache.TTL) {
-	// Use cached data
-	events = eventsCache.data;
-	console.log("Using cached GitHub events");
-} else {
-	// Fetch fresh data and update cache
-	events = await fetchGitHubEvents();
-	eventsCache.data = events;
-	eventsCache.timestamp = now;
-	console.log("Fetched fresh GitHub events");
-}
+const events: DisplayEvent[] = await fetchGitHubEvents();
 ---
 
 <div class="flex flex-col space-y-3">
