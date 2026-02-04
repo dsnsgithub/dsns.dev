@@ -72,8 +72,8 @@ async function fetchGitHubEvents() {
 			events.push({
 				actor: event.actor,
 				verb: `${event.payload.action} pull request`,
-				object: `#${prDetails.number} ${prDetails.title}`,
-				description: prDetails.body ?? undefined,
+				object: `${prDetails.title} (#${prDetails.number})`,
+				description: prDetails.body!,
 				repo: event.repo.name,
 				url: prDetails.html_url,
 				timestamp: formatDate(event.created_at!)
@@ -84,7 +84,7 @@ async function fetchGitHubEvents() {
 			events.push({
 				actor: event.actor,
 				verb: `${event.payload.action} issue`,
-				object: `#${issue.number} ${issue.title}`,
+				object: `${issue.title} (#${issue.number})`,
 				description: issue.body!,
 				repo: event.repo.name,
 				url: issue.html_url,
@@ -95,7 +95,7 @@ async function fetchGitHubEvents() {
 				actor: event.actor,
 				verb: "forked",
 				object: event.repo.name,
-				description: `Created ${event.payload.forkee.full_name}`,
+				description: `Created under ${event.payload.forkee.full_name}.`,
 				repo: event.repo.name,
 				url: event.payload.forkee.html_url!,
 				timestamp: formatDate(event.created_at!)
