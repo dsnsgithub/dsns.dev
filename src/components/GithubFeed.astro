@@ -41,15 +41,17 @@ function isEvent<T extends keyof EventPayloadMap>(event: components["schemas"]["
 	return event.type === type;
 }
 
-const formatDate = (iso: string) =>
-	new Date(iso).toLocaleDateString(undefined, {
+// iso: 2026-01-27T03:03:13Z
+function formatDate(iso: string) {
+	return new Date(iso).toLocaleDateString(undefined, {
 		month: "short",
 		day: "numeric",
 		hour: "numeric",
 		minute: "numeric"
 	});
+}
 
-async function fetchGitHubEvents(): Promise<DisplayEvent[]> {
+async function fetchGitHubEvents() {
 	const events: DisplayEvent[] = [];
 
 	const res = await octokit.rest.activity.listPublicEventsForUser({
@@ -59,14 +61,21 @@ async function fetchGitHubEvents(): Promise<DisplayEvent[]> {
 	for (const event of res.data) {
 		if (isEvent(event, "PullRequestEvent")) {
 			const pullRequest = event.payload.pull_request;
+			const [owner, repo] = event.repo.name.split("/");
+
+			const { data: prDetails } = await octokit.rest.pulls.get({
+				owner,
+				repo,
+				pull_number: pullRequest.number
+			});
 
 			events.push({
 				actor: event.actor,
 				verb: `${event.payload.action} pull request`,
-				object: `#${pullRequest.number} ${"N/A"}`,
-				description: "N/A",
+				object: `#${prDetails.number} ${prDetails.title}`,
+				description: prDetails.body ?? undefined,
 				repo: event.repo.name,
-				url: "N/A",
+				url: prDetails.html_url,
 				timestamp: formatDate(event.created_at!)
 			});
 		} else if (isEvent(event, "IssuesEvent")) {
@@ -76,7 +85,7 @@ async function fetchGitHubEvents(): Promise<DisplayEvent[]> {
 				actor: event.actor,
 				verb: `${event.payload.action} issue`,
 				object: `#${issue.number} ${issue.title}`,
-				description: issue.body ?? undefined,
+				description: issue.body!,
 				repo: event.repo.name,
 				url: issue.html_url,
 				timestamp: formatDate(event.created_at!)
@@ -97,7 +106,7 @@ async function fetchGitHubEvents(): Promise<DisplayEvent[]> {
 	return events;
 }
 
-const events: DisplayEvent[] = await fetchGitHubEvents();
+const events = await fetchGitHubEvents();
 ---
 
 <div class="flex flex-col space-y-3">
