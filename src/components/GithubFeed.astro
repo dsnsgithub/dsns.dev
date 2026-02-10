@@ -58,10 +58,14 @@ async function fetchGitHubEvents() {
 		username: "dsnsgithub"
 	});
 
+	const seenUrls = new Set<string>();
 	for (const event of res.data) {
 		if (isEvent(event, "PullRequestEvent")) {
 			const pullRequest = event.payload.pull_request;
 			const [owner, repo] = event.repo.name.split("/");
+
+			if (seenUrls.has(pullRequest.url)) continue;
+			seenUrls.add(pullRequest.url);
 
 			const { data: prDetails } = await octokit.rest.pulls.get({
 				owner,
@@ -81,6 +85,9 @@ async function fetchGitHubEvents() {
 		} else if (isEvent(event, "IssuesEvent")) {
 			const issue = event.payload.issue;
 
+			if (seenUrls.has(issue.url)) continue;
+			seenUrls.add(issue.url);
+
 			events.push({
 				actor: event.actor,
 				verb: `${event.payload.action} issue`,
@@ -91,13 +98,18 @@ async function fetchGitHubEvents() {
 				timestamp: formatDate(event.created_at!)
 			});
 		} else if (isEvent(event, "ForkEvent")) {
+			const fork = event.payload.forkee;
+
+			if (seenUrls.has(fork.html_url!)) continue;
+			seenUrls.add(fork.html_url!);
+
 			events.push({
 				actor: event.actor,
 				verb: "forked",
-				object: event.repo.name,
-				description: `Created under ${event.payload.forkee.full_name}.`,
+				object: fork.full_name!,
+				description: `Created under ${fork.full_name}.`,
 				repo: event.repo.name,
-				url: event.payload.forkee.html_url!,
+				url: fork.html_url!,
 				timestamp: formatDate(event.created_at!)
 			});
 		}
