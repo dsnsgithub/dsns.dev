@@ -1,0 +1,143 @@
+---
+export const prerender = false;
+
+import { Octokit } from "@octokit/rest";
+import type { components } from "@octokit/openapi-types";
+
+interface DisplayEvent {
+	actor: { login: string; avatar_url: string };
+	verb: string;
+	object: string;
+	description?: string;
+	repo: string;
+	url: string;
+	timestamp: string;
+}
+
+const octokit = new Octokit({
+	auth: import.meta.env.GITHUB_TOKEN
+});
+
+export type EventPayloadMap = {
+	CreateEvent: components["schemas"]["create-event"];
+	DeleteEvent: components["schemas"]["delete-event"];
+	DiscussionEvent: components["schemas"]["discussion-event"];
+	IssuesEvent: components["schemas"]["issues-event"];
+	IssueCommentEvent: components["schemas"]["issue-comment-event"];
+	ForkEvent: components["schemas"]["fork-event"];
+	GollumEvent: components["schemas"]["gollum-event"];
+	MemberEvent: components["schemas"]["member-event"];
+	PublicEvent: components["schemas"]["public-event"];
+	PushEvent: components["schemas"]["push-event"];
+	PullRequestEvent: components["schemas"]["pull-request-event"];
+	PullRequestReviewCommentEvent: components["schemas"]["pull-request-review-comment-event"];
+	PullRequestReviewEvent: components["schemas"]["pull-request-review-event"];
+	CommitCommentEvent: components["schemas"]["commit-comment-event"];
+	ReleaseEvent: components["schemas"]["release-event"];
+	WatchEvent: components["schemas"]["watch-event"];
+};
+
+function isEvent<T extends keyof EventPayloadMap>(event: components["schemas"]["event"], type: T): event is components["schemas"]["event"] & { type: T; payload: EventPayloadMap[T] } {
+	return event.type === type;
+}
+
+// iso: 2026-01-27T03:03:13Z
+function formatDate(iso: string) {
+	return new Date(iso).toLocaleDateString(undefined, {
+		month: "short",
+		day: "numeric",
+		hour: "numeric",
+		minute: "numeric"
+	});
+}
+
+async function fetchGitHubEvents() {
+	const events: DisplayEvent[] = [];
+
+	const res = await octokit.rest.activity.listPublicEventsForUser({
+		username: "dsnsgithub"
+	});
+
+	for (const event of res.data) {
+		if (isEvent(event, "PullRequestEvent")) {
+			const pullRequest = event.payload.pull_request;
+			const [owner, repo] = event.repo.name.split("/");
+
+			const { data: prDetails } = await octokit.rest.pulls.get({
+				owner,
+				repo,
+				pull_number: pullRequest.number
+			});
+
+			events.push({
+				actor: event.actor,
+				verb: `${event.payload.action} pull request`,
+				object: `${prDetails.title} (#${prDetails.number})`,
+				description: prDetails.body!,
+				repo: event.repo.name,
+				url: prDetails.html_url,
+				timestamp: formatDate(event.created_at!)
+			});
+		} else if (isEvent(event, "IssuesEvent")) {
+			const issue = event.payload.issue;
+
+			events.push({
+				actor: event.actor,
+				verb: `${event.payload.action} issue`,
+				object: `${issue.title} (#${issue.number})`,
+				description: issue.body!,
+				repo: event.repo.name,
+				url: issue.html_url,
+				timestamp: formatDate(event.created_at!)
+			});
+		} else if (isEvent(event, "ForkEvent")) {
+			events.push({
+				actor: event.actor,
+				verb: "forked",
+				object: event.repo.name,
+				description: `Created under ${event.payload.forkee.full_name}.`,
+				repo: event.repo.name,
+				url: event.payload.forkee.html_url!,
+				timestamp: formatDate(event.created_at!)
+			});
+		}
+	}
+
+	return events;
+}
+
+const events = await fetchGitHubEvents();
+---
+
+<div class="flex flex-col space-y-3">
+	{events.length === 0 && <p class="py-4 text-center text-gray-500">No recent activity found.</p>}
+
+	{
+		events.map((item) => (
+			<div class="group mx-2 rounded-xl bg-viola-50 p-4 transition-transform duration-500 hover:scale-[1.01] hover:transition hover:duration-500 sm:mx-4 sm:p-5">
+				<a href={item.url} target="_blank" rel="noopener noreferrer" class="flex items-start space-x-3 sm:space-x-4">
+					<img src={item.actor.avatar_url} alt={item.actor.login} class="h-8 w-8 shrink-0 rounded-full border-2 border-white bg-viola-100 shadow-sm sm:h-10 sm:w-10" />
+
+					<div class="min-w-0 flex-1">
+						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+							<p class="text-sm font-bold text-gray-900">
+								{item.actor.login}
+								<span class="mx-0.5 font-normal text-gray-500"> {item.verb} </span>
+								<span class="text-viola-700">{item.object}</span>
+							</p>
+							<span class="mt-1 text-[10px] text-gray-400 sm:mt-0 sm:text-xs">{item.timestamp}</span>
+						</div>
+
+						{item.description && (
+							<div class="mt-2" style="mask-image: linear-gradient(to bottom, black 70%, transparent); -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent);">
+								<p class="line-clamp-3 whitespace-pre-wrap text-xs text-gray-600">{item.description}</p>
+							</div>
+						)}
+
+						<p class="mt-2 truncate text-[10px] font-semibold tracking-wide text-viola-700/80 sm:text-[11px]">{item.repo}</p>
+					</div>
+				</a>
+			</div>
+		))
+	}
+</div>

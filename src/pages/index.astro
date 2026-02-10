@@ -1,11 +1,14 @@
 ---
+export const prerender = false;
+
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import scheduliIcon from "../assets/schedule.svg";
 import betterHudIcon from "../assets/betterhud.png";
 import { Icon } from "astro-icon/components";
 import DiscordStatus from "../components/DiscordStatus.tsx";
-import GithubFeed from "../components/GithubFeed.tsx";
+import GithubFeed from "../components/GithubFeed.astro";
+import GithubFeedSkeleton from "../components/GithubFeedSkeleton.astro";
 ---
 
 <Layout title="dsns.dev" description="Check out what I do, and explore some of my projects.">
@@ -68,7 +71,9 @@ import GithubFeed from "../components/GithubFeed.tsx";
 
 		<div class="m-2 rounded-lg bg-viola-100 p-6 shadow-lg lg:p-8">
 			<h2 class="mb-6 text-2xl font-bold">GitHub Feed</h2>
-			<GithubFeed client:idle />
+			<GithubFeed server:defer>
+				<GithubFeedSkeleton slot="fallback" />
+			</GithubFeed>
 		</div>
 	</div>
 </Layout>

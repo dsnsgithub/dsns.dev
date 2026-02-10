@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useLanyard } from "use-lanyard";
+import { useLanyardWS } from "use-lanyard";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import rawGames from "../assets/gameList.json";
 
@@ -27,7 +27,7 @@ const LanyardStatus = () => {
 	const [visible, setVisible] = useState(false);
 	const [currentTime, setCurrentTime] = useState(new Date().getTime());
 
-	const { data: status } = useLanyard("342874998375186432");
+	const status = useLanyardWS("342874998375186432");
 
 	useEffect(() => {
 		const timer = setTimeout(() => setVisible(true), 500);
@@ -93,7 +93,7 @@ const LanyardStatus = () => {
 								00:00
 							</span>
 							<span className="absolute inset-0">
-								{formatTime(Math.min(currentTime - status.spotify.timestamps.start, status.spotify.timestamps.end - status.spotify.timestamps.start))}
+								{formatTime(Math.max(0, Math.min(currentTime - status.spotify.timestamps.start, status.spotify.timestamps.end - status.spotify.timestamps.start)))}
 							</span>
 						</span>
 
