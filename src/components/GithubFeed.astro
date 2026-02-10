@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import { Octokit } from "@octokit/rest";
-import type { components } from "@octokit/openapi-types";
+import { isEvent } from "../types/GitHub";
 
 interface DisplayEvent {
 	actor: { login: string; avatar_url: string };
@@ -18,30 +18,6 @@ const octokit = new Octokit({
 	auth: import.meta.env.GITHUB_TOKEN
 });
 
-export type EventPayloadMap = {
-	CreateEvent: components["schemas"]["create-event"];
-	DeleteEvent: components["schemas"]["delete-event"];
-	DiscussionEvent: components["schemas"]["discussion-event"];
-	IssuesEvent: components["schemas"]["issues-event"];
-	IssueCommentEvent: components["schemas"]["issue-comment-event"];
-	ForkEvent: components["schemas"]["fork-event"];
-	GollumEvent: components["schemas"]["gollum-event"];
-	MemberEvent: components["schemas"]["member-event"];
-	PublicEvent: components["schemas"]["public-event"];
-	PushEvent: components["schemas"]["push-event"];
-	PullRequestEvent: components["schemas"]["pull-request-event"];
-	PullRequestReviewCommentEvent: components["schemas"]["pull-request-review-comment-event"];
-	PullRequestReviewEvent: components["schemas"]["pull-request-review-event"];
-	CommitCommentEvent: components["schemas"]["commit-comment-event"];
-	ReleaseEvent: components["schemas"]["release-event"];
-	WatchEvent: components["schemas"]["watch-event"];
-};
-
-function isEvent<T extends keyof EventPayloadMap>(event: components["schemas"]["event"], type: T): event is components["schemas"]["event"] & { type: T; payload: EventPayloadMap[T] } {
-	return event.type === type;
-}
-
-// iso: 2026-01-27T03:03:13Z
 function formatDate(iso: string) {
 	return new Date(iso).toLocaleDateString(undefined, {
 		month: "short",
