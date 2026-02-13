@@ -9,9 +9,6 @@
 		"preview": "astro preview",
 		"astro": "astro"
 	},
-	"overrides": {
-		"@octokit/openapi-types": "github:dsnsgithub/openapi-types.ts#main"
-	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.6",
 		"@astrojs/mdx": "^4.3.13",
@@ -43,5 +40,8 @@
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-tailwindcss": "^0.6.6",
 		"tailwind-scrollbar": "^3.1.0"
+	},
+	"patchedDependencies": {
+		"@octokit/openapi-types@27.0.0": "patches/@octokit%2Fopenapi-types@27.0.0.patch"
 	}
 }
