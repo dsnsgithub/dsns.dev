@@ -1,0 +1,151 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+
+// Note: Ensure you have jspdf and jszip installed in your project:
+// npm install jspdf jszip
+---
+
+<Layout title="PPTX to PDF Converter | dsns.dev" description="Convert PowerPoint files to PDF purely in your browser.">
+  <div class="container mx-auto flex flex-col gap-10 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
+    
+    <div class="m-2 rounded-lg bg-viola-100 p-8 shadow-lg">
+      <h2 class="mb-4 text-3xl font-bold text-viola-900 flex items-center gap-3">
+        <Icon name="mdi:file-powerpoint" class="text-4xl text-[#d04423]" />
+        Batch PPTX Converter
+      </h2>
+      <p class="mb-6 text-viola-800">
+        Privacy-focused conversion. Your files never leave your computer—everything is processed locally in your browser.
+      </p>
+
+      <div 
+        id="dropzone"
+        class="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-viola-300 bg-viola-50 p-12 transition-all hover:border-viola-500 hover:bg-viola-100"
+      >
+        <input type="file" id="upload" accept=".pptx" multiple class="absolute inset-0 cursor-pointer opacity-0" />
+        <Icon name="mdi:cloud-upload" class="mb-4 text-5xl text-viola-400 group-hover:text-viola-600" />
+        <p class="text-lg font-medium text-viola-900">Drag & Drop or Click to Upload</p>
+        <p class="text-sm text-viola-600">Supports multiple .pptx files</p>
+      </div>
+
+      <div id="fileListContainer" class="mt-8 hidden">
+        <h3 class="mb-3 text-xl font-semibold text-viola-900">Files to Process</h3>
+        <div id="fileList" class="flex flex-col gap-2">
+            </div>
+
+        <div class="mt-6 flex flex-col items-center gap-4">
+            <div class="h-3 w-full overflow-hidden rounded-full bg-viola-200">
+                <div id="progressBar" class="h-full w-0 bg-viola-600 transition-all duration-300"></div>
+            </div>
+            
+            <button 
+                id="convertBtn" 
+                class="w-full rounded-xl bg-viola-600 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:scale-[1.02] hover:bg-viola-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                Convert All to PDF
+            </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</Layout>
+
+<script>
+    import { jsPDF } from "jspdf";
+    import JSZip from "jszip";
+
+    const uploadInput = document.getElementById('upload') as HTMLInputElement;
+    const convertBtn = document.getElementById('convertBtn') as HTMLButtonElement;
+    const fileList = document.getElementById('fileList') as HTMLDivElement;
+    const container = document.getElementById('fileListContainer') as HTMLDivElement;
+    const progressBar = document.getElementById('progressBar') as HTMLDivElement;
+
+    let filesToProcess: File[] = [];
+
+    uploadInput.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        if (!target.files) return;
+        
+        filesToProcess = Array.from(target.files);
+        fileList.innerHTML = '';
+        container.classList.remove('hidden');
+        
+        filesToProcess.forEach(file => {
+            const row = document.createElement('div');
+            row.className = "flex items-center justify-between rounded-lg bg-viola-50 p-4 shadow-sm border border-viola-200";
+            row.innerHTML = `
+                <span class="font-medium text-viola-900 truncate max-w-[70%]">${file.name}</span>
+                <span id="status-${file.name.replace(/\W/g, '')}" class="text-xs font-bold uppercase tracking-wider text-viola-400">Ready</span>
+            `;
+            fileList.appendChild(row);
+        });
+
+        convertBtn.disabled = filesToProcess.length === 0;
+    });
+
+    convertBtn.addEventListener('click', async () => {
+        convertBtn.disabled = true;
+        
+        for (let i = 0; i < filesToProcess.length; i++) {
+            const file = filesToProcess[i];
+            const statusId = `status-${file.name.replace(/\W/g, '')}`;
+            const statusEl = document.getElementById(statusId);
+            
+            try {
+                if (statusEl) {
+                    statusEl.innerText = "Processing...";
+                    statusEl.classList.replace('text-viola-400', 'text-viola-600');
+                }
+                
+                await processPptx(file);
+                
+                if (statusEl) {
+                    statusEl.innerText = "Done";
+                    statusEl.classList.replace('text-viola-600', 'text-green-600');
+                }
+            } catch (err) {
+                if (statusEl) {
+                    statusEl.innerText = "Error";
+                    statusEl.classList.replace('text-viola-600', 'text-red-600');
+                }
+            }
+            
+            const progress = ((i + 1) / filesToProcess.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        convertBtn.disabled = false;
+    });
+
+    async function processPptx(file: File) {
+        const zip = await JSZip.loadAsync(file);
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [720, 540] });
+        
+        const slideFiles = Object.keys(zip.files)
+            .filter(name => name.startsWith('ppt/slides/slide') && name.endsWith('.xml'))
+            .sort((a, b) => {
+                const aNum = parseInt(a.match(/\d+/)![0]);
+                const bNum = parseInt(b.match(/\d+/)![0]);
+                return aNum - bNum;
+            });
+
+        for (let i = 0; i < slideFiles.length; i++) {
+            if (i > 0) pdf.addPage([720, 540], 'landscape');
+
+            const content = await zip.file(slideFiles[i])!.async("string");
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(content, "text/xml");
+            const textNodes = xmlDoc.getElementsByTagName("a:t");
+            
+            let y = 60;
+            Array.from(textNodes).forEach(node => {
+                if (y > 500) return;
+                pdf.setFontSize(14);
+                pdf.text(node.textContent || "", 40, y);
+                y += 20;
+            });
+        }
+        pdf.save(file.name.replace(".pptx", ".pdf"));
+    }
+</script>
