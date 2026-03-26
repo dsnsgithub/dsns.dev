@@ -18,15 +18,6 @@ const octokit = new Octokit({
 	auth: import.meta.env.GITHUB_TOKEN
 });
 
-function formatDate(iso: string) {
-	return new Date(iso).toLocaleDateString(undefined, {
-		month: "short",
-		day: "numeric",
-		hour: "numeric",
-		minute: "numeric"
-	});
-}
-
 async function fetchGitHubEvents() {
 	const events: DisplayEvent[] = [];
 
@@ -56,7 +47,7 @@ async function fetchGitHubEvents() {
 				description: prDetails.body!,
 				repo: event.repo.name,
 				url: prDetails.html_url,
-				timestamp: formatDate(event.created_at!)
+				timestamp: event.created_at!
 			});
 		} else if (isEvent(event, "IssuesEvent")) {
 			const issue = event.payload.issue;
@@ -71,7 +62,7 @@ async function fetchGitHubEvents() {
 				description: issue.body!,
 				repo: event.repo.name,
 				url: issue.html_url,
-				timestamp: formatDate(event.created_at!)
+				timestamp: event.created_at!
 			});
 		} else if (isEvent(event, "ForkEvent")) {
 			const fork = event.payload.forkee;
@@ -86,7 +77,7 @@ async function fetchGitHubEvents() {
 				description: `Created under ${fork.full_name}.`,
 				repo: event.repo.name,
 				url: fork.html_url!,
-				timestamp: formatDate(event.created_at!)
+				timestamp: event.created_at!
 			});
 		}
 	}
@@ -113,7 +104,9 @@ const events = await fetchGitHubEvents();
 								<span class="mx-0.5 font-normal text-gray-500"> {item.verb} </span>
 								<span class="text-viola-700">{item.object}</span>
 							</p>
-							<span class="mt-1 text-[10px] text-gray-400 sm:mt-0 sm:text-xs">{item.timestamp}</span>
+							<span class="mt-1 text-[10px] text-gray-400 sm:mt-0 sm:text-xs" title={new Date(item.timestamp).toLocaleString()}>
+								{new Date(item.timestamp).toLocaleDateString()}
+							</span>
 						</div>
 
 						{item.description && (
