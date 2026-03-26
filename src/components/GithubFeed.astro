@@ -104,9 +104,9 @@ const events = await fetchGitHubEvents();
 								<span class="mx-0.5 font-normal text-gray-500"> {item.verb} </span>
 								<span class="text-viola-700">{item.object}</span>
 							</p>
-							<span class="mt-1 text-[10px] text-gray-400 sm:mt-0 sm:text-xs" title={new Date(item.timestamp).toLocaleString()}>
-								{new Date(item.timestamp).toLocaleDateString()}
-							</span>
+							<time class="mt-1 text-[10px] text-gray-400 sm:mt-0 sm:text-xs" datetime={item.timestamp} data-timestamp={item.timestamp}>
+								{item.timestamp}
+							</time>
 						</div>
 
 						{item.description && (
@@ -122,3 +122,11 @@ const events = await fetchGitHubEvents();
 		))
 	}
 </div>
+
+<script>
+	document.querySelectorAll<HTMLTimeElement>("time[data-timestamp]").forEach((el) => {
+		const date = new Date(el.dataset.timestamp!);
+		el.title = date.toLocaleString();
+		el.textContent = date.toLocaleDateString();
+	});
+</script>
