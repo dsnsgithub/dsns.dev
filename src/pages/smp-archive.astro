@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
+import chromocraftSeason1 from "../assets/smps/chromocraftseason1.png";
+import firstSMP from "../assets/smps/firstsmp.png";
 import earth14000Smp from "../assets/smps/earthsmp.png";
 import chromocraftSeason4 from "../assets/smps/chromocraftseason4.png";
 import citySmp from "../assets/smps/citysmp.png";
@@ -14,6 +16,20 @@ import aNewBeginningSmp from "../assets/smps/a-new-beginning.png";
 
 
 const smps = [
+	{
+		name: "First SMP",
+		url: "https://archive.org/details/first-smp",
+		image: firstSMP,
+		date: "2017-10-06",
+		size: "8.7 MB"
+	},
+	{
+		name: "Chromocraft Season 1",
+		url: "https://archive.org/details/chromocraft-season-1",
+		image: chromocraftSeason1,
+		date: "2017-10-18",
+		size: "20.5 MB"
+	},
 	{
 		name: "Earth 1:4000 SMP",
 		url: "https://archive.org/details/earth-1-4000-smp",
@@ -80,6 +96,14 @@ const smps = [
 		size: "419.8 MB"
 	}
 ];
+
+const timestamps = smps.map(s => new Date(s.date).getTime());
+const gaps = timestamps.slice(1).map((t, i) => t - timestamps[i]);
+const maxGap = Math.max(...gaps);
+const minRem = 3;
+const maxRem = 14;
+const margins = gaps.map(g => minRem + (g / maxGap) * (maxRem - minRem));
+margins.push(0);
 ---
 
 <Layout title="Minecraft SMP Archive" description="An archive of all of the SMP worlds hosted by me.">
@@ -96,10 +120,10 @@ const smps = [
 			<div class="absolute left-5 top-0 h-full w-0.5 bg-viola-300 md:left-1/2 md:-translate-x-px" aria-hidden="true"></div>
 
 			{
-				smps.map((smp, i) => {
-					const isLeft = i % 2 === 0;
-					return (
-						<div class:list={["timeline-entry group relative mb-12 flex items-start", "pl-16 md:pl-0", isLeft ? "md:flex-row-reverse" : "md:flex-row"]}>
+			smps.map((smp, i) => {
+				const isLeft = i % 2 === 0;
+				return (
+					<div class:list={["timeline-entry group relative flex items-start", "pl-16 md:pl-0", isLeft ? "md:flex-row-reverse" : "md:flex-row"]} style={`margin-bottom: ${margins[i]}rem`}>
 							<div class="absolute left-5 top-5 z-10 flex -translate-x-1/2 items-center justify-center md:left-1/2">
 								<span class="h-4 w-4 rounded-full border-[3px] border-viola-400 bg-viola-50 shadow transition-colors duration-300 group-hover:border-viola-600 group-hover:bg-viola-200" />
 							</div>
