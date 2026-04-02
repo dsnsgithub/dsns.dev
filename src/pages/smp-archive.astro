@@ -5,6 +5,8 @@ import { Image } from "astro:assets";
 import chromocraftSeason1 from "../assets/smps/chromocraftseason1.png";
 import firstSMP from "../assets/smps/firstsmp.png";
 import earth14000Smp from "../assets/smps/earthsmp.png";
+import chromocraftSeason2 from "../assets/smps/chromocraftseason2.png";
+import chromocraftSeason3 from "../assets/smps/chromocraftseason3.png";
 import chromocraftSeason4 from "../assets/smps/chromocraftseason4.png";
 import citySmp from "../assets/smps/citysmp.png";
 import one17Smp from "../assets/smps/1-17-smp.png";
@@ -29,6 +31,22 @@ const smps = [
 		image: chromocraftSeason1,
 		date: "2017-10-18",
 		size: "20.5 MB"
+	},
+	{
+		name: "Chromocraft Season 2",
+		url: null,
+		image: chromocraftSeason2,
+		date: "2019-02-18",
+		missing: true,
+		size: null
+	},
+	{
+		name: "Chromocraft Season 3",
+		url: null,
+		image: chromocraftSeason3,
+		date: "2019-04-28",
+		missing: true,
+		size: null
 	},
 	{
 		name: "Earth 1:4000 SMP",
@@ -162,13 +180,15 @@ margins.push(0);
 
 										<p class="text-lg font-bold text-gray-900">{smp.name}</p>
 										{smp.subtitle && <span class="text-xs font-medium uppercase tracking-wide text-viola-600">{smp.subtitle}</span>}
-
+										{smp.missing && <span class="text-xs font-medium uppercase tracking-wide text-yellow-600">No World Available</span>}
 										<div class="mt-1 flex items-center gap-2 font-mono text-xs text-gray-400">{smp.size && <span>{smp.size}</span>}</div>
 
+										{!smp.missing && (
 										<div class="mt-3 flex items-center gap-1 font-mono text-xs uppercase tracking-wide text-viola-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
 											<span>View Archive</span>
 											<span class="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
 										</div>
+										)}
 									</div>
 								</a>
 							</div>
