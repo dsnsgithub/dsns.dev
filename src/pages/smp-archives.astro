@@ -1,0 +1,149 @@
+---
+import Layout from "../layouts/Layout.astro";
+ 
+const smps = [
+    {
+        name: "Earth 1:4000 SMP",
+        url: "https://archive.org/details/earth-1-4000-smp",
+        image: "https://archive.org/download/earth-1-4000-smp/2026-04-02_00.42.54.png",
+        date: "2020-08-06",
+        size: "855.9 MB",
+    },
+    {
+        name: "Chromocraft Season 4",
+        url: "https://archive.org/details/chromocraft-season-4",
+        image: "https://archive.org/download/chromocraft-season-4/2020-11-28_23.36.36.png",
+        date: "2020-11-30",
+        size: "958.6 MB",
+    },
+    {
+        name: "CitySMP",
+        url: "https://archive.org/details/city-smp",
+        image: "https://archive.org/download/city-smp/2021-01-15_22.07.27_2.png",
+        date: "2021-01-14",
+        size: "1.0 GB",
+    },
+    {
+        name: "1.17 SMP",
+        url: "https://archive.org/details/1.17-smp",
+        image: null,
+        date: "2021",
+        size: "1.3 GB",
+    },
+    {
+        name: "1.18 Snapshot SMP",
+        subtitle: "21w40a",
+        url: "https://archive.org/details/1.18-snapshot-smp",
+        image: null,
+        date: "2021",
+        size: "370.4 MB",
+    },
+    {
+        name: "mc.dsns.dev",
+        subtitle: "Part 1",
+        url: "https://archive.org/details/mc.dsns.dev-part-1",
+        image: "https://archive.org/download/mc.dsns.dev-part-1/2023-06-28_19.00.01.png",
+        date: "2023-06-07",
+        size: "4.0 GB",
+    },
+    {
+        name: "mc.dsns.dev",
+        subtitle: "Part 2",
+        url: "https://archive.org/details/mc.dsns.dev-part-2",
+        image: "https://archive.org/download/mc.dsns.dev-part-2/2024-06-27_17.36.51.png",
+        date: "2024-06-11",
+        size: "2.6 GB",
+    },
+    {
+        name: "Delicious SMP",
+        url: "https://archive.org/details/delicious-smp",
+        image: "https://archive.org/download/delicious-smp/2025-04-06_02.36.46.png",
+        date: "2025-04-08",
+        size: "994.2 MB",
+    },
+    {
+        name: "A New Beginning SMP",
+        url: "https://archive.org/details/a-new-beginning-smp",
+        image: "https://archive.org/download/a-new-beginning-smp/image.png",
+        date: "2025-12-07",
+        size: "419.8 MB",
+    },
+];
+---
+ 
+<Layout title="SMP Archive — dsns.dev" description="Archived Minecraft SMP worlds, preserved and playable.">
+    <div class="container mx-auto flex flex-col gap-6 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
+        <div class="rounded-xl bg-viola-100 p-8 shadow-lg">
+            <h1 class="text-4xl font-extrabold text-gray-900">SMP Archive</h1>
+ 
+            <div class="mt-6 inline-block rounded-lg bg-viola-50 px-5 py-3 text-sm text-gray-600 shadow-sm">
+                Download the <code class="rounded bg-viola-200 px-2 py-0.5 font-mono text-xs text-viola-700">.zip</code> and drag it into
+                <code class="rounded bg-viola-200 px-2 py-0.5 font-mono text-xs text-viola-700">Prism Launcher</code> to play.
+            </div>
+ 
+            <p class="mt-6 text-xs text-gray-400">{smps.length} worlds archived</p>
+ 
+            <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {
+                    smps.map((smp) => (
+                        <a
+                            href={smp.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group overflow-hidden rounded-xl bg-viola-50 shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-xl"
+                        >
+                            <div class="relative aspect-video w-full overflow-hidden bg-viola-200">
+                                {smp.image ? (
+                                    <img
+                                        src={smp.image}
+                                        alt={smp.name}
+                                        loading="lazy"
+                                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <div class="flex h-full w-full items-center justify-center text-viola-400">
+                                        <svg
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
+ 
+                            <div class="p-4">
+                                <p class="text-lg font-bold text-gray-900">{smp.name}</p>
+                                {smp.subtitle && <span class="text-xs font-medium uppercase tracking-wide text-viola-600">{smp.subtitle}</span>}
+ 
+                                <div class="mt-1 flex items-center gap-2 font-mono text-xs text-gray-400">
+                                    <span>{new Date(smp.date).toLocaleDateString()}</span>
+                                    {smp.size && (
+                                        <>
+                                            <span>&middot;</span>
+                                            <span>{smp.size}</span>
+                                        </>
+                                    )}
+                                </div>
+ 
+                                <div class="mt-3 flex items-center gap-1 font-mono text-xs uppercase tracking-wide text-viola-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                    <span>View Archive</span>
+                                    <span class="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+                                </div>
+                            </div>
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+ 
+    </div>
+</Layout>
