@@ -81,7 +81,6 @@ const smps = [
         </div>
 
         <div class="relative pb-8">
-            <!-- vertical spine -->
             <div class="absolute left-5 top-0 h-full w-0.5 bg-viola-300 md:left-1/2 md:-translate-x-px" aria-hidden="true"></div>
 
             {smps.map((smp, i) => {
@@ -94,12 +93,10 @@ const smps = [
                             isLeft ? "md:flex-row-reverse" : "md:flex-row",
                         ]}
                     >
-                        {/* dot on the spine */}
                         <div class="absolute left-5 top-5 z-10 flex -translate-x-1/2 items-center justify-center md:left-1/2">
                             <span class="h-4 w-4 rounded-full border-[3px] border-viola-400 bg-viola-50 shadow transition-colors duration-300 group-hover:border-viola-600 group-hover:bg-viola-200" />
                         </div>
 
-                        {/* date label — opposite side on desktop, above card on mobile */}
                         <div class:list={[
                             "hidden w-1/2 items-start pt-4 md:flex",
                             isLeft ? "justify-start pl-14" : "justify-end pr-14",
@@ -109,7 +106,6 @@ const smps = [
                             </time>
                         </div>
 
-                        {/* card */}
                         <div class:list={["w-full md:w-1/2", isLeft ? "md:pr-14" : "md:pl-14"]}>
                             <a
                                 href={smp.url}
@@ -137,7 +133,6 @@ const smps = [
                                 </div>
 
                                 <div class="p-4">
-                                    {/* mobile-only date */}
                                     <time class="mb-1 block font-mono text-xs font-semibold text-viola-500 md:hidden">
                                         {smp.date.length === 4 ? smp.date : new Date(smp.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                                     </time>
@@ -160,7 +155,6 @@ const smps = [
                 );
             })}
 
-            {/* terminal dot */}
             <div class="absolute bottom-0 left-5 z-10 flex -translate-x-1/2 items-center justify-center md:left-1/2">
                 <span class="h-3 w-3 rounded-full bg-viola-400" />
             </div>
