@@ -1,39 +1,51 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+import earth14000Smp from "../assets/smps/earthsmp.png";
+import chromocraftSeason4 from "../assets/smps/chromocraftseason4.png";
+import citySmp from "../assets/smps/citysmp.png";
+import one17Smp from "../assets/smps/1-17-smp.png";
+import one18SnapshotSmp from "../assets/smps/1-18-smp.png";
+import mcDsnsDevPart1 from "../assets/smps/mc-dsns-dev-part-1.png";
+import mcDsnsDevPart2 from "../assets/smps/mc-dsns-dev-part-2.png";
+import deliciousSmp from "../assets/smps/delicious-smp.png";
+import aNewBeginningSmp from "../assets/smps/a-new-beginning.png";
+
 
 const smps = [
 	{
 		name: "Earth 1:4000 SMP",
 		url: "https://archive.org/details/earth-1-4000-smp",
-		image: "https://archive.org/download/earth-1-4000-smp/2026-04-02_00.42.54.png",
+		image: earth14000Smp,
 		date: "2020-08-06",
 		size: "855.9 MB"
 	},
 	{
 		name: "Chromocraft Season 4",
 		url: "https://archive.org/details/chromocraft-season-4",
-		image: "https://archive.org/download/chromocraft-season-4/2020-11-28_23.36.36.png",
+		image: chromocraftSeason4,
 		date: "2020-11-30",
 		size: "958.6 MB"
 	},
 	{
 		name: "CitySMP",
 		url: "https://archive.org/details/city-smp",
-		image: "https://archive.org/download/city-smp/2021-01-15_22.07.27_2.png",
+		image: citySmp,
 		date: "2021-01-14",
 		size: "1.0 GB"
 	},
 	{
 		name: "1.17 SMP",
 		url: "https://archive.org/details/1.17-smp",
-		image: "https://archive.org/download/1.17-smp/2026-04-02_01.33.05.png",
+		image: one17Smp,
 		date: "2021-06-15",
 		size: "1.3 GB"
 	},
 	{
 		name: "1.18 Snapshot SMP (21w40a)",
 		url: "https://archive.org/details/1.18-snapshot-smp",
-		image: "https://archive.org/download/1.18-snapshot-smp/2026-04-02_01.35.30.png",
+		image: one18SnapshotSmp,
 		date: "2021-10-10",
 		size: "370.4 MB"
 	},
@@ -41,7 +53,7 @@ const smps = [
 		name: "mc.dsns.dev",
 		subtitle: "Part 1",
 		url: "https://archive.org/details/mc.dsns.dev-part-1",
-		image: "https://archive.org/download/mc.dsns.dev-part-1/2023-06-28_19.00.01.png",
+		image: mcDsnsDevPart1,
 		date: "2023-06-07",
 		size: "4.0 GB"
 	},
@@ -49,21 +61,21 @@ const smps = [
 		name: "mc.dsns.dev",
 		subtitle: "Part 2",
 		url: "https://archive.org/details/mc.dsns.dev-part-2",
-		image: "https://archive.org/download/mc.dsns.dev-part-2/2024-06-27_17.36.51.png",
+		image: mcDsnsDevPart2,
 		date: "2024-06-11",
 		size: "2.6 GB"
 	},
 	{
 		name: "Delicious SMP",
 		url: "https://archive.org/details/delicious-smp",
-		image: "https://archive.org/download/delicious-smp/2025-04-06_02.36.46.png",
+		image: deliciousSmp,
 		date: "2025-04-08",
 		size: "994.2 MB"
 	},
 	{
 		name: "A New Beginning SMP",
 		url: "https://archive.org/details/a-new-beginning-smp",
-		image: "https://archive.org/download/a-new-beginning-smp/image.png",
+		image: aNewBeginningSmp,
 		date: "2025-12-07",
 		size: "419.8 MB"
 	}
@@ -107,7 +119,7 @@ const smps = [
 								>
 									<div class="relative aspect-video w-full overflow-hidden bg-viola-200">
 										{smp.image ? (
-											<img src={smp.image} alt={smp.name} loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+											<Image src={smp.image} alt={smp.name} loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
 										) : (
 											<div class="flex h-full w-full items-center justify-center text-viola-400">
 												<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
