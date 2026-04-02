@@ -27,15 +27,14 @@ const smps = [
         name: "1.17 SMP",
         url: "https://archive.org/details/1.17-smp",
         image: null,
-        date: "2021",
+        date: "2021-06-15",
         size: "1.3 GB",
     },
     {
-        name: "1.18 Snapshot SMP",
-        subtitle: "21w40a",
+        name: "1.18 Snapshot SMP (21w40a)",
         url: "https://archive.org/details/1.18-snapshot-smp",
         image: null,
-        date: "2021",
+        date: "2021-10-10",
         size: "370.4 MB",
     },
     {
@@ -72,76 +71,132 @@ const smps = [
 ---
  
 <Layout title="SMP Archive — dsns.dev" description="Archived Minecraft SMP worlds, preserved and playable.">
-    <div class="container mx-auto flex flex-col gap-6 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48">
-        <div class="rounded-xl bg-viola-100 p-8 shadow-lg">
+    <div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 md:px-8">
+        <div class="text-center">
             <h1 class="text-4xl font-extrabold text-gray-900">SMP Archive</h1>
- 
-            <div class="mt-6 inline-block rounded-lg bg-viola-50 px-5 py-3 text-sm text-gray-600 shadow-sm">
-                Download the <code class="rounded bg-viola-200 px-2 py-0.5 font-mono text-xs text-viola-700">.zip</code> and drag it into
-                <code class="rounded bg-viola-200 px-2 py-0.5 font-mono text-xs text-viola-700">Prism Launcher</code> to play.
-            </div>
-  
-            <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {
-                    smps.map((smp) => (
-                        <a
-                            href={smp.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="group overflow-hidden rounded-xl bg-viola-50 shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-xl"
-                        >
-                            <div class="relative aspect-video w-full overflow-hidden bg-viola-200">
-                                {smp.image ? (
-                                    <img
-                                        src={smp.image}
-                                        alt={smp.name}
-                                        loading="lazy"
-                                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div class="flex h-full w-full items-center justify-center text-viola-400">
-                                        <svg
-                                            width="32"
-                                            height="32"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="1.2"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                        >
-                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                                            <line x1="12" y1="22.08" x2="12" y2="12" />
-                                        </svg>
-                                    </div>
-                                )}
-                            </div>
- 
-                            <div class="p-4">
-                                <p class="text-lg font-bold text-gray-900">{smp.name}</p>
-                                {smp.subtitle && <span class="text-xs font-medium uppercase tracking-wide text-viola-600">{smp.subtitle}</span>}
- 
-                                <div class="mt-1 flex items-center gap-2 font-mono text-xs text-gray-400">
-                                    <span>{new Date(smp.date).toLocaleDateString()}</span>
-                                    {smp.size && (
-                                        <>
-                                            <span>&middot;</span>
-                                            <span>{smp.size}</span>
-                                        </>
+            <p class="mx-auto mt-3 max-w-md text-sm text-gray-500">
+                Download the <code class="rounded bg-viola-200 px-1.5 py-0.5 font-mono text-xs text-viola-700">.zip</code> and drag it into
+                <a href="https://prismlauncher.org/" target="_blank" rel="noopener noreferrer">Prism Launcher</a> to play.
+            </p>
+        </div>
+
+        <div class="relative pb-8">
+            <!-- vertical spine -->
+            <div class="absolute left-5 top-0 h-full w-0.5 bg-viola-300 md:left-1/2 md:-translate-x-px" aria-hidden="true"></div>
+
+            {smps.map((smp, i) => {
+                const isLeft = i % 2 === 0;
+                return (
+                    <div
+                        class:list={[
+                            "timeline-entry group relative mb-12 flex items-start",
+                            "pl-16 md:pl-0",
+                            isLeft ? "md:flex-row-reverse" : "md:flex-row",
+                        ]}
+                    >
+                        {/* dot on the spine */}
+                        <div class="absolute left-5 top-5 z-10 flex -translate-x-1/2 items-center justify-center md:left-1/2">
+                            <span class="h-4 w-4 rounded-full border-[3px] border-viola-400 bg-viola-50 shadow transition-colors duration-300 group-hover:border-viola-600 group-hover:bg-viola-200" />
+                        </div>
+
+                        {/* date label — opposite side on desktop, above card on mobile */}
+                        <div class:list={[
+                            "hidden w-1/2 items-start pt-4 md:flex",
+                            isLeft ? "justify-start pl-14" : "justify-end pr-14",
+                        ]}>
+                            <time class="font-mono text-sm font-semibold text-viola-500">
+                                {smp.date.length === 4 ? smp.date : new Date(smp.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                            </time>
+                        </div>
+
+                        {/* card */}
+                        <div class:list={["w-full md:w-1/2", isLeft ? "md:pr-14" : "md:pl-14"]}>
+                            <a
+                                href={smp.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block overflow-hidden rounded-xl bg-viola-100 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                            >
+                                <div class="relative aspect-video w-full overflow-hidden bg-viola-200">
+                                    {smp.image ? (
+                                        <img
+                                            src={smp.image}
+                                            alt={smp.name}
+                                            loading="lazy"
+                                            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div class="flex h-full w-full items-center justify-center text-viola-400">
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                                            </svg>
+                                        </div>
                                     )}
                                 </div>
- 
-                                <div class="mt-3 flex items-center gap-1 font-mono text-xs uppercase tracking-wide text-viola-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                    <span>View Archive</span>
-                                    <span class="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+
+                                <div class="p-4">
+                                    {/* mobile-only date */}
+                                    <time class="mb-1 block font-mono text-xs font-semibold text-viola-500 md:hidden">
+                                        {smp.date.length === 4 ? smp.date : new Date(smp.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                                    </time>
+
+                                    <p class="text-lg font-bold text-gray-900">{smp.name}</p>
+                                    {smp.subtitle && <span class="text-xs font-medium uppercase tracking-wide text-viola-600">{smp.subtitle}</span>}
+
+                                    <div class="mt-1 flex items-center gap-2 font-mono text-xs text-gray-400">
+                                        {smp.size && <span>{smp.size}</span>}
+                                    </div>
+
+                                    <div class="mt-3 flex items-center gap-1 font-mono text-xs uppercase tracking-wide text-viola-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                        <span>View Archive</span>
+                                        <span class="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    ))
-                }
+                            </a>
+                        </div>
+                    </div>
+                );
+            })}
+
+            {/* terminal dot */}
+            <div class="absolute bottom-0 left-5 z-10 flex -translate-x-1/2 items-center justify-center md:left-1/2">
+                <span class="h-3 w-3 rounded-full bg-viola-400" />
             </div>
         </div>
- 
     </div>
+
+    <script>
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("is-visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.15 },
+        );
+
+        function observe() {
+            document.querySelectorAll(".timeline-entry").forEach((el) => observer.observe(el));
+        }
+
+        observe();
+        document.addEventListener("astro:after-swap", observe);
+    </script>
+
+    <style>
+        .timeline-entry {
+            opacity: 0;
+            transform: translateY(2rem);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .timeline-entry.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </Layout>
