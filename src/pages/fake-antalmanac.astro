@@ -1,0 +1,58 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Google OAuth Login Test | dsns.dev" description="Google OAuth login test page.">
+  <div class="container mx-auto flex flex-col items-center justify-center gap-6 px-1 md:px-8 lg:px-10 xl:px-32 2xl:px-48" style="min-height: 60vh;">
+
+    <h2 class="text-3xl font-bold text-viola-900">Login with Google</h2>
+
+    <div id="buttonDiv"></div>
+
+    <div id="user-info" class="mt-5 hidden rounded-lg bg-white p-6 shadow-md">
+      <p class="text-lg font-semibold text-viola-900">Login Successful!</p>
+      <p class="mt-2 text-viola-800">
+        Google User ID (sub): <span id="google-id" class="font-mono font-bold text-red-600"></span>
+      </p>
+    </div>
+
+  </div>
+</Layout>
+
+<script is:inline src="https://accounts.google.com/gsi/client"></script>
+
+<script is:inline>
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
+  function handleCredentialResponse(response) {
+    const responsePayload = parseJwt(response.credential);
+    console.log("Full Payload:", responsePayload);
+
+    const googleId = responsePayload.sub;
+    console.log("Google User ID:", googleId);
+
+    document.getElementById('google-id').innerText = googleId;
+    document.getElementById('user-info').style.display = 'block';
+  }
+
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: "191210755144-45slubjrenv63ekorpo56odo368rnid3.apps.googleusercontent.com",
+      callback: handleCredentialResponse
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("buttonDiv"),
+      { theme: "outline", size: "large" }
+    );
+
+    google.accounts.id.prompt();
+  }
+</script>
