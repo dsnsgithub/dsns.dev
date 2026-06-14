@@ -47,6 +47,7 @@ import GithubFeedSkeleton from "../components/GithubFeedSkeleton.astro";
 							width={96}
 							class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
 							loading={"eager"}
+							fetchpriority="high"
 						/>
 
 						<div class="flex basis-4/5 flex-col">
@@ -58,7 +59,7 @@ import GithubFeedSkeleton from "../components/GithubFeedSkeleton.astro";
 						href="https://modrinth.com/mod/betterhudfabric"
 						class="flex flex-col items-center gap-10 rounded-xl bg-viola-50 p-8 shadow-lg duration-500 hover:scale-[1.01] hover:transition hover:duration-500 sm:flex-row"
 					>
-						<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+						<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 h-[128px] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} fetchpriority="high" />
 
 						<div class="flex basis-4/5 flex-col">
 							<p class="mb-2 text-xl font-bold">BetterHUD</p>

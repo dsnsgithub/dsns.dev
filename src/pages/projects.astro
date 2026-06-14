@@ -28,6 +28,7 @@ import calopolyIcon from "../assets/calopoly.png";
 						width={96}
 						class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
 						loading={"eager"}
+						fetchpriority="high"
 					/>
 				</ProjectDescription>
 
@@ -37,7 +38,7 @@ import calopolyIcon from "../assets/calopoly.png";
 					description="A Minecraft Fabric mod providing a HUD with essential information."
 					tags={["Java", "Minecraft"]}
 				>
-					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 h-[128px] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} fetchpriority="high" />
 				</ProjectDescription>
 
 				<ProjectDescription
@@ -46,7 +47,7 @@ import calopolyIcon from "../assets/calopoly.png";
 					description="A multiplayer online board game inspired by Monopoly, set in California."
 					tags={["Next.js", "Socket.io"]}
 				>
-					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] h-[128px] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
 				</ProjectDescription>
 
 				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
