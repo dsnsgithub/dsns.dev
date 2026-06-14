@@ -300,7 +300,7 @@
 
     "@octokit/graphql": ["@octokit/graphql@9.0.3", "", { "dependencies": { "@octokit/request": "^10.0.6", "@octokit/types": "^16.0.0", "universal-user-agent": "^7.0.0" } }, "sha512-grAEuupr/C1rALFnXTv6ZQhFuL1D8G5y8CN04RgrO4FIPMrtm+mcZzFG7dcBm+nq+1ppNixu+Jd78aeJOYxlGA=="],
 
-    "@octokit/openapi-types": ["@octokit/openapi-types@github:dsnsgithub/openapi-types.ts#0ff4230", {}, "dsnsgithub-openapi-types.ts-0ff4230"],
+    "@octokit/openapi-types": ["@octokit/openapi-types@github:dsnsgithub/openapi-types.ts#0ff4230", {}, "dsnsgithub-openapi-types.ts-0ff4230", "sha512-UFafzpRJjRyzKXr3+44J05xOEVnKF837wqtMUekzfmHDHd9nWhdF+i96vTH4yRPzsFf6gykweEfVheYSk/VBHw=="],
 
     "@octokit/plugin-paginate-rest": ["@octokit/plugin-paginate-rest@14.0.0", "", { "dependencies": { "@octokit/types": "^16.0.0" }, "peerDependencies": { "@octokit/core": ">=6" } }, "sha512-fNVRE7ufJiAA3XUrha2omTA39M6IXIc6GIZLvlbsm8QOQCYvpq/LkMNGyFlB1d8hTDzsAXa3OKtybdMAYsV/fw=="],
 
