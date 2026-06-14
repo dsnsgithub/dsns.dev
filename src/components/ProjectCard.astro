@@ -12,7 +12,7 @@ const { title, url, description, tags } = Astro.props;
 <a href={url} class="flex flex-col items-center gap-10 rounded-xl bg-viola-50 p-8 shadow-lg duration-500 hover:scale-[1.01] hover:transition hover:duration-500 sm:flex-row">
 	<slot />
 
-	<div class="flex basis-4/5 flex-col gap-4">
+	<div class="flex min-w-0 flex-1 flex-col gap-4">
 		<div>
 			<p class="mb-2 text-xl font-bold">{title}</p>
 			<div>{description}</div>

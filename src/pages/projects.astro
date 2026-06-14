@@ -25,8 +25,9 @@ import calopolyIcon from "../assets/calopoly.png";
 					<Image
 						src={scheduliIcon}
 						alt="Scheduli Icon"
-						width={96}
-						class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
+						width={128}
+						height={128}
+						class="aspect-square h-[96px] w-[96px] shrink-0 rounded-xl bg-[#ddeff0] p-4 md:h-[128px] md:w-[128px]"
 						loading={"eager"}
 					/>
 				</ProjectDescription>
@@ -37,7 +38,7 @@ import calopolyIcon from "../assets/calopoly.png";
 					description="A Minecraft Fabric mod providing a HUD with essential information."
 					tags={["Java", "Minecraft"]}
 				>
-					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} class={`rounded-xl p-4 bg-viola-200 w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+					<Image src={betterHudIcon} alt={`BetterHUD Icon`} width={128} height={128} class="aspect-square h-[128px] w-[128px] shrink-0 rounded-xl bg-viola-200 p-4" loading={"eager"} />
 				</ProjectDescription>
 
 				<ProjectDescription
@@ -46,22 +47,23 @@ import calopolyIcon from "../assets/calopoly.png";
 					description="A multiplayer online board game inspired by Monopoly, set in California."
 					tags={["Next.js", "Socket.io"]}
 				>
-					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} class={`rounded-xl p-3 bg-[#dfceba] w-[128px] basis-1/5 aspect-square"`} loading={"eager"} />
+					<Image src={calopolyIcon} alt={`Cal-opoly Icon`} width={128} height={128} class="aspect-square h-[128px] w-[128px] shrink-0 rounded-xl bg-[#dfceba] p-3" loading={"eager"} />
 				</ProjectDescription>
 
 				<ProjectDescription title="Recent Games" url="/recentgames" description="Find the status and recent games of any Hypixel player." tags={["React", "Hypixel API"]}>
 					<Image
 						src={mcHead}
 						alt={`Recent Games Icon`}
-						width={96}
-						class={`rounded-xl p-7 bg-viola-200 w-[96px] h-[96px] md:w-[128px] md:h-[128px] basis-1/5 aspect-square"`}
+						width={128}
+						height={128}
+						class="aspect-square h-[96px] w-[96px] shrink-0 rounded-xl bg-viola-200 p-7 md:h-[128px] md:w-[128px]"
 						loading={"eager"}
 					/>
 				</ProjectDescription>
 
 				<ProjectDescription title="Audio Frequency Analyzer" url="/eq" description="Test headphones/speakers by uploading an audio file and sculpting the sound." tags={["Astro"]}>
-					<div>
-						<Icon name="mdi:equalizer" class="aspect-square h-[96px] w-[96px] basis-1/5 rounded-xl bg-viola-200 p-7 text-3xl text-viola-600 md:h-[128px] md:w-[128px]" />
+					<div class="shrink-0">
+						<Icon name="mdi:equalizer" class="aspect-square h-[96px] w-[96px] rounded-xl bg-viola-200 p-7 text-3xl text-viola-600 md:h-[128px] md:w-[128px]" />
 					</div>
 				</ProjectDescription>
 
