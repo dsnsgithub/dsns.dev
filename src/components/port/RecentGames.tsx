@@ -1,5 +1,5 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 interface StatusData {
 	success: boolean;
@@ -43,7 +43,7 @@ interface HypixelAPIResponse {
 	};
 }
 
-export default function RecentGames({ children }: { children: JSX.Element }) {
+export default function RecentGames({ children }: { children: ReactNode }) {
 	const [username, setUsername] = useState("");
 	const [actualUsername, setActualUsername] = useState<String | number>("");
 	const [uuid, setUUID] = useState("");
@@ -99,7 +99,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						type="text"
 						id="inputBox"
 						placeholder="Search..."
-						className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
+						className="w-5/6 grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-hidden"
 						onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>
@@ -191,7 +191,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 							)}
 
 							{actualUsername != -1 && uuid && (statusData || recentGamesData) ? (
-								<div className="m-2 overflow-scroll rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl scrollbar-none">
+								<div className="m-2 scrollbar-none overflow-scroll rounded-xl border-2 border-viola-300 bg-viola-100 p-6 shadow-xl">
 									<img src={`https://hypixel.paniek.de/signature/${uuid}/general-tooltip`} alt="Hypixel Player Information" className="min-h-[170px] min-w-[430px]"></img>
 								</div>
 							) : (

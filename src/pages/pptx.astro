@@ -73,7 +73,7 @@ import { Icon } from "astro-icon/components";
         
         filesToProcess.forEach(file => {
             const row = document.createElement('div');
-            row.className = "flex items-center justify-between rounded-lg bg-viola-50 p-4 shadow-sm border border-viola-200";
+            row.className = "flex items-center justify-between rounded-lg bg-viola-50 p-4 shadow-xs border border-viola-200";
             row.innerHTML = `
                 <span class="font-medium text-viola-900 truncate max-w-[70%]">${file.name}</span>
                 <span id="status-${file.name.replace(/\W/g, '')}" class="text-xs font-bold uppercase tracking-wider text-viola-400">Ready</span>

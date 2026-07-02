@@ -65,8 +65,8 @@ export default function ServerStatus() {
 
 			{/* All Systems Operational Banner */}
 			{!loading && allSystemsOperational && (
-				<div className="mb-8 flex items-center rounded-lg border-l-4 border-green-500 bg-green-100 p-4 text-green-800 shadow" role="alert">
-					<svg className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+				<div className="mb-8 flex items-center rounded-lg border-l-4 border-green-500 bg-green-100 p-4 text-green-800 shadow-sm" role="alert">
+					<svg className="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
 						<path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 					<div className="ml-3">
@@ -77,8 +77,8 @@ export default function ServerStatus() {
 
 			{/* Not all systems operation issue banner */}
 			{!loading && !allSystemsOperational && (
-				<div className="mb-8 flex items-center rounded-lg border-l-4 border-red-500 bg-red-100 p-4 text-red-800 shadow" role="alert">
-					<svg className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+				<div className="mb-8 flex items-center rounded-lg border-l-4 border-red-500 bg-red-100 p-4 text-red-800 shadow-sm" role="alert">
+					<svg className="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
 						<path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 					<div className="ml-3">
@@ -114,7 +114,7 @@ export default function ServerStatus() {
 											aria-atomic="true"
 										>
 											<div className="flex items-center space-x-4">
-												<img src={image} alt={`${name} favicon`} width={48} className="rounded-full shadow-sm" />
+												<img src={image} alt={`${name} favicon`} width={48} className="rounded-full shadow-xs" />
 												<div>
 													<p className="text-lg font-semibold">{name}</p>
 													<p className="break-words text-sm text-gray-600">{url}</p>

@@ -1,7 +1,8 @@
 ---
-import "@fontsource-variable/dm-sans";
+import "../styles/global.css";
+import "@fontsource-variable/dm-sans/index.css";
 import Nav from "../components/Nav.astro";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import PostHog from "../components/PostHog.astro";
 
 interface Props {
@@ -13,7 +14,7 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="overflow-x-hidden overflow-y-scroll scrollbar scrollbar-track-viola-200 scrollbar-thumb-viola-400 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-w-2">
+<html lang="en" class="scrollbar scrollbar-thumb-viola-400 scrollbar-track-viola-200 overflow-x-hidden overflow-y-scroll scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-w-2">
 	<head>
 		<meta charset="UTF-8" />
 		<meta property="og:type" content="website" />
@@ -28,7 +29,7 @@ const { title, description } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		<ViewTransitions />
+		<ClientRouter />
 		<PostHog />
 	</head>
 	<body class="container mx-auto my-10 bg-viola-50">

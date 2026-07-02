@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar" {
+	nocompatible: true;
+	preferredstrategy: "pseudoelements";
+}
+
+@theme {
+	--font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+	--color-viola-50: #faf5f7;
+	--color-viola-100: #f6edf1;
+	--color-viola-200: #eedce3;
+	--color-viola-300: #e2bfcd;
+	--color-viola-400: #c98aa2;
+	--color-viola-500: #bd7790;
+	--color-viola-600: #a85a72;
+	--color-viola-700: #8f475b;
+	--color-viola-800: #773d4c;
+	--color-viola-900: #653642;
+	--color-viola-950: #3b1c24;
+}
+
+/*
+	Tailwind v3 compatibility: restore v3 defaults that changed in v4
+	so existing markup keeps rendering the same.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+}

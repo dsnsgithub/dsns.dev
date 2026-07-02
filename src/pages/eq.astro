@@ -10,13 +10,13 @@ import Layout from "../layouts/Layout.astro";
 				<p>
 					Test headphones/speakers by uploading an audio file and sculpting the sound.
 					<div class="mt-2 flex flex-wrap gap-3">
-						<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+						<a href="/symbolism.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow-sm transition hover:bg-viola-300">
 							🌌 <span>Symbolism</span>
 						</a>
-						<a href="/invincible.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+						<a href="/invincible.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow-sm transition hover:bg-viola-300">
 							💪 <span>Invincible</span>
 						</a>
-						<a href="/mortals.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300">
+						<a href="/mortals.mp3" download class="inline-flex items-center gap-1 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow-sm transition hover:bg-viola-300">
 							🥁 <span>Mortals</span>
 						</a>
 					</div>
@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
 						type="file"
 						id="audio-file"
 						accept=".mp3,.flac,.wav, .m4a, .ogg, .aac"
-						class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-none focus:ring-2 focus:ring-viola-400"
+						class="block rounded-lg border border-viola-300 bg-viola-50 px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-viola-200 file:px-4 file:py-2 hover:file:bg-viola-300 focus:outline-hidden focus:ring-2 focus:ring-viola-400"
 					/>
 
 					<div class="relative flex items-center gap-2 rounded-lg border border-viola-300 bg-viola-200 p-4 shadow-xl">
@@ -47,7 +47,7 @@ import Layout from "../layouts/Layout.astro";
 						/>
 						<span
 							id="detail-tooltip"
-							class="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 rounded bg-viola-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200"
+							class="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 rounded-sm bg-viola-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200"
 							style="white-space:nowrap;"
 						>
 							4096
@@ -96,8 +96,8 @@ import Layout from "../layouts/Layout.astro";
 				<div id="eq-header" class="hidden items-center justify-between">
 					<h3 class="text-lg font-semibold">Parametric EQ</h3>
 					<div class="flex gap-2">
-						<button id="add-band-btn" class="rounded-lg bg-viola-300 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-400"> + Add Band </button>
-						<button id="reset-eq-btn" class="rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow transition hover:bg-viola-300"> Reset EQ </button>
+						<button id="add-band-btn" class="rounded-lg bg-viola-300 px-3 py-1 text-sm font-medium shadow-sm transition hover:bg-viola-400"> + Add Band </button>
+						<button id="reset-eq-btn" class="rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium shadow-sm transition hover:bg-viola-300"> Reset EQ </button>
 					</div>
 				</div>
 				<div id="eq-details" class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-3 lg:grid-cols-5"></div>
@@ -381,7 +381,7 @@ import Layout from "../layouts/Layout.astro";
 							card.innerHTML = `
                         <div class="flex items-center justify-between mb-2">
                             <p class="font-bold text-center flex-1" id="freq-display-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</p>
-                            <button class="remove-band-btn ml-2 px-2 py-1 bg-viola-600 hover:bg-viola-700 rounded text-xs font-medium text-white transition" data-index="${index}">×</button>
+                            <button class="remove-band-btn ml-2 px-2 py-1 bg-viola-600 hover:bg-viola-700 rounded-sm text-xs font-medium text-white transition" data-index="${index}">×</button>
                         </div>
                         <div class="mt-2">
                             <label for="freq-${index}" class="block text-xs">Frequency: <span id="freq-val-${index}">${filter.frequency.value < 1000 ? Math.round(filter.frequency.value) + " Hz" : (filter.frequency.value / 1000).toFixed(1) + " kHz"}</span></label>
@@ -393,7 +393,7 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                         <div class="mt-2">
                             <label for="type-${index}" class="block text-xs">Type:</label>
-                            <select id="type-${index}" class="w-full mt-1 px-2 py-1 bg-viola-50 border border-viola-300 rounded text-xs">
+                            <select id="type-${index}" class="w-full mt-1 px-2 py-1 bg-viola-50 border border-viola-300 rounded-sm text-xs">
                                 <option value="peaking" ${filter.type === "peaking" ? "selected" : ""}>Peaking</option>
                                 <option value="lowshelf" ${filter.type === "lowshelf" ? "selected" : ""}>Low Shelf</option>
                                 <option value="highshelf" ${filter.type === "highshelf" ? "selected" : ""}>High Shelf</option>

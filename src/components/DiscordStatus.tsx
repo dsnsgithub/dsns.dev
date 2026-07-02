@@ -73,7 +73,7 @@ const LanyardStatus = () => {
 					<h3 className="text-md mb-2 font-bold">Listening to Spotify</h3>
 
 					<div className="flex items-center space-x-4">
-						<img src={status.spotify.album_art_url as string} alt="Album Art" className="h-16 w-16 rounded" />
+						<img src={status.spotify.album_art_url as string} alt="Album Art" className="h-16 w-16 rounded-sm" />
 						<div>
 							<h4 className="w-32 truncate text-sm md:w-48 lg:w-32 xl:w-32 2xl:w-48" title={status.spotify.song}>
 								{status.spotify.song}
@@ -118,11 +118,11 @@ const LanyardStatus = () => {
 				<div className="m-2 rounded-lg bg-viola-100 p-8 shadow-lg">
 					<h2 className="mb-4 text-2xl font-bold">Status</h2>
 					<div className="flex items-center space-x-4">
-						<div className="relative flex-shrink-0">
-							{largeImage && <img src={largeImage} alt="Large Activity Icon" className="h-16 w-16 rounded" />}
+						<div className="relative shrink-0">
+							{largeImage && <img src={largeImage} alt="Large Activity Icon" className="h-16 w-16 rounded-sm" />}
 							{!largeImage && !smallImage && activity.emoji?.name && <span className="text-3xl">{activity.emoji.name}</span>}
-							{smallImage && !largeImage && <img src={smallImage} alt="Activity Icon" className="h-16 w-16 rounded" />}
-							{smallImage && largeImage && <img src={smallImage} alt="Small Activity Icon" className="ring-3 absolute bottom-0 right-0 h-6 w-6 rounded" />}
+							{smallImage && !largeImage && <img src={smallImage} alt="Activity Icon" className="h-16 w-16 rounded-sm" />}
+							{smallImage && largeImage && <img src={smallImage} alt="Small Activity Icon" className="ring-3 absolute bottom-0 right-0 h-6 w-6 rounded-sm" />}
 						</div>
 
 						<div>
