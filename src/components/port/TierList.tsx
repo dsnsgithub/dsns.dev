@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 interface Element {
 	id: string;
 	name: string;
-    color: string;
+	color: string;
 	area: string;
 }
 
@@ -24,15 +24,15 @@ function Column({ children, id }: { children: React.ReactNode; id: string }) {
 		S: "bg-red-200",
 		A: "bg-orange-200",
 		B: "bg-yellow-200",
-        C: "bg-green-200",
-        F: "bg-blue-200",
+		C: "bg-green-200",
+		F: "bg-blue-200"
 	};
 
 	return (
 		<div className="flex h-20 flex-row items-center">
 			{!id.startsWith("_") ? <div className={colors[id] + " flex h-20 w-20 items-center justify-center rounded-l-xl"}>{id} Tier</div> : <></>}
 
-			<div ref={ref} className={(!id.startsWith("_") ? "rounded-r-xl" : "rounded-xl") +  " bg-viola-100" + " flex h-20 w-full flex-row gap-2 p-2 "}>
+			<div ref={ref} className={(!id.startsWith("_") ? "rounded-r-xl" : "rounded-xl") + " bg-viola-100" + " flex h-20 w-full flex-row gap-2 p-2"}>
 				{children}
 			</div>
 		</div>
@@ -54,7 +54,7 @@ function Item(props: { element: Element; index: number; column: string }) {
 
 			<div className="flex flex-col p-2">
 				<div>{props.element.name}</div>
-                <div className="text-xs text-slate-400">{props.element.area}</div>
+				<div className="text-xs text-slate-400">{props.element.area}</div>
 			</div>
 		</button>
 	);
@@ -73,22 +73,19 @@ export default function TierList() {
 		]
 	});
 
-    useEffect(() => {
-        const items = localStorage.getItem("items");
-        if (!items) return;
+	useEffect(() => {
+		const items = localStorage.getItem("items");
+		if (!items) return;
 
-        console.log(items);
+		console.log(items);
 
-        setItems(JSON.parse(items));
-    }, []);
+		setItems(JSON.parse(items));
+	}, []);
 
-    useEffect(() => {
-        localStorage.setItem("items", JSON.stringify(items));
-        console.log(items);
-
-    }, [items]);
-
-
+	useEffect(() => {
+		localStorage.setItem("items", JSON.stringify(items));
+		console.log(items);
+	}, [items]);
 
 	const [columnOrder, setColumnOrder] = useState(() => Object.keys(items));
 
