@@ -274,25 +274,130 @@ function GeoDetails({ geo }: { geo: Geo }) {
 	);
 }
 
+// Tiles are laid out by hand rather than pulled in through a map library — a
+// static, centred view needs nothing more than the Web Mercator projection, and
+// it keeps the page dependency-free.
+const TILE_SIZE = 256;
+const MIN_ZOOM = 2;
+const MAX_ZOOM = 16;
+const DEFAULT_ZOOM = 11;
+
+function project(lat: number, lon: number, zoom: number) {
+	const scale = TILE_SIZE * 2 ** zoom;
+	const bounded = Math.max(-85.05112878, Math.min(85.05112878, lat));
+	const sin = Math.sin((bounded * Math.PI) / 180);
+
+	return {
+		x: ((lon + 180) / 360) * scale,
+		y: (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * scale
+	};
+}
+
 function LocationMap({ geo }: { geo: Geo }) {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [size, setSize] = useState({ width: 0, height: 0 });
+	const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+
+	// Start each new lookup back at the default zoom.
+	useEffect(() => setZoom(DEFAULT_ZOOM), [geo.ip]);
+
+	useEffect(() => {
+		const element = containerRef.current;
+		if (!element) return;
+
+		const measure = () => setSize({ width: element.clientWidth, height: element.clientHeight });
+		measure();
+
+		const observer = new ResizeObserver(measure);
+		observer.observe(element);
+		return () => observer.disconnect();
+	}, []);
+
 	if (geo.latitude == null || geo.longitude == null) return null;
 
-	const lat = Math.max(-85, Math.min(85, geo.latitude));
-	const lon = Math.max(-180, Math.min(180, geo.longitude));
-	const bbox = [lon - 0.4, lat - 0.3, lon + 0.4, lat + 0.3].map((value) => value.toFixed(4)).join("%2C");
+	const { width, height } = size;
+	const centre = project(geo.latitude, geo.longitude, zoom);
+	const left = centre.x - width / 2;
+	const top = centre.y - height / 2;
+	const tileCount = 2 ** zoom;
+
+	const tiles: { key: string; src: string; x: number; y: number }[] = [];
+	if (width > 0 && height > 0) {
+		for (let tx = Math.floor(left / TILE_SIZE); tx <= Math.floor((left + width) / TILE_SIZE); tx++) {
+			for (let ty = Math.floor(top / TILE_SIZE); ty <= Math.floor((top + height) / TILE_SIZE); ty++) {
+				if (ty < 0 || ty >= tileCount) continue;
+
+				// Wrap horizontally so the map doesn't tear at the date line.
+				const wrapped = ((tx % tileCount) + tileCount) % tileCount;
+				const subdomain = "abc"[Math.abs(tx + ty) % 3];
+
+				tiles.push({
+					key: `${zoom}/${tx}/${ty}`,
+					src: `https://${subdomain}.basemaps.cartocdn.com/light_all/${zoom}/${wrapped}/${ty}@2x.png`,
+					x: tx * TILE_SIZE - left,
+					y: ty * TILE_SIZE - top
+				});
+			}
+		}
+	}
 
 	return (
-		<iframe
-			title={`Approximate location of ${geo.ip}`}
-			className="mt-4 h-64 w-full rounded-lg border-2 border-viola-300"
-			loading="lazy"
-			referrerPolicy="no-referrer"
-			src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`}
-		></iframe>
+		<div className="mt-4 overflow-hidden rounded-xl border-2 border-viola-300 shadow-md">
+			<div ref={containerRef} className="relative h-64 w-full bg-viola-100 md:h-80">
+				{tiles.map((tile) => (
+					<img
+						key={tile.key}
+						src={tile.src}
+						alt=""
+						draggable={false}
+						className="pointer-events-none absolute select-none"
+						style={{ left: tile.x, top: tile.y, width: TILE_SIZE, height: TILE_SIZE }}
+					/>
+				))}
+
+				{/* Soft edge fade so the tiles melt into the card instead of ending abruptly. */}
+				<div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_28px_rgba(59,28,36,0.13)]"></div>
+
+				<div className="pointer-events-none absolute left-1/2 top-1/2 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2">
+					<span className="absolute inset-0 animate-ping rounded-full bg-viola-500 opacity-60"></span>
+					<span className="absolute inset-0 rounded-full border-[3px] border-white bg-viola-600 shadow-[0_2px_10px_rgba(59,28,36,0.5)]"></span>
+				</div>
+
+				<div className="absolute right-3 top-3 flex flex-col overflow-hidden rounded-lg border border-viola-300 bg-white/85 shadow-md backdrop-blur-sm">
+					<button
+						type="button"
+						onClick={() => setZoom((current) => Math.min(MAX_ZOOM, current + 1))}
+						disabled={zoom >= MAX_ZOOM}
+						aria-label="Zoom in"
+						className="h-8 w-8 text-lg leading-none text-viola-900 transition hover:bg-viola-100 disabled:opacity-40"
+					>
+						+
+					</button>
+					<button
+						type="button"
+						onClick={() => setZoom((current) => Math.max(MIN_ZOOM, current - 1))}
+						disabled={zoom <= MIN_ZOOM}
+						aria-label="Zoom out"
+						className="h-8 w-8 border-t border-viola-200 text-lg leading-none text-viola-900 transition hover:bg-viola-100 disabled:opacity-40"
+					>
+						−
+					</button>
+				</div>
+
+				<div className="absolute bottom-0 right-0 rounded-tl-md bg-white/75 px-1.5 py-0.5 text-[10px] text-viola-900/60">
+					<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="hover:underline">
+						© OpenStreetMap
+					</a>{" "}
+					<a href="https://carto.com/attributions" target="_blank" rel="noreferrer" className="hover:underline">
+						© CARTO
+					</a>
+				</div>
+			</div>
+		</div>
 	);
 }
 
-function OwnAddress({ version, state, geo, otherFound }: { version: 4 | 6; state: Detection; geo: Geo | null; otherFound: boolean }) {
+function OwnAddress({ version, state, geo, otherFound, onLocate }: { version: 4 | 6; state: Detection; geo: Geo | null; otherFound: boolean; onLocate: (ip: string) => void }) {
 	const location = formatLocation(geo);
 	const network = formatNetwork(geo);
 	const { ip, done } = state;
@@ -321,6 +426,17 @@ function OwnAddress({ version, state, geo, otherFound }: { version: 4 | 6; state
 						{geo?.timezone?.id ? <Row label="Timezone" value={geo.timezone.id} /> : null}
 						{geo && !location && !network ? <span className="text-viola-800/60">No location data available.</span> : null}
 					</div>
+
+					<button
+						type="button"
+						onClick={() => onLocate(ip)}
+						className="mt-4 flex select-none flex-row items-center gap-1.5 self-start rounded-lg border border-viola-300 bg-viola-100 px-3 py-1.5 text-sm font-medium transition hover:bg-viola-200"
+					>
+						<svg viewBox="0 0 24 24" className="h-4 w-4 text-viola-600" fill="currentColor" aria-hidden="true">
+							<path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+						</svg>
+						Locate on map
+					</button>
 				</>
 			) : (
 				<>
@@ -348,6 +464,9 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 	const [error, setError] = useState<string | null>(null);
 
 	const seenResolvers = useRef(new Set<string>());
+	const inputTouched = useRef(false);
+	const prefilled = useRef(false);
+	const lookupCardRef = useRef<HTMLDivElement>(null);
 	const [resolverListRef] = useAutoAnimate();
 	const [resultRef] = useAutoAnimate();
 
@@ -419,9 +538,33 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 		};
 	}, []);
 
-	async function handleLookup() {
-		const raw = query.trim();
+	// Seed the lookup box with the visitor's own address so the section opens on
+	// something meaningful. Their geo result is already cached from the detection
+	// above, so this costs no extra request.
+	useEffect(() => {
+		if (prefilled.current || inputTouched.current) return;
+
+		const own = ipv4.ip ?? (ipv4.done ? ipv6.ip : null);
+		if (!own) return;
+
+		prefilled.current = true;
+		setQuery(own);
+		handleLookup(own);
+	}, [ipv4, ipv6]);
+
+	function locateAddress(ip: string) {
+		inputTouched.current = true;
+		handleLookup(ip);
+		lookupCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+	}
+
+	// `input` lets the IP cards drive a lookup directly, rather than going through
+	// the query state and waiting a render for it to land.
+	async function handleLookup(input?: string) {
+		const raw = (input ?? query).trim();
 		if (!raw || searching) return;
+
+		if (input !== undefined) setQuery(raw);
 
 		setSearching(true);
 		setError(null);
@@ -485,6 +628,7 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 	}
 
 	const resolverList = Object.values(resolvers);
+	const isOwnResult = result != null && (result.ip === ipv4.ip || result.ip === ipv6.ip);
 
 	return (
 		<div className="rounded-xl bg-viola-100 p-4 shadow-xl lg:p-8">
@@ -496,8 +640,8 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 			<div className="flex flex-col gap-4">
 				<Card title="Your IP Address">
 					<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-						<OwnAddress version={4} state={ipv4} geo={ipv4Geo} otherFound={ipv6.ip !== null} />
-						<OwnAddress version={6} state={ipv6} geo={ipv6Geo} otherFound={ipv4.ip !== null} />
+						<OwnAddress version={4} state={ipv4} geo={ipv4Geo} otherFound={ipv6.ip !== null} onLocate={locateAddress} />
+						<OwnAddress version={6} state={ipv6} geo={ipv6Geo} otherFound={ipv4.ip !== null} onLocate={locateAddress} />
 					</div>
 				</Card>
 
@@ -542,46 +686,60 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 					</div>
 				</Card>
 
-				<Card title="Geolocate an IP">
-					<div className="mb-2 flex flex-row">
-						<input
-							type="text"
-							placeholder="1.1.1.1, 2606:4700::1111, or example.com"
-							value={query}
-							className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
-							onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
-							onKeyDown={(e) => e.key === "Enter" && handleLookup()}
-						></input>
-						<button
-							className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-100 p-5 shadow-md disabled:opacity-60"
-							onClick={() => handleLookup()}
-							disabled={searching}
-							aria-label="Look up IP address"
-						>
-							{children}
-							<div className="hidden md:block">{searching ? "…" : "Lookup"}</div>
-						</button>
-					</div>
+				<div ref={lookupCardRef}>
+					<Card title="Geolocate an IP">
+						<div className="mb-2 flex flex-row">
+							<input
+								type="text"
+								placeholder="1.1.1.1, 2606:4700::1111, or example.com"
+								value={query}
+								className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
+								onInput={(e) => {
+									inputTouched.current = true;
+									setQuery((e.target as HTMLInputElement).value);
+								}}
+								onKeyDown={(e) => e.key === "Enter" && handleLookup()}
+							></input>
+							<button
+								className="ml-4 flex flex-row items-center rounded-xl border-2 border-viola-300 bg-viola-100 p-5 shadow-md disabled:opacity-60"
+								onClick={() => handleLookup()}
+								disabled={searching}
+								aria-label="Look up IP address"
+							>
+								{children}
+								<div className="hidden md:block">{searching ? "…" : "Lookup"}</div>
+							</button>
+						</div>
 
-					<div ref={resultRef}>
-						{error ? <p className="mt-2 text-xl text-red-500">{error}</p> : null}
+						<div ref={resultRef}>
+							{error ? <p className="mt-2 text-xl text-red-500">{error}</p> : null}
 
-						{result ? (
-							<div className="mt-4">
-								{resolvedFrom ? (
-									<p className="mb-2 text-sm text-viola-800/70">
-										Resolved <span className="font-mono">{resolvedFrom}</span> to <span className="font-mono">{result.ip}</span>.
-									</p>
-								) : null}
+							{result ? (
+								<div className="mt-4">
+									{resolvedFrom ? (
+										<p className="mb-2 text-sm text-viola-800/70">
+											Resolved <span className="font-mono">{resolvedFrom}</span> to <span className="font-mono">{result.ip}</span>.
+										</p>
+									) : null}
 
-								<GeoDetails geo={result} />
-								<LocationMap geo={result} />
+									{isOwnResult ? (
+										<p className="mb-3 inline-flex items-center gap-1.5 rounded-lg bg-viola-200 px-3 py-1 text-sm font-medium">
+											<svg viewBox="0 0 24 24" className="h-4 w-4 text-viola-600" fill="currentColor" aria-hidden="true">
+												<path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+											</svg>
+											This is your own address
+										</p>
+									) : null}
 
-								<p className="mt-3 text-sm text-viola-800/70">IP geolocation is approximate — it usually points at the network's registered area, not the device itself.</p>
-							</div>
-						) : null}
-					</div>
-				</Card>
+									<GeoDetails geo={result} />
+									<LocationMap geo={result} />
+
+									<p className="mt-3 text-sm text-viola-800/70">IP geolocation is approximate — it usually points at the network's registered area, not the device itself.</p>
+								</div>
+							) : null}
+						</div>
+					</Card>
+				</div>
 			</div>
 		</div>
 	);
