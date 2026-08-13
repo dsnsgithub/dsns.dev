@@ -13,32 +13,8 @@ const total = PLACES.length;
 	<div class="container mx-auto flex flex-col gap-6 px-1 md:px-8 lg:px-10 xl:px-20 2xl:px-32">
 		<!-- ───────────────────────── Header ───────────────────────── -->
 		<section class="rounded-2xl bg-viola-100 p-6 shadow-lg md:p-10">
-			<div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-				<div>
-					<p class="mb-1 text-sm font-semibold uppercase tracking-widest text-viola-600">Irvine &amp; UC Irvine</p>
-					<h1 class="bg-gradient-to-r from-viola-950 via-viola-700 to-viola-500 bg-clip-text text-4xl font-extrabold text-transparent md:text-5xl">Asian Food Tier List</h1>
-					<p class="mt-3 max-w-2xl text-viola-900">
-						Every Asian restaurant, dessert shop, and boba spot worth arguing about — from Diamond Jamboree to the food court you actually walk to between lectures. Sorted by food category
-						so you can rank one cuisine at a time.
-					</p>
-				</div>
-				<div class="flex shrink-0 flex-row gap-3 md:flex-col md:items-end">
-					<div class="rounded-xl bg-viola-200 px-4 py-3 text-center shadow">
-						<div class="text-2xl font-extrabold leading-none text-viola-900" id="stat-total">{total}</div>
-						<div class="text-[11px] font-semibold uppercase tracking-wide text-viola-700">places</div>
-					</div>
-					<div class="rounded-xl bg-viola-200 px-4 py-3 text-center shadow">
-						<div class="text-2xl font-extrabold leading-none text-viola-900" id="stat-ranked">0</div>
-						<div class="text-[11px] font-semibold uppercase tracking-wide text-viola-700">ranked</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="mt-5 flex flex-wrap items-center gap-2 text-xs">
-				<span class="rounded-full bg-viola-50 px-3 py-1 font-semibold text-viola-800">Updated {LAST_UPDATED}</span>
-				<span class="rounded-full bg-viola-50 px-3 py-1 font-semibold text-viola-800">Saves automatically</span>
-				<span class="rounded-full bg-viola-50 px-3 py-1 font-semibold text-viola-800">Drag on desktop · tap-to-place on mobile</span>
-			</div>
+			<p class="mb-1 text-sm font-semibold uppercase tracking-widest text-viola-600">Irvine &amp; UC Irvine</p>
+			<h1 class="bg-gradient-to-r from-viola-950 via-viola-700 to-viola-500 bg-clip-text text-4xl font-extrabold text-transparent md:text-5xl">Asian Food Tier List</h1>
 		</section>
 
 		<!-- ───────────────────────── Toolbar ───────────────────────── -->
@@ -150,20 +126,6 @@ const total = PLACES.length;
 			<div id="pool" class="flex min-h-[6rem] flex-col gap-5 rounded-xl bg-viola-50 p-3 transition-colors" data-dropzone="pool"></div>
 			<p id="pool-empty" class="hidden py-8 text-center text-sm text-viola-600">Nothing here — either everything is ranked, or your filters are hiding it all.</p>
 		</section>
-
-		<section class="rounded-2xl bg-viola-100 p-6 text-sm text-viola-800 shadow-lg">
-			<h2 class="mb-2 text-lg font-bold text-viola-900">How it works</h2>
-			<ul class="list-inside list-disc space-y-1">
-				<li><b>Desktop:</b> drag a place onto a tier row, or click it and press <kbd>S</kbd> <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>F</kbd>.</li>
-				<li><b>Mobile:</b> tap a place to select it, then tap the tier letter you want.</li>
-				<li>Rename a tier by tapping the letter. Send a place back by selecting it and tapping the Unranked area.</li>
-				<li>Your list is saved in this browser, and “Copy share link” bakes the whole ranking into a URL.</li>
-			</ul>
-			<p class="mt-3 text-xs text-viola-600">
-				Compiled from center directories (Diamond Jamboree, Irvine Company Retail, The Market Place, Trade), UCI Dining, and current listings as of {LAST_UPDATED}. Closed spots are left off —
-				if something changed, add it with the box above.
-			</p>
-		</section>
 	</div>
 
 	<!-- floating action bar for the selected item -->
@@ -231,15 +193,6 @@ const total = PLACES.length;
 	}
 	.tool-btn-danger:hover {
 		background: #f3b4b4;
-	}
-
-	kbd {
-		border-radius: 0.3rem;
-		border: 1px solid theme("colors.viola.300");
-		background: theme("colors.viola.50");
-		padding: 0 0.3rem;
-		font-family: ui-monospace, monospace;
-		font-size: 0.75rem;
 	}
 
 	/* place chips */
@@ -600,8 +553,6 @@ const total = PLACES.length;
 
 		document.getElementById("pool-empty")!.classList.toggle("hidden", visible.length > 0);
 		document.getElementById("pool-count")!.textContent = `· ${visible.length}${visible.length !== unranked.length ? ` of ${unranked.length}` : ""}`;
-		document.getElementById("stat-ranked")!.textContent = String(ranked.size);
-		document.getElementById("stat-total")!.textContent = String(allIds().length);
 
 		renderSelbar();
 	}
