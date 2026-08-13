@@ -266,7 +266,11 @@ function GeoDetails({ geo }: { geo: Geo }) {
 			{geo.type ? <Row label="Type" value={geo.type} /> : null}
 			{location ? <Row label="Location" value={location} /> : null}
 			{geo.postal ? <Row label="Postal Code" value={geo.postal} /> : null}
-			{geo.latitude != null && geo.longitude != null ? <Row label="Coordinates" value={<span className="font-mono">{`${geo.latitude.toFixed(4)}, ${geo.longitude.toFixed(4)}`}</span>} /> : null}
+			{/* Two decimals is about a kilometre — past that the extra digits would
+			    dress up a city-level guess as a street-level one. */}
+			{geo.latitude != null && geo.longitude != null ? (
+				<Row label="Approx. Coordinates" value={<span className="font-mono">{`${geo.latitude.toFixed(2)}, ${geo.longitude.toFixed(2)}`}</span>} />
+			) : null}
 			{network ? <Row label="Network" value={network} /> : null}
 			{geo.connection?.isp && geo.connection.isp !== geo.connection.org ? <Row label="ISP" value={geo.connection.isp} /> : null}
 			{geo.timezone?.id ? <Row label="Timezone" value={`${geo.timezone.id}${geo.timezone.utc ? ` (UTC${geo.timezone.utc})` : ""}`} /> : null}
@@ -279,8 +283,13 @@ function GeoDetails({ geo }: { geo: Geo }) {
 // it keeps the page dependency-free.
 const TILE_SIZE = 256;
 const MIN_ZOOM = 2;
-const MAX_ZOOM = 16;
-const DEFAULT_ZOOM = 11;
+const MAX_ZOOM = 14;
+const EQUATOR_METRES_PER_PIXEL = 156543.03392;
+
+// Mapbox needs an account, so CARTO's Positron is the default. Set
+// PUBLIC_MAPBOX_TOKEN to switch; tiles fall back to CARTO if the token is
+// rejected.
+const MAPBOX_TOKEN = import.meta.env.PUBLIC_MAPBOX_TOKEN as string | undefined;
 
 function project(lat: number, lon: number, zoom: number) {
 	const scale = TILE_SIZE * 2 ** zoom;
@@ -293,13 +302,28 @@ function project(lat: number, lon: number, zoom: number) {
 	};
 }
 
+function metresPerPixel(lat: number, zoom: number) {
+	return (EQUATOR_METRES_PER_PIXEL * Math.cos((lat * Math.PI) / 180)) / 2 ** zoom;
+}
+
+// How much ground the answer really covers. These databases resolve an address
+// to a city or a network's registered area, never to a street, so the radius
+// follows how specific the response managed to be.
+function accuracyRadiusKm(geo: Geo) {
+	if (geo.city) return 25;
+	if (geo.region) return 75;
+	if (geo.country) return 250;
+	return 500;
+}
+
 function LocationMap({ geo }: { geo: Geo }) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState({ width: 0, height: 0 });
-	const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+	const [zoomOffset, setZoomOffset] = useState(0);
+	const [mapboxFailed, setMapboxFailed] = useState(false);
 
-	// Start each new lookup back at the default zoom.
-	useEffect(() => setZoom(DEFAULT_ZOOM), [geo.ip]);
+	// Each new lookup starts framed on its own area again.
+	useEffect(() => setZoomOffset(0), [geo.ip]);
 
 	useEffect(() => {
 		const element = containerRef.current;
@@ -316,6 +340,19 @@ function LocationMap({ geo }: { geo: Geo }) {
 	if (geo.latitude == null || geo.longitude == null) return null;
 
 	const { width, height } = size;
+	const radiusKm = accuracyRadiusKm(geo);
+	const radiusMetres = radiusKm * 1000;
+
+	// Frame the view on the area itself: pick the zoom that leaves the region
+	// covering roughly half the shorter side, so the surrounding context stays
+	// visible and the answer never reads as a single spot.
+	const shortestSide = Math.min(width || 320, height || 256);
+	const fittedZoom = Math.log2((EQUATOR_METRES_PER_PIXEL * Math.cos((geo.latitude * Math.PI) / 180) * shortestSide) / (4 * radiusMetres));
+	const zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.round(fittedZoom) + zoomOffset));
+
+	const radiusPixels = radiusMetres / metresPerPixel(geo.latitude, zoom);
+	const useMapbox = Boolean(MAPBOX_TOKEN) && !mapboxFailed;
+
 	const centre = project(geo.latitude, geo.longitude, zoom);
 	const left = centre.x - width / 2;
 	const top = centre.y - height / 2;
@@ -333,7 +370,9 @@ function LocationMap({ geo }: { geo: Geo }) {
 
 				tiles.push({
 					key: `${zoom}/${tx}/${ty}`,
-					src: `https://${subdomain}.basemaps.cartocdn.com/light_all/${zoom}/${wrapped}/${ty}@2x.png`,
+					src: useMapbox
+						? `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/${TILE_SIZE}/${zoom}/${wrapped}/${ty}@2x?access_token=${MAPBOX_TOKEN}`
+						: `https://${subdomain}.basemaps.cartocdn.com/light_all/${zoom}/${wrapped}/${ty}@2x.png`,
 					x: tx * TILE_SIZE - left,
 					y: ty * TILE_SIZE - top
 				});
@@ -350,6 +389,7 @@ function LocationMap({ geo }: { geo: Geo }) {
 						src={tile.src}
 						alt=""
 						draggable={false}
+						onError={useMapbox ? () => setMapboxFailed(true) : undefined}
 						className="pointer-events-none absolute select-none"
 						style={{ left: tile.x, top: tile.y, width: TILE_SIZE, height: TILE_SIZE }}
 					/>
@@ -358,15 +398,23 @@ function LocationMap({ geo }: { geo: Geo }) {
 				{/* Soft edge fade so the tiles melt into the card instead of ending abruptly. */}
 				<div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_28px_rgba(59,28,36,0.13)]"></div>
 
-				<div className="pointer-events-none absolute left-1/2 top-1/2 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2">
-					<span className="absolute inset-0 animate-ping rounded-full bg-viola-500 opacity-60"></span>
-					<span className="absolute inset-0 rounded-full border-[3px] border-white bg-viola-600 shadow-[0_2px_10px_rgba(59,28,36,0.5)]"></span>
-				</div>
+				{/* The answer is a region, not a point, so it's drawn as a haze that
+				    fades out with no border to trace — there is no exact spot to mark. */}
+				<div
+					className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+					style={{
+						width: radiusPixels * 2,
+						height: radiusPixels * 2,
+						background:
+							"radial-gradient(circle, rgba(168,90,114,0.30) 0%, rgba(168,90,114,0.24) 28%, rgba(168,90,114,0.14) 52%, rgba(168,90,114,0.05) 74%, rgba(168,90,114,0.01) 88%, rgba(168,90,114,0) 100%)",
+						filter: `blur(${Math.max(6, radiusPixels * 0.09)}px)`
+					}}
+				></div>
 
 				<div className="absolute right-3 top-3 flex flex-col overflow-hidden rounded-lg border border-viola-300 bg-white/85 shadow-md backdrop-blur-sm">
 					<button
 						type="button"
-						onClick={() => setZoom((current) => Math.min(MAX_ZOOM, current + 1))}
+						onClick={() => setZoomOffset((current) => current + 1)}
 						disabled={zoom >= MAX_ZOOM}
 						aria-label="Zoom in"
 						className="h-8 w-8 text-lg leading-none text-viola-900 transition hover:bg-viola-100 disabled:opacity-40"
@@ -375,7 +423,7 @@ function LocationMap({ geo }: { geo: Geo }) {
 					</button>
 					<button
 						type="button"
-						onClick={() => setZoom((current) => Math.max(MIN_ZOOM, current - 1))}
+						onClick={() => setZoomOffset((current) => current - 1)}
 						disabled={zoom <= MIN_ZOOM}
 						aria-label="Zoom out"
 						className="h-8 w-8 border-t border-viola-200 text-lg leading-none text-viola-900 transition hover:bg-viola-100 disabled:opacity-40"
@@ -384,13 +432,24 @@ function LocationMap({ geo }: { geo: Geo }) {
 					</button>
 				</div>
 
+				<div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-white/85 px-2.5 py-1.5 text-xs shadow-sm backdrop-blur-sm">
+					<span className="h-3 w-3 shrink-0 rounded-full bg-viola-500/40"></span>
+					<span className="text-viola-900/80">Likely somewhere in this area (~{radiusKm} km)</span>
+				</div>
+
 				<div className="absolute bottom-0 right-0 rounded-tl-md bg-white/75 px-1.5 py-0.5 text-[10px] text-viola-900/60">
 					<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="hover:underline">
 						© OpenStreetMap
 					</a>{" "}
-					<a href="https://carto.com/attributions" target="_blank" rel="noreferrer" className="hover:underline">
-						© CARTO
-					</a>
+					{useMapbox ? (
+						<a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noreferrer" className="hover:underline">
+							© Mapbox
+						</a>
+					) : (
+						<a href="https://carto.com/attributions" target="_blank" rel="noreferrer" className="hover:underline">
+							© CARTO
+						</a>
+					)}
 				</div>
 			</div>
 		</div>
@@ -734,7 +793,10 @@ export default function IPTools({ children }: { children: JSX.Element }) {
 									<GeoDetails geo={result} />
 									<LocationMap geo={result} />
 
-									<p className="mt-3 text-sm text-viola-800/70">IP geolocation is approximate — it usually points at the network's registered area, not the device itself.</p>
+									<p className="mt-3 text-sm text-viola-800/70">
+										IP geolocation resolves to a region, not an address. It reflects where the network block is registered, which can sit far from whoever is using it — and a VPN
+										or mobile carrier moves it further still.
+									</p>
 								</div>
 							) : null}
 						</div>
