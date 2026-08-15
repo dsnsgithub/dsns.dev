@@ -1,0 +1,1049 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { CATEGORIES, TIERS, PLACES, LAST_UPDATED } from "../data/irvineTierlist";
+
+const total = PLACES.length;
+---
+
+<Layout
+	title="Irvine Asian Food Tier List | dsns.dev"
+	description={`Rank every Asian restaurant, dessert shop, and boba spot in Irvine and around UCI. ${total} places, sorted by food category. Updated ${LAST_UPDATED}.`}
+>
+	<div class="container mx-auto flex flex-col gap-6 px-1 md:px-8 lg:px-10 xl:px-20 2xl:px-32">
+		<!-- ───────────────────────── Header ───────────────────────── -->
+		<section class="rounded-2xl bg-viola-100 p-6 shadow-lg md:p-10">
+			<p class="mb-1 text-sm font-semibold uppercase tracking-widest text-viola-600">Irvine &amp; UC Irvine</p>
+			<h1 class="bg-gradient-to-r from-viola-950 via-viola-700 to-viola-500 bg-clip-text text-4xl font-extrabold text-transparent md:text-5xl">Asian Food Tier List</h1>
+		</section>
+
+		<!-- ───────────────────────── Toolbar ───────────────────────── -->
+		<section class="rounded-2xl bg-viola-100 p-4 shadow-lg md:p-6">
+			<div class="flex flex-col gap-4">
+				<div class="flex flex-col gap-3 md:flex-row md:items-center">
+					<label class="relative flex-1">
+						<Icon name="mdi:magnify" class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl text-viola-500" />
+						<input
+							id="search"
+							type="search"
+							placeholder="Search 140+ places — try “tofu”, “boba”, “Jamboree”…"
+							class="w-full rounded-xl border-2 border-viola-200 bg-viola-50 py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-viola-400"
+						/>
+					</label>
+
+					<div class="flex items-center gap-2">
+						<label for="groupby" class="text-sm font-semibold text-viola-800">Sort by</label>
+						<select id="groupby" class="rounded-xl border-2 border-viola-200 bg-viola-50 px-3 py-2.5 text-sm font-medium outline-none transition focus:border-viola-400">
+							<option value="cat">Food category</option>
+							<option value="loc">Location / plaza</option>
+							<option value="az">A → Z</option>
+						</select>
+					</div>
+				</div>
+
+				<div id="cat-filters" class="flex flex-wrap gap-2">
+					<button type="button" data-cat="all" class="cat-chip is-active" style="--dot:#8f475b">All</button>
+					{
+						CATEGORIES.map((c) => (
+							<button type="button" data-cat={c.id} class="cat-chip" style={`--dot:${c.color}`}>
+								<span aria-hidden="true">{c.emoji}</span> {c.label}
+							</button>
+						))
+					}
+				</div>
+
+				<div class="flex flex-wrap items-center gap-2 border-t border-viola-200 pt-4">
+					<button id="btn-png" type="button" class="tool-btn tool-btn-primary">
+						<Icon name="mdi:image-outline" class="text-lg" /> Download image
+					</button>
+					<button id="btn-share" type="button" class="tool-btn">
+						<Icon name="mdi:link-variant" class="text-lg" /> Copy share link
+					</button>
+					<button id="btn-fill" type="button" class="tool-btn">
+						<Icon name="mdi:shuffle-variant" class="text-lg" /> Surprise me
+					</button>
+					<button id="btn-reset" type="button" class="tool-btn tool-btn-danger">
+						<Icon name="mdi:refresh" class="text-lg" /> Reset
+					</button>
+					<span id="toast" class="ml-1 text-sm font-semibold text-viola-700 opacity-0 transition-opacity duration-300"></span>
+				</div>
+			</div>
+		</section>
+
+		<!-- ───────────────────────── Tiers ───────────────────────── -->
+		<section id="tierlist" class="flex flex-col gap-3 overflow-hidden rounded-2xl bg-viola-100 p-4 shadow-lg md:p-6">
+			{
+				TIERS.map((t) => (
+					<div class="tier-row flex overflow-hidden rounded-xl shadow" data-tier-row={t.id}>
+						<button
+							type="button"
+							class="tier-label flex w-16 shrink-0 flex-col items-center justify-center gap-0.5 px-1 py-3 md:w-24"
+							style={`background:${t.color}`}
+							data-dropzone={t.id}
+							title={`Put the selected place in ${t.label} tier`}
+						>
+							<span class="tier-letter text-2xl font-extrabold leading-tight text-viola-950 outline-none md:text-3xl" contenteditable="true" spellcheck="false" data-tier-label={t.id}>
+								{t.label}
+							</span>
+							<span class="text-[10px] font-bold uppercase tracking-wider text-viola-950/50" data-tier-count={t.id} />
+						</button>
+
+						<div class="drop-body flex min-h-[5.5rem] flex-1 flex-wrap content-start items-start gap-2 bg-viola-50 p-3 transition-colors" data-dropzone={t.id} />
+
+						<button
+							type="button"
+							class="clear-row w-8 shrink-0 bg-viola-200 text-viola-700 transition hover:bg-viola-300 hover:text-viola-900"
+							data-clear={t.id}
+							title="Clear this tier"
+							aria-label={`Clear ${t.label} tier`}
+						>
+							<Icon name="mdi:close" class="mx-auto text-lg" />
+						</button>
+					</div>
+				))
+			}
+		</section>
+
+		<!-- ───────────────────────── Pool ───────────────────────── -->
+		<section class="rounded-2xl bg-viola-100 p-4 shadow-lg md:p-6">
+			<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+				<h2 class="text-xl font-bold text-viola-900">
+					Unranked <span class="text-viola-600" id="pool-count"></span>
+				</h2>
+				<form id="add-form" class="flex items-center gap-2">
+					<input
+						id="add-input"
+						type="text"
+						placeholder="Missing a spot? Add it"
+						class="w-48 rounded-xl border-2 border-viola-200 bg-viola-50 px-3 py-2 text-sm outline-none transition focus:border-viola-400 sm:w-56"
+					/>
+					<button type="submit" class="tool-btn tool-btn-primary">
+						<Icon name="mdi:plus" class="text-lg" /> Add
+					</button>
+				</form>
+			</div>
+
+			<div id="pool" class="flex min-h-[6rem] flex-col gap-5 rounded-xl bg-viola-50 p-3 transition-colors" data-dropzone="pool"></div>
+			<p id="pool-empty" class="hidden py-8 text-center text-sm text-viola-600">Nothing here — either everything is ranked, or your filters are hiding it all.</p>
+		</section>
+	</div>
+
+	<!-- floating action bar for the selected item -->
+	<div
+		id="selbar"
+		class="pointer-events-none fixed inset-x-0 bottom-4 z-40 mx-auto flex w-fit translate-y-4 items-center gap-2 rounded-full bg-viola-950/95 px-3 py-2 opacity-0 shadow-2xl transition-all"
+	>
+		<span id="selbar-name" class="max-w-[8rem] truncate px-2 text-sm font-bold text-viola-50 sm:max-w-xs"></span>
+		<div class="flex gap-1" id="selbar-tiers"></div>
+		<button type="button" id="selbar-clear" class="rounded-full bg-viola-800 px-3 py-1.5 text-xs font-bold text-viola-100 hover:bg-viola-700"> Unrank </button>
+	</div>
+</Layout>
+
+<style>
+	.cat-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		border-radius: 9999px;
+		border: 2px solid theme("colors.viola.200");
+		background: theme("colors.viola.50");
+		padding: 0.3rem 0.75rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: theme("colors.viola.900");
+		transition:
+			background 0.15s,
+			border-color 0.15s,
+			transform 0.1s;
+	}
+	.cat-chip:hover {
+		border-color: var(--dot);
+		transform: translateY(-1px);
+	}
+	.cat-chip.is-active {
+		background: var(--dot);
+		border-color: var(--dot);
+		color: white;
+	}
+
+	.tool-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		border-radius: 0.75rem;
+		background: theme("colors.viola.200");
+		padding: 0.5rem 0.9rem;
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: theme("colors.viola.900");
+		transition:
+			background 0.15s,
+			transform 0.1s;
+	}
+	.tool-btn:hover {
+		background: theme("colors.viola.300");
+		transform: translateY(-1px);
+	}
+	.tool-btn-primary {
+		background: theme("colors.viola.600");
+		color: white;
+	}
+	.tool-btn-primary:hover {
+		background: theme("colors.viola.700");
+	}
+	.tool-btn-danger:hover {
+		background: #f3b4b4;
+	}
+
+	/* place chips */
+	:global(.place) {
+		position: relative;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: flex-start;
+		max-width: 13rem;
+		border-radius: 0.6rem;
+		border: 2px solid theme("colors.viola.200");
+		border-left-width: 6px;
+		background: white;
+		padding: 0.3rem 0.55rem;
+		text-align: left;
+		line-height: 1.15;
+		box-shadow: 0 1px 2px rgb(59 28 36 / 0.08);
+		cursor: grab;
+		user-select: none;
+		touch-action: manipulation;
+		transition:
+			transform 0.1s,
+			box-shadow 0.15s,
+			border-color 0.15s;
+	}
+	:global(.place:hover) {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 14px rgb(59 28 36 / 0.16);
+	}
+	:global(.place.is-selected) {
+		border-color: theme("colors.viola.600");
+		box-shadow: 0 0 0 3px theme("colors.viola.300");
+	}
+	:global(.place-name) {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: theme("colors.viola.950");
+	}
+	:global(.place-sub) {
+		font-size: 0.62rem;
+		font-weight: 600;
+		color: theme("colors.viola.600");
+	}
+	:global(.place-new) {
+		position: absolute;
+		top: -0.45rem;
+		right: -0.35rem;
+		border-radius: 9999px;
+		background: theme("colors.viola.600");
+		padding: 0 0.3rem;
+		font-size: 0.55rem;
+		font-weight: 800;
+		letter-spacing: 0.05em;
+		color: white;
+	}
+
+	:global(.drop-body.is-over),
+	:global(#pool.is-over) {
+		background: theme("colors.viola.200");
+	}
+
+	:global(.drag-ghost) {
+		position: fixed;
+		z-index: 60;
+		pointer-events: none;
+		opacity: 0.92;
+		transform: rotate(-2deg) scale(1.05);
+		box-shadow: 0 12px 28px rgb(59 28 36 / 0.35);
+	}
+
+	:global(.drop-marker) {
+		width: 3px;
+		align-self: stretch;
+		min-height: 2.2rem;
+		border-radius: 9999px;
+		background: theme("colors.viola.600");
+	}
+
+	.tier-letter {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+	/* renamed tiers ("GOAT", "mid") need to shrink to stay inside the label */
+	.tier-letter.is-long {
+		font-size: 1rem;
+		letter-spacing: -0.01em;
+	}
+	.tier-letter:focus {
+		background: rgb(255 255 255 / 0.35);
+		border-radius: 0.3rem;
+	}
+
+	#selbar.is-open {
+		pointer-events: auto;
+		opacity: 1;
+		transform: translateY(0);
+	}
+</style>
+
+<script>
+	import { PLACES, CATEGORIES, TIERS, LAST_UPDATED } from "../data/irvineTierlist";
+
+	type Meta = { name: string; cat: string; loc: string; note?: string; fresh?: boolean };
+
+	const STORAGE_KEY = "irvine-tierlist-v1";
+	const CAT_BY_ID = new Map(CATEGORIES.map((c) => [c.id, c]));
+
+	interface State {
+		tiers: Record<string, string[]>;
+		custom: string[];
+		labels: Record<string, string>;
+	}
+
+	let state: State = emptyState();
+	let filterCat = "all";
+	let filterText = "";
+	let groupBy: "cat" | "loc" | "az" = "cat";
+	let selected: string | null = null;
+
+	function emptyState(): State {
+		const tiers: Record<string, string[]> = {};
+		for (const t of TIERS) tiers[t.id] = [];
+		return { tiers, custom: [], labels: {} };
+	}
+
+	const isCustom = (id: string) => id.startsWith("_");
+
+	function meta(id: string): Meta {
+		if (isCustom(id)) {
+			return { name: state.custom[Number(id.slice(1))] ?? "Unknown", cat: "fusion", loc: "Added by you" };
+		}
+		const p = PLACES[Number(id)];
+		return p ?? { name: "Unknown", cat: "fusion", loc: "" };
+	}
+
+	const catColor = (cat: string) => CAT_BY_ID.get(cat as any)?.color ?? "#8f475b";
+
+	function allIds(): string[] {
+		const ids = PLACES.map((_, i) => String(i));
+		state.custom.forEach((_, i) => ids.push("_" + i));
+		return ids;
+	}
+
+	function rankedSet(): Set<string> {
+		const s = new Set<string>();
+		for (const t of TIERS) for (const id of state.tiers[t.id]) s.add(id);
+		return s;
+	}
+
+	// ───────────────────────────── persistence ─────────────────────────────
+
+	function save() {
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+		} catch {
+			/* private mode, whatever */
+		}
+	}
+
+	function loadLocal(): boolean {
+		try {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (!raw) return false;
+			const parsed = JSON.parse(raw) as State;
+			const next = emptyState();
+			next.custom = Array.isArray(parsed.custom) ? parsed.custom.map(String) : [];
+			next.labels = parsed.labels && typeof parsed.labels === "object" ? parsed.labels : {};
+			const valid = new Set(allIdsFor(next.custom.length));
+			for (const t of TIERS) {
+				const list = Array.isArray(parsed.tiers?.[t.id]) ? parsed.tiers[t.id] : [];
+				next.tiers[t.id] = list.filter((id) => valid.has(id));
+			}
+			state = dedupe(next);
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	function allIdsFor(customCount: number): string[] {
+		const ids = PLACES.map((_, i) => String(i));
+		for (let i = 0; i < customCount; i++) ids.push("_" + i);
+		return ids;
+	}
+
+	/** A place may only live in one tier. */
+	function dedupe(s: State): State {
+		const seen = new Set<string>();
+		for (const t of TIERS) {
+			s.tiers[t.id] = s.tiers[t.id].filter((id) => {
+				if (seen.has(id)) return false;
+				seen.add(id);
+				return true;
+			});
+		}
+		return s;
+	}
+
+	// ───────────────────────────── share links ─────────────────────────────
+
+	function encodeState(): string {
+		const tierPart = TIERS.map((t) => state.tiers[t.id].map((id) => (isCustom(id) ? id : Number(id).toString(36))).join(".")).join("~");
+		const customPart = state.custom.length ? "!" + state.custom.map((n) => encodeURIComponent(n)).join("|") : "";
+		return tierPart + customPart;
+	}
+
+	function decodeState(hash: string): State | null {
+		if (!hash) return null;
+		try {
+			const [tierPart, customPart] = hash.split("!");
+			const next = emptyState();
+			next.custom = customPart
+				? customPart
+						.split("|")
+						.map((n) => decodeURIComponent(n))
+						.filter(Boolean)
+				: [];
+			const valid = new Set(allIdsFor(next.custom.length));
+			tierPart.split("~").forEach((chunk, i) => {
+				const tier = TIERS[i];
+				if (!tier || !chunk) return;
+				next.tiers[tier.id] = chunk
+					.split(".")
+					.map((tok) => (tok.startsWith("_") ? tok : String(parseInt(tok, 36))))
+					.filter((id) => valid.has(id));
+			});
+			return dedupe(next);
+		} catch {
+			return null;
+		}
+	}
+
+	// ───────────────────────────── mutations ─────────────────────────────
+
+	function place(id: string, zone: string, index?: number) {
+		for (const t of TIERS) {
+			const i = state.tiers[t.id].indexOf(id);
+			if (i !== -1) state.tiers[t.id].splice(i, 1);
+		}
+		if (zone !== "pool") {
+			const list = state.tiers[zone];
+			if (!list) return;
+			const at = index === undefined || index < 0 || index > list.length ? list.length : index;
+			list.splice(at, 0, id);
+		}
+		save();
+		render();
+	}
+
+	// ───────────────────────────── rendering ─────────────────────────────
+
+	function chip(id: string): HTMLElement {
+		const m = meta(id);
+		const el = document.createElement("div");
+		el.className = "place";
+		el.dataset.id = id;
+		el.style.borderLeftColor = catColor(m.cat);
+		el.setAttribute("role", "button");
+		el.setAttribute("tabindex", "0");
+		if (m.note) el.title = `${m.name} — ${m.note} (${m.loc})`;
+		else el.title = `${m.name}${m.loc ? " — " + m.loc : ""}`;
+
+		const name = document.createElement("span");
+		name.className = "place-name";
+		name.textContent = m.name;
+		el.appendChild(name);
+
+		if (m.loc) {
+			const sub = document.createElement("span");
+			sub.className = "place-sub";
+			sub.textContent = m.loc;
+			el.appendChild(sub);
+		}
+		if (m.fresh) {
+			const badge = document.createElement("span");
+			badge.className = "place-new";
+			badge.textContent = "NEW";
+			el.appendChild(badge);
+		}
+		if (id === selected) el.classList.add("is-selected");
+		return el;
+	}
+
+	function matchesFilter(id: string): boolean {
+		const m = meta(id);
+		if (filterCat !== "all" && m.cat !== filterCat) return false;
+		if (!filterText) return true;
+		const hay = `${m.name} ${m.loc} ${m.note ?? ""} ${CAT_BY_ID.get(m.cat as any)?.label ?? ""}`.toLowerCase();
+		return hay.includes(filterText);
+	}
+
+	function render() {
+		const ranked = rankedSet();
+
+		// tiers
+		for (const t of TIERS) {
+			const body = document.querySelector<HTMLElement>(`.drop-body[data-dropzone="${t.id}"]`);
+			if (!body) continue;
+			body.replaceChildren(...state.tiers[t.id].map(chip));
+			const count = document.querySelector<HTMLElement>(`[data-tier-count="${t.id}"]`);
+			if (count) count.textContent = state.tiers[t.id].length ? String(state.tiers[t.id].length) : "";
+			const label = document.querySelector<HTMLElement>(`[data-tier-label="${t.id}"]`);
+			if (label) {
+				if (state.labels[t.id] && label.textContent !== state.labels[t.id]) label.textContent = state.labels[t.id];
+				label.classList.toggle("is-long", (label.textContent || "").trim().length > 2);
+			}
+		}
+
+		// pool
+		const pool = document.getElementById("pool")!;
+		const unranked = allIds().filter((id) => !ranked.has(id));
+		const visible = unranked.filter(matchesFilter);
+
+		const groups = new Map<string, { label: string; color: string; ids: string[] }>();
+		if (groupBy === "cat") {
+			for (const c of CATEGORIES) groups.set(c.id, { label: `${c.emoji}  ${c.label}`, color: c.color, ids: [] });
+			for (const id of visible) {
+				const m = meta(id);
+				const g = groups.get(m.cat) ?? groups.get("fusion")!;
+				g.ids.push(id);
+			}
+		} else if (groupBy === "loc") {
+			for (const id of visible.slice().sort((a, b) => meta(a).loc.localeCompare(meta(b).loc))) {
+				const key = meta(id).loc || "Irvine";
+				if (!groups.has(key)) groups.set(key, { label: `📍  ${key}`, color: "#8f475b", ids: [] });
+				groups.get(key)!.ids.push(id);
+			}
+		} else {
+			const sorted = visible.slice().sort((a, b) => meta(a).name.localeCompare(meta(b).name));
+			groups.set("az", { label: "All places, A → Z", color: "#8f475b", ids: sorted });
+		}
+
+		const frag = document.createDocumentFragment();
+		for (const g of groups.values()) {
+			if (!g.ids.length) continue;
+			const wrap = document.createElement("div");
+
+			const head = document.createElement("h3");
+			head.className = "mb-2 flex items-center gap-2 text-sm font-extrabold text-viola-900";
+			const dot = document.createElement("span");
+			dot.className = "inline-block h-2.5 w-2.5 rounded-full";
+			dot.style.background = g.color;
+			head.appendChild(dot);
+			head.appendChild(document.createTextNode(g.label));
+			const n = document.createElement("span");
+			n.className = "text-xs font-semibold text-viola-500";
+			n.textContent = `(${g.ids.length})`;
+			head.appendChild(n);
+			wrap.appendChild(head);
+
+			const row = document.createElement("div");
+			row.className = "flex flex-wrap gap-2";
+			row.append(...g.ids.map(chip));
+			wrap.appendChild(row);
+			frag.appendChild(wrap);
+		}
+		pool.replaceChildren(frag);
+
+		document.getElementById("pool-empty")!.classList.toggle("hidden", visible.length > 0);
+		document.getElementById("pool-count")!.textContent = `· ${visible.length}${visible.length !== unranked.length ? ` of ${unranked.length}` : ""}`;
+
+		renderSelbar();
+	}
+
+	function renderSelbar() {
+		const bar = document.getElementById("selbar")!;
+		const nameEl = document.getElementById("selbar-name")!;
+		if (!selected) {
+			bar.classList.remove("is-open");
+			return;
+		}
+		bar.classList.add("is-open");
+		nameEl.textContent = meta(selected).name;
+	}
+
+	function setSelected(id: string | null) {
+		selected = id;
+		for (const el of document.querySelectorAll<HTMLElement>(".place")) {
+			el.classList.toggle("is-selected", el.dataset.id === selected);
+		}
+		renderSelbar();
+	}
+
+	// ───────────────────────────── drag & drop ─────────────────────────────
+
+	let drag: { id: string; ghost: HTMLElement; offX: number; offY: number } | null = null;
+	let pending: { id: string; x: number; y: number; el: HTMLElement } | null = null;
+	let marker: HTMLElement | null = null;
+
+	function clearDropUI() {
+		document.querySelectorAll(".is-over").forEach((el) => el.classList.remove("is-over"));
+		marker?.remove();
+		marker = null;
+	}
+
+	function zoneAt(x: number, y: number): HTMLElement | null {
+		const el = document.elementFromPoint(x, y) as HTMLElement | null;
+		return el?.closest<HTMLElement>("[data-dropzone]") ?? null;
+	}
+
+	/** Which index inside a tier body the pointer is closest to. */
+	function insertIndex(body: HTMLElement, x: number, y: number): number {
+		const chips = [...body.querySelectorAll<HTMLElement>(".place")];
+		for (let i = 0; i < chips.length; i++) {
+			const r = chips[i].getBoundingClientRect();
+			if (y < r.bottom && x < r.left + r.width / 2) return i;
+		}
+		return chips.length;
+	}
+
+	function onPointerDown(e: PointerEvent) {
+		if (e.button !== 0 && e.pointerType === "mouse") return;
+		const el = (e.target as HTMLElement).closest<HTMLElement>(".place");
+		if (!el?.dataset.id) return;
+		if (e.pointerType === "touch") return; // touch uses tap-to-place
+		pending = { id: el.dataset.id, x: e.clientX, y: e.clientY, el };
+	}
+
+	function startDrag(e: PointerEvent) {
+		if (!pending) return;
+		const rect = pending.el.getBoundingClientRect();
+		const ghost = pending.el.cloneNode(true) as HTMLElement;
+		ghost.classList.add("drag-ghost");
+		ghost.style.width = `${rect.width}px`;
+		document.body.appendChild(ghost);
+		drag = { id: pending.id, ghost, offX: e.clientX - rect.left, offY: e.clientY - rect.top };
+		pending.el.style.opacity = "0.35";
+		document.body.style.cursor = "grabbing";
+	}
+
+	function updateDropTarget(x: number, y: number) {
+		clearDropUI();
+		const zone = zoneAt(x, y);
+		if (!zone) return;
+		const id = zone.dataset.dropzone!;
+		const body = id === "pool" ? zone : (document.querySelector<HTMLElement>(`.drop-body[data-dropzone="${id}"]`) ?? zone);
+		body.classList.add("is-over");
+		if (id !== "pool") {
+			marker = document.createElement("div");
+			marker.className = "drop-marker";
+			const at = insertIndex(body, x, y);
+			const chips = body.querySelectorAll<HTMLElement>(".place");
+			if (at >= chips.length) body.appendChild(marker);
+			else body.insertBefore(marker, chips[at]);
+		}
+	}
+
+	// The tier rows and the pool rarely fit on screen together, so a drag that
+	// reaches the top or bottom edge scrolls the page along with it.
+	let scrollRAF = 0;
+	let scrollVel = 0;
+	let lastPointer = { x: 0, y: 0 };
+
+	function tickScroll() {
+		if (!drag || !scrollVel) {
+			scrollRAF = 0;
+			return;
+		}
+		window.scrollBy(0, scrollVel);
+		if (drag.ghost) updateDropTarget(lastPointer.x, lastPointer.y);
+		scrollRAF = requestAnimationFrame(tickScroll);
+	}
+
+	function updateAutoScroll(y: number) {
+		const EDGE = 120;
+		const MAX = 24;
+		const h = window.innerHeight;
+		if (y < EDGE) scrollVel = -Math.ceil(((EDGE - y) / EDGE) * MAX);
+		else if (y > h - EDGE) scrollVel = Math.ceil(((y - (h - EDGE)) / EDGE) * MAX);
+		else scrollVel = 0;
+		if (scrollVel && !scrollRAF) scrollRAF = requestAnimationFrame(tickScroll);
+	}
+
+	function stopAutoScroll() {
+		scrollVel = 0;
+		if (scrollRAF) cancelAnimationFrame(scrollRAF);
+		scrollRAF = 0;
+	}
+
+	function onPointerMove(e: PointerEvent) {
+		if (pending && !drag) {
+			if (Math.hypot(e.clientX - pending.x, e.clientY - pending.y) < 6) return;
+			startDrag(e);
+		}
+		if (!drag) return;
+		e.preventDefault();
+		lastPointer = { x: e.clientX, y: e.clientY };
+		drag.ghost.style.left = `${e.clientX - drag.offX}px`;
+		drag.ghost.style.top = `${e.clientY - drag.offY}px`;
+		updateDropTarget(e.clientX, e.clientY);
+		updateAutoScroll(e.clientY);
+	}
+
+	function onPointerUp(e: PointerEvent) {
+		stopAutoScroll();
+		if (drag) {
+			const zone = zoneAt(e.clientX, e.clientY);
+			const ghostId = drag.id;
+			drag.ghost.remove();
+			document.body.style.cursor = "";
+			const dropped = drag;
+			drag = null;
+			pending = null;
+			if (zone) {
+				const zid = zone.dataset.dropzone!;
+				let at: number | undefined;
+				if (zid !== "pool") {
+					const body = document.querySelector<HTMLElement>(`.drop-body[data-dropzone="${zid}"]`);
+					if (body) {
+						at = insertIndex(body, e.clientX, e.clientY);
+						// dragging within the same tier: account for the element leaving its slot
+						const from = state.tiers[zid].indexOf(ghostId);
+						if (from !== -1 && from < at) at -= 1;
+					}
+				}
+				clearDropUI();
+				place(dropped.id, zid, at);
+				setSelected(null);
+				return;
+			}
+			clearDropUI();
+			render();
+			return;
+		}
+
+		// no drag happened → treat as a click/tap
+		pending = null;
+	}
+
+	function onClick(e: MouseEvent) {
+		const target = e.target as HTMLElement;
+
+		const chipEl = target.closest<HTMLElement>(".place");
+		if (chipEl?.dataset.id) {
+			setSelected(selected === chipEl.dataset.id ? null : chipEl.dataset.id);
+			return;
+		}
+
+		const zone = target.closest<HTMLElement>("[data-dropzone]");
+		if (zone && selected) {
+			if (target.closest("[contenteditable]")) return;
+			place(selected, zone.dataset.dropzone!);
+			setSelected(null);
+		}
+	}
+
+	// ───────────────────────────── PNG export ─────────────────────────────
+
+	function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+		ctx.beginPath();
+		ctx.moveTo(x + r, y);
+		ctx.arcTo(x + w, y, x + w, y + h, r);
+		ctx.arcTo(x + w, y + h, x, y + h, r);
+		ctx.arcTo(x, y + h, x, y, r);
+		ctx.arcTo(x, y, x + w, y, r);
+		ctx.closePath();
+	}
+
+	function exportPNG() {
+		const SCALE = 2;
+		const W = 1400;
+		const LABEL_W = 150;
+		const PAD = 18;
+		const CHIP_H = 46;
+		const GAP = 12;
+		const HEADER = 140;
+		const FOOTER = 66;
+		const FONT = '700 20px "DM Sans Variable", ui-sans-serif, system-ui, sans-serif';
+
+		const probe = document.createElement("canvas").getContext("2d")!;
+		probe.font = FONT;
+		const maxW = W - LABEL_W - PAD * 2;
+
+		type Chip = { name: string; w: number; color: string };
+		const rows = TIERS.map((t) => {
+			const chips: Chip[] = state.tiers[t.id].map((id) => {
+				const m = meta(id);
+				return { name: m.name, w: Math.min(Math.ceil(probe.measureText(m.name).width) + 30, maxW), color: catColor(m.cat) };
+			});
+			const lines: Chip[][] = [[]];
+			for (const c of chips) {
+				const line = lines[lines.length - 1];
+				const used = line.reduce((a, b) => a + b.w + GAP, 0);
+				if (line.length && used + c.w > maxW) lines.push([c]);
+				else line.push(c);
+			}
+			const h = Math.max(96, lines.length * CHIP_H + (lines.length - 1) * GAP + PAD * 2);
+			return { tier: t, lines, h };
+		});
+
+		const H = HEADER + rows.reduce((a, r) => a + r.h + 10, 0) + FOOTER;
+		const canvas = document.createElement("canvas");
+		canvas.width = W * SCALE;
+		canvas.height = H * SCALE;
+		const ctx = canvas.getContext("2d")!;
+		ctx.scale(SCALE, SCALE);
+
+		ctx.fillStyle = "#faf5f7";
+		ctx.fillRect(0, 0, W, H);
+
+		ctx.fillStyle = "#3b1c24";
+		ctx.font = '800 44px "DM Sans Variable", ui-sans-serif, system-ui, sans-serif';
+		ctx.textBaseline = "alphabetic";
+		ctx.fillText("Irvine + UCI Asian Food Tier List", PAD + 6, 62);
+		ctx.fillStyle = "#8f475b";
+		ctx.font = '600 20px "DM Sans Variable", ui-sans-serif, system-ui, sans-serif';
+		ctx.fillText(`${rankedSet().size} places ranked · data current as of ${LAST_UPDATED}`, PAD + 6, 96);
+
+		let y = HEADER;
+		for (const row of rows) {
+			ctx.fillStyle = row.tier.color;
+			roundRect(ctx, PAD, y, LABEL_W, row.h, 14);
+			ctx.fill();
+			ctx.fillStyle = "#3b1c24";
+			ctx.font = '800 40px "DM Sans Variable", ui-sans-serif, system-ui, sans-serif';
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText(state.labels[row.tier.id] || row.tier.label, PAD + LABEL_W / 2, y + row.h / 2, LABEL_W - 16);
+
+			ctx.fillStyle = "#f6edf1";
+			roundRect(ctx, PAD + LABEL_W + 8, y, W - LABEL_W - PAD * 2 - 8, row.h, 14);
+			ctx.fill();
+
+			ctx.textAlign = "left";
+			ctx.font = FONT;
+			let cy = y + PAD;
+			for (const line of row.lines) {
+				let cx = PAD + LABEL_W + 8 + PAD;
+				for (const c of line) {
+					ctx.fillStyle = "#ffffff";
+					roundRect(ctx, cx, cy, c.w, CHIP_H, 10);
+					ctx.fill();
+					ctx.fillStyle = c.color;
+					roundRect(ctx, cx, cy, 6, CHIP_H, 3);
+					ctx.fill();
+					ctx.fillStyle = "#3b1c24";
+					ctx.textBaseline = "middle";
+					ctx.fillText(c.name, cx + 16, cy + CHIP_H / 2, c.w - 26);
+					cx += c.w + GAP;
+				}
+				cy += CHIP_H + GAP;
+			}
+			y += row.h + 10;
+		}
+
+		ctx.fillStyle = "#c98aa2";
+		ctx.font = '700 20px "DM Sans Variable", ui-sans-serif, system-ui, sans-serif';
+		ctx.textBaseline = "alphabetic";
+		ctx.fillText("dsns.dev/irvine-tierlist", PAD + 6, H - 26);
+
+		canvas.toBlob((blob) => {
+			if (!blob) return;
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "irvine-asian-food-tierlist.png";
+			a.click();
+			setTimeout(() => URL.revokeObjectURL(url), 5000);
+			toast("Image downloaded");
+		}, "image/png");
+	}
+
+	// ───────────────────────────── misc UI ─────────────────────────────
+
+	let toastTimer: number | undefined;
+	function toast(msg: string) {
+		const el = document.getElementById("toast");
+		if (!el) return;
+		el.textContent = msg;
+		el.style.opacity = "1";
+		clearTimeout(toastTimer);
+		toastTimer = window.setTimeout(() => (el.style.opacity = "0"), 2200);
+	}
+
+	function buildSelbarTiers() {
+		const wrap = document.getElementById("selbar-tiers")!;
+		wrap.replaceChildren(
+			...TIERS.map((t) => {
+				const b = document.createElement("button");
+				b.type = "button";
+				b.className = "h-8 w-8 rounded-full text-sm font-extrabold text-viola-950 transition hover:scale-110";
+				b.style.background = t.color;
+				b.textContent = state.labels[t.id]?.slice(0, 2) || t.label;
+				b.addEventListener("click", () => {
+					if (!selected) return;
+					place(selected, t.id);
+					setSelected(null);
+				});
+				return b;
+			})
+		);
+	}
+
+	function init() {
+		const root = document.getElementById("tierlist");
+		if (!root) return; // not this page
+
+		const fromHash = decodeState(decodeURIComponent(location.hash.replace(/^#/, "")));
+		if (fromHash) {
+			state = fromHash;
+			save();
+		} else if (!loadLocal()) {
+			state = emptyState();
+		}
+
+		buildSelbarTiers();
+		render();
+
+		// filters
+		document.getElementById("cat-filters")!.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-cat]");
+			if (!btn) return;
+			filterCat = btn.dataset.cat!;
+			document.querySelectorAll("#cat-filters [data-cat]").forEach((b) => b.classList.toggle("is-active", b === btn));
+			render();
+		});
+
+		const search = document.getElementById("search") as HTMLInputElement;
+		search.addEventListener("input", () => {
+			filterText = search.value.trim().toLowerCase();
+			render();
+		});
+
+		const group = document.getElementById("groupby") as HTMLSelectElement;
+		group.addEventListener("change", () => {
+			groupBy = group.value as typeof groupBy;
+			render();
+		});
+
+		// tier labels
+		for (const el of document.querySelectorAll<HTMLElement>("[data-tier-label]")) {
+			el.addEventListener("blur", () => {
+				const id = el.dataset.tierLabel!;
+				const text = (el.textContent || "").trim().slice(0, 8);
+				el.textContent = text || TIERS.find((t) => t.id === id)!.label;
+				el.classList.toggle("is-long", el.textContent.length > 2);
+				state.labels[id] = el.textContent;
+				save();
+				buildSelbarTiers();
+			});
+			el.addEventListener("keydown", (e) => {
+				if ((e as KeyboardEvent).key === "Enter") {
+					e.preventDefault();
+					el.blur();
+				}
+			});
+			el.addEventListener("click", (e) => e.stopPropagation());
+		}
+
+		// clear-row buttons
+		for (const el of document.querySelectorAll<HTMLElement>("[data-clear]")) {
+			el.addEventListener("click", (e) => {
+				e.stopPropagation();
+				state.tiers[el.dataset.clear!] = [];
+				save();
+				render();
+			});
+		}
+
+		// pointer interactions
+		document.addEventListener("pointerdown", onPointerDown);
+		document.addEventListener("pointermove", onPointerMove, { passive: false });
+		document.addEventListener("pointerup", onPointerUp);
+		document.addEventListener("pointercancel", () => {
+			stopAutoScroll();
+			drag?.ghost.remove();
+			drag = null;
+			pending = null;
+			clearDropUI();
+			render();
+		});
+		document.addEventListener("click", onClick);
+
+		// keyboard tiering
+		document.addEventListener("keydown", (e) => {
+			if (!selected) return;
+			const t = e.target as HTMLElement;
+			if (t.tagName === "INPUT" || t.tagName === "SELECT" || t.isContentEditable) return;
+			const key = e.key.toUpperCase();
+			if (key === "ESCAPE") return setSelected(null);
+			if (key === "BACKSPACE" || key === "DELETE" || key === "0") {
+				e.preventDefault();
+				place(selected, "pool");
+				return setSelected(null);
+			}
+			if (TIERS.some((tier) => tier.id === key)) {
+				e.preventDefault();
+				place(selected, key);
+				setSelected(null);
+			}
+		});
+
+		// buttons
+		document.getElementById("btn-png")!.addEventListener("click", exportPNG);
+
+		document.getElementById("btn-share")!.addEventListener("click", async () => {
+			const url = `${location.origin}${location.pathname}#${encodeState()}`;
+			history.replaceState(null, "", url);
+			try {
+				await navigator.clipboard.writeText(url);
+				toast("Share link copied");
+			} catch {
+				toast("Link is in the address bar");
+			}
+		});
+
+		document.getElementById("btn-reset")!.addEventListener("click", () => {
+			if (!confirm("Clear every ranking (and any places you added)?")) return;
+			state = emptyState();
+			history.replaceState(null, "", location.pathname);
+			save();
+			setSelected(null);
+			render();
+			toast("Reset");
+		});
+
+		document.getElementById("btn-fill")!.addEventListener("click", () => {
+			const ranked = rankedSet();
+			const pool = allIds().filter((id) => !ranked.has(id) && matchesFilter(id));
+			if (!pool.length) return toast("Nothing left to place");
+			for (let i = 0; i < Math.min(12, pool.length); i++) {
+				const id = pool[Math.floor(Math.random() * pool.length)];
+				if (ranked.has(id)) continue;
+				ranked.add(id);
+				state.tiers[TIERS[Math.floor(Math.random() * TIERS.length)].id].push(id);
+			}
+			save();
+			render();
+			toast("Hot takes generated");
+		});
+
+		document.getElementById("selbar-clear")!.addEventListener("click", () => {
+			if (!selected) return;
+			place(selected, "pool");
+			setSelected(null);
+		});
+
+		// add your own
+		const addForm = document.getElementById("add-form") as HTMLFormElement;
+		const addInput = document.getElementById("add-input") as HTMLInputElement;
+		addForm.addEventListener("submit", (e) => {
+			e.preventDefault();
+			const name = addInput.value.trim().slice(0, 40);
+			if (!name) return;
+			state.custom.push(name);
+			addInput.value = "";
+			save();
+			render();
+			toast(`Added ${name}`);
+		});
+	}
+
+	document.addEventListener("astro:page-load", init);
+</script>
