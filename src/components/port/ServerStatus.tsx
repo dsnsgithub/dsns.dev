@@ -5,8 +5,7 @@ const servers = {
 	"dsns.dev": [
 		{ name: "Main Website", url: "dsns.dev", icon: "dsns.dev", image: "/kirby.png" },
 		{ name: "Immich", url: "immich.dsns.dev", icon: "immich", image: "/immich.png" },
-		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn", image: "/v2ray.png" },
-		{ name: "Calopoly Server", url: "calopoly-server.dsns.dev", icon: "calopoly.dsns.dev", image: "/calopoly2.jpg" }
+		{ name: "V2Ray VPN", url: "vray.dsns.dev/dsns", icon: "v2ray vpn", image: "/v2ray.png" }
 	]
 };
 
@@ -25,9 +24,6 @@ export default function ServerStatus() {
 					return response.status === 400;
 				}
 
-				if (url === "calopoly-server.dsns.dev") {
-					return response.status === 404;
-				}
 				return response.ok;
 			} catch {
 				return false;
