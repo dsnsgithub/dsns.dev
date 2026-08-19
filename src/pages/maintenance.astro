@@ -1,6 +1,13 @@
 ---
+export const prerender = false;
+
 import { Icon } from "astro-icon/components";
 import Layout from "../layouts/Layout.astro";
+
+Astro.response.status = 503;
+Astro.response.statusText = "Service Unavailable";
+Astro.response.headers.set("Retry-After", "3600");
+Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
 <Layout title="Scheduled Maintenance" description="This service is currently under scheduled maintenance.">
