@@ -45,12 +45,12 @@ const smps = [
 	},
 	{
 		name: "Chromocraft Season 3",
-		url: null,
+		url: "https://archive.org/details/chromocraft-season-3",
 		version: "1.14-1.15.1",
 		image: chromocraftSeason3,
 		date: "2019-04-28",
-		missing: true,
-		size: null
+		missing: false,
+		size: "2.9 GB"
 	},
 	{
 		name: "Earth 1:4000 SMP",
@@ -218,39 +218,4 @@ margins.push(0);
 			</div>
 		</div>
 	</div>
-
-	<script>
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						entry.target.classList.add("is-visible");
-						observer.unobserve(entry.target);
-					}
-				});
-			},
-			{ threshold: 0.15 }
-		);
-
-		function observe() {
-			document.querySelectorAll(".timeline-entry").forEach((el) => observer.observe(el));
-		}
-
-		observe();
-		document.addEventListener("astro:after-swap", observe);
-	</script>
-
-	<style>
-		.timeline-entry {
-			opacity: 0;
-			transform: translateY(2rem);
-			transition:
-				opacity 0.6s ease,
-				transform 0.6s ease;
-		}
-		.timeline-entry.is-visible {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	</style>
 </Layout>
