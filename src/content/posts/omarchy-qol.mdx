@@ -1,0 +1,64 @@
+---
+title: "Omarchy - The First Actually Good Linux Distro"
+description: "I have switched to Omarchy from Windows 11 Pro on my Gaming PC. This is my experience."
+date: "8/23/2026"
+---
+
+
+These are some QOL improvements for Omarchy that might aid you in your quest to switch to Omarchy.
+
+## Essential
+Fix Sleep/Lock:
+```bash
+omarchy plugin add https://github.com/dsnsgithub/omarchy-lock-fix
+omarchy restart shell
+```
+
+## Worth It
+
+### Remove Chrome Managed Policies
+Install Google Chrome (Omarchy Menu, Install > Browser), delete Chromium (Omarchy Menu, Remove > Browser).
+Then clean out any managed policies (creates weird Chrome themes, locks secure DNS for some reason)
+```bash
+sudo rm -rf /etc/opt/chrome/policies/managed
+sudo rm -rf /etc/opt/chrome/policies/recommended
+```
+
+### Change Chrome Font (to make it look good on Linux)
+Add `inter-font` (Omarchy menu, Install > Package)
+
+```bash
+gsettings set org.gnome.desktop.interface font-name "Inter 10"
+gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font 11"
+pkill -f chrome
+```
+
+## Optional
+
+### Disable Mouse Acceleration
+`nvim ~/.config/hypr/input.lua`
+
+Uncomment Line 26.
+
+```
+  26 │        accel_profile = "flat",
+```
+
+### Setup Windows Hello Facial Recognition (Howdy)
+Install [Howdy](https://github.com/boltgolt/howdy) or [howdy-next](https://codeberg.org/nathawat/howdy-next)
+
+Using Howdy to Unlock Computer: `sudo nvim /etc/pam.d/omarchy-lock-password`
+
+Add
+```
+auth       sufficient                  pam_howdy.so
+```
+on the line after `#%PAM-1.0`
+
+Using Howdy for sudo: `sudo nvim /etc/pam.d/sudo`
+
+Add
+```
+auth        sufficient  pam_howdy.so workaround=native
+```
+on the line after `#%PAM-1.0`
