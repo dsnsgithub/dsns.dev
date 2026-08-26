@@ -39,7 +39,7 @@ import Layout from "../layouts/Layout.astro";
 							id="detail-slider"
 							min="8"
 							max="15"
-							value="12"
+							value="13"
 							class="h-2 w-32 cursor-pointer appearance-none rounded-lg bg-viola-300 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-viola-500 [&::-moz-range-thumb]:transition [&::-moz-range-thumb]:hover:bg-viola-600 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-viola-500 [&::-webkit-slider-thumb]:transition [&::-webkit-slider-thumb]:hover:bg-viola-600"
 							oninput="document.getElementById('detail-tooltip').textContent = Math.pow(2, this.value); document.getElementById('detail-tooltip').style.opacity = 1;"
 							onchange="document.getElementById('detail-tooltip').style.opacity = 0;"
@@ -50,7 +50,7 @@ import Layout from "../layouts/Layout.astro";
 							class="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 rounded bg-viola-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200"
 							style="white-space:nowrap;"
 						>
-							4096
+							8192
 						</span>
 					</div>
 
@@ -161,6 +161,7 @@ import Layout from "../layouts/Layout.astro";
 					const CLIP_HEADROOM = 2; // soft-clipper handles input up to +6 dBFS
 					const MIN_SELECTION_RATIO = 1.05; // narrowest selection we will build a band for
 					const RESPONSE_POINTS = 256;
+					const SPECTRUM_BAR_PX = 2; // target width of one drawn spectrum column
 
 					// Audio Context and Nodes
 					let audioContext;
@@ -184,6 +185,9 @@ import Layout from "../layouts/Layout.astro";
 					let smoothedReduction = 0;
 					let selectionRect = { startX: 0, endX: 0, startFreq: 0, endFreq: 0 };
 					let spectrumData = null;
+					let spectrumColumns = [];
+					let spectrumColumnsKey = "";
+					let barGradient = null;
 
 					const detailSlider = document.getElementById("detail-slider");
 					const detailTooltip = document.getElementById("detail-tooltip");
@@ -496,6 +500,8 @@ import Layout from "../layouts/Layout.astro";
 					function resizeCanvas() {
 						canvas.width = visualizerWrapper.clientWidth;
 						canvas.height = visualizerWrapper.clientHeight;
+						spectrumColumnsKey = "";
+						barGradient = null;
 						for (let i = 0; i < bands.length; i++) updatePointPosition(i);
 					}
 					window.addEventListener("resize", resizeCanvas);
@@ -518,6 +524,44 @@ import Layout from "../layouts/Layout.astro";
 						return Math.pow(10, minLog + percent * (maxLog - minLog));
 					}
 
+					// The FFT returns linearly spaced bins but the axis is logarithmic, so the bins
+					// are badly maldistributed against it. At the default detail the top octave has
+					// ~1100 bins competing for 101 px while the 20-40 Hz octave has 2 bins to fill
+					// 91 px. Drawing one rect per bin therefore spent thousands of overlapping draws
+					// on the right, where all but the last one per pixel were painted over anyway,
+					// and left the bass as a handful of wide blocks. Draw a fixed column every couple
+					// of pixels instead, and let each column aggregate whatever bins land in it.
+					function rebuildSpectrumColumns() {
+						if (!analyserNode || !audioContext) return;
+
+						const bins = analyserNode.frequencyBinCount;
+						const key = `${canvas.width}:${bins}:${audioContext.sampleRate}`;
+						if (key === spectrumColumnsKey) return;
+						spectrumColumnsKey = key;
+
+						const maxFreq = nyquist();
+						const binWidth = maxFreq / bins; // bin i is centred on i * binWidth
+						const plotWidth = canvas.width - AXIS_PAD;
+						const count = Math.max(1, Math.round(plotWidth / SPECTRUM_BAR_PX));
+
+						spectrumColumns = [];
+						for (let i = 0; i < count; i++) {
+							const x0 = AXIS_PAD + (i / count) * plotWidth;
+							const x1 = AXIS_PAD + ((i + 1) / count) * plotWidth;
+							const f0 = xToFreq(x0, maxFreq);
+							const f1 = xToFreq(x1, maxFreq);
+							spectrumColumns.push({
+								x: x0,
+								w: x1 - x0,
+								binLo: Math.max(0, Math.ceil(f0 / binWidth)),
+								binHi: Math.min(bins - 1, Math.ceil(f1 / binWidth) - 1),
+								// fractional bin index at the column's centre, for the low end where the
+								// column is narrower than a bin and no bin centre falls inside it
+								binMid: Math.sqrt(f0 * f1) / binWidth
+							});
+						}
+					}
+
 					function gainToY(db) {
 						return (1 - db / MAX_GAIN_DB) * (canvas.height / 2);
 					}
@@ -533,29 +577,39 @@ import Layout from "../layouts/Layout.astro";
 						analyserNode.getByteFrequencyData(spectrumData);
 
 						updateAutoTrim();
+						rebuildSpectrumColumns();
 
 						ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-						// Gradient for bars
-						const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-						gradient.addColorStop(0, "#fbcfe8");
-						gradient.addColorStop(1, "#f9a8d4");
-						ctx.fillStyle = gradient;
+						// Gradient for bars, built once per size rather than once per frame
+						if (!barGradient) {
+							barGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+							barGradient.addColorStop(0, "#fbcfe8");
+							barGradient.addColorStop(1, "#f9a8d4");
+						}
+						ctx.fillStyle = barGradient;
 
 						const maxFreq = nyquist();
 
-						for (let i = 0; i < bufferLength; i++) {
-							const barHeight = (spectrumData[i] / 255) * canvas.height;
-							let freq = (i * maxFreq) / bufferLength;
-							if (freq < MIN_FREQ) freq = MIN_FREQ; // Clamp to 20 Hz for mapping
-							const posX = freqToX(freq, maxFreq);
-							const nextFreq = ((i + 1) * maxFreq) / bufferLength;
-							const nextPosX = freqToX(nextFreq, maxFreq);
-							const width = Math.max(2, nextPosX - posX);
-
-							if (posX < canvas.width) {
-								ctx.fillRect(posX, canvas.height - barHeight, width, barHeight);
+						for (const col of spectrumColumns) {
+							let value;
+							if (col.binHi >= col.binLo) {
+								// Peak, not mean: hundreds of bins share a column up at the top, and
+								// averaging would bury a narrow tone under the quiet bins beside it.
+								value = 0;
+								for (let i = col.binLo; i <= col.binHi; i++) {
+									if (spectrumData[i] > value) value = spectrumData[i];
+								}
+							} else {
+								// Down in the bass a column is a fraction of one bin wide, so read
+								// between the two nearest bins rather than repeating one as a flat block.
+								const i0 = Math.min(bufferLength - 2, Math.max(0, Math.floor(col.binMid)));
+								const t = Math.min(1, Math.max(0, col.binMid - i0));
+								value = spectrumData[i0] + (spectrumData[i0 + 1] - spectrumData[i0]) * t;
 							}
+
+							const barHeight = (value / 255) * canvas.height;
+							ctx.fillRect(col.x, canvas.height - barHeight, col.w, barHeight);
 						}
 
 						// Draw frequency labels
