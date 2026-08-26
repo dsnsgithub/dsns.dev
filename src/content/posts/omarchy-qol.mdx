@@ -45,23 +45,21 @@ Uncomment Line 26.
 ```
 
 ### Setup Windows Hello Facial Recognition (Howdy)
-Install [Howdy](https://github.com/boltgolt/howdy) or [howdy-next](https://codeberg.org/nathawat/howdy-next)
+Install [Gaze](https://github.com/GunduLabs/gaze) for Windows Hello style authentication with liveness detection.
 
-Using Howdy to Unlock Computer: `sudo nvim /etc/pam.d/omarchy-lock-password`
+```bash
+yay -S --needed gaze-bin 
+sudo pacman -S --needed gst-plugins-good gst-plugins-base
+sudo systemctl enable --now gazed
+```
 
-Add
+Edit `/etc/gaze/config.toml` and set security preferences.
+```bash
+sudo systemctl restart gazed
+gaze doctor
+gaze add-face default
+gaze list-faces
 ```
-auth       sufficient                  pam_howdy.so
-```
-on the line after `#%PAM-1.0`
-
-Using Howdy for sudo: `sudo nvim /etc/pam.d/sudo`
-
-Add
-```
-auth        sufficient  pam_howdy.so workaround=native
-```
-on the line after `#%PAM-1.0`
 
 ### Kirby Theme
 
