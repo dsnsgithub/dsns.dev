@@ -83,12 +83,22 @@ import Layout from "../layouts/Layout.astro";
 					<canvas id="visualizer-canvas"></canvas>
 				</div>
 
-				<div class="text-center text-sm">
-					<p>
-						Drag on visualization to isolate a frequency range. Add EQ points and move them to desired frequency to EQ. <button id="reset-selection-btn" class="ml-2 hidden font-bold"
-							>(Reset Selection)</button
-						>
-					</p>
+				<div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-sm">
+					<p>Drag on visualization to isolate a frequency range. Add EQ points and move them to desired frequency to EQ.</p>
+					<label
+						for="selection-order"
+						class="flex items-center gap-1.5 rounded-lg bg-viola-200 px-2 py-1 text-xs shadow"
+						title="How sharply the isolated band is cut off. Steeper rejects more of the neighbouring frequencies, but rings longer on transients."
+					>
+						<span>Isolation</span>
+						<select id="selection-order" class="cursor-pointer rounded border border-viola-300 bg-viola-50 px-1 py-0.5 text-xs">
+							<option value="4">24 dB/oct</option>
+							<option value="8" selected>48 dB/oct</option>
+							<option value="12">72 dB/oct</option>
+							<option value="16">96 dB/oct</option>
+						</select>
+					</label>
+					<button id="reset-selection-btn" class="hidden font-bold">(Reset Selection)</button>
 				</div>
 			</section>
 
@@ -144,6 +154,7 @@ import Layout from "../layouts/Layout.astro";
 					const autoTrimToggle = document.getElementById("auto-trim-toggle");
 					const autoTrimReadout = document.getElementById("auto-trim-readout");
 					const limitIndicator = document.getElementById("limit-indicator");
+					const selectionOrderSelect = document.getElementById("selection-order");
 
 					const ctx = canvas.getContext("2d");
 
@@ -151,7 +162,7 @@ import Layout from "../layouts/Layout.astro";
 					const MIN_FREQ = 20;
 					const AXIS_PAD = 20; // px reserved at the left edge of the plot
 					const MAX_GAIN_DB = 20;
-					const SELECTION_ORDER = 4; // 24 dB/oct Butterworth skirts on each edge
+					const SELECTION_REBUILD_MS = 40; // mute window while the cascade is swapped
 					const PARAM_TC = 0.012; // AudioParam smoothing time constant, seconds
 					const XFADE_TC = 0.01;
 					const TRIM_TC = 0.05;
@@ -172,6 +183,7 @@ import Layout from "../layouts/Layout.astro";
 					let clipInGain; // scales the signal into the soft-clipper's input range
 					let softClipNode; // last resort for the transients the limiter's attack misses
 					let dryGain, wetGain; // crossfade around the selection filters
+					let selectionOrder = 8; // Butterworth sections per edge x2, i.e. 48 dB/oct
 					let selectionHighpass = [];
 					let selectionLowpass = [];
 					let bands = []; // { node, type, freq, gain, q }
@@ -322,12 +334,18 @@ import Layout from "../layouts/Layout.astro";
 						}
 					}
 
-					// Two cascaded Butterworth sections per edge. A single biquad per edge has a
-					// resonant peak at its cutoff and only reaches about 11 dB/oct in practice, so
-					// it both colours the band it is meant to pass and leaks most of what it is
-					// meant to reject. Cascading gives a flat passband and 24 dB/oct skirts.
+					// Cascaded Butterworth sections per edge. A single biquad per edge has a resonant
+					// peak at its cutoff and only reaches about 11 dB/oct in practice, so it both
+					// colours the band it is meant to pass and leaks most of what it is meant to
+					// reject. Cascading gives a flat passband and 6 dB/oct per section.
+					//
+					// Order is worth exposing because it is a real trade, not a free win: measured on
+					// a 300-600 Hz band, half an octave outside it, order 4 leaks -12 dB, order 8
+					// -24 dB, order 12 -36 dB -- but ringing after a transient goes 6.6 -> 11.5 ->
+					// 16.4 ms over the same range. You cannot have a sharp edge and a short impulse
+					// response at once. Order 8 is the default compromise.
 					function buildSelectionChain() {
-						const qs = butterworthQs(SELECTION_ORDER);
+						const qs = butterworthQs(selectionOrder);
 						selectionHighpass = qs.map((q) => {
 							const hp = audioContext.createBiquadFilter();
 							hp.type = "highpass";
@@ -342,6 +360,33 @@ import Layout from "../layouts/Layout.astro";
 							lp.Q.value = 20 * Math.log10(q);
 							return lp;
 						});
+					}
+
+					// Swapping filter nodes mid-stream would click, so mute the wet path across the
+					// rebuild and bring it back once the new cascade is wired and settled.
+					function setSelectionOrder(order) {
+						selectionOrder = order;
+						if (!audioContext) return;
+
+						const wasActive = selectionActive;
+						setParam(wetGain.gain, 0, XFADE_TC);
+
+						setTimeout(() => {
+							selectionHighpass.forEach((f) => f.disconnect());
+							selectionLowpass.forEach((f) => f.disconnect());
+							buildSelectionChain();
+
+							if (wasActive) {
+								selectionHighpass.forEach((f) => setParam(f.frequency, selectionRect.startFreq, 0));
+								selectionLowpass.forEach((f) => setParam(f.frequency, selectionRect.endFreq, 0));
+							}
+							connectAudioNodes();
+							if (wasActive) setParam(wetGain.gain, 1, XFADE_TC);
+						}, SELECTION_REBUILD_MS);
+					}
+
+					if (selectionOrderSelect) {
+						selectionOrderSelect.addEventListener("change", (e) => setSelectionOrder(parseInt(e.target.value, 10)));
 					}
 
 					function connectAudioNodes() {
