@@ -83,24 +83,11 @@ import Layout from "../layouts/Layout.astro";
 					<canvas id="visualizer-canvas"></canvas>
 				</div>
 
-				<div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-sm">
-					<p>Drag on visualization to isolate a frequency range. Add EQ points and move them to desired frequency to EQ.</p>
-					<label
-						for="selection-order"
-						class="flex items-center gap-1.5 rounded-lg bg-viola-200 px-2 py-1 text-xs shadow"
-						title="How sharply the isolated band is cut off. Steeper rejects more of the neighbouring frequencies, but rings longer on transients."
-					>
-						<span>Isolation</span>
-						<select id="selection-order" class="cursor-pointer rounded border border-viola-300 bg-viola-50 px-1 py-0.5 text-xs">
-							<option value="auto" selected>Auto</option>
-							<option value="4">24 dB/oct</option>
-							<option value="8">48 dB/oct</option>
-							<option value="12">72 dB/oct</option>
-							<option value="16">96 dB/oct</option>
-						</select>
-						<span id="isolation-effective" class="font-mono">96 dB/oct</span>
-					</label>
-					<button id="reset-selection-btn" class="hidden font-bold">(Reset Selection)</button>
+				<div class="text-center text-sm">
+					<p>
+						Drag on visualization to isolate a frequency range. Add EQ points and move them to desired frequency to EQ.
+						<button id="reset-selection-btn" class="ml-2 hidden font-bold">(Reset Selection)</button>
+					</p>
 				</div>
 			</section>
 
@@ -156,8 +143,6 @@ import Layout from "../layouts/Layout.astro";
 					const autoTrimToggle = document.getElementById("auto-trim-toggle");
 					const autoTrimReadout = document.getElementById("auto-trim-readout");
 					const limitIndicator = document.getElementById("limit-indicator");
-					const selectionOrderSelect = document.getElementById("selection-order");
-					const isolationEffective = document.getElementById("isolation-effective");
 
 					const ctx = canvas.getContext("2d");
 
@@ -165,10 +150,7 @@ import Layout from "../layouts/Layout.astro";
 					const MIN_FREQ = 20;
 					const AXIS_PAD = 20; // px reserved at the left edge of the plot
 					const MAX_GAIN_DB = 20;
-					const SELECTION_REBUILD_MS = 40; // mute window while the cascade is swapped
-					const SELECTION_ORDERS = [4, 8, 12, 16]; // 24 / 48 / 72 / 96 dB per octave
-					const RING_MS_BUDGET = 60; // how much ring-out we are willing to trade for steepness
-					const RING_MS_PER_ORDER_HZ = 420; // measured: ring_ms ~= 420 * order / lowEdgeHz
+					const SELECTION_ORDER = 16; // Butterworth sections per edge x2, i.e. 96 dB/oct
 					const PARAM_TC = 0.012; // AudioParam smoothing time constant, seconds
 					const XFADE_TC = 0.01;
 					const TRIM_TC = 0.05;
@@ -189,8 +171,6 @@ import Layout from "../layouts/Layout.astro";
 					let clipInGain; // scales the signal into the soft-clipper's input range
 					let softClipNode; // last resort for the transients the limiter's attack misses
 					let dryGain, wetGain; // crossfade around the selection filters
-					let selectionOrder = 16; // filter order actually in use
-					let selectionOrderMode = "auto"; // "auto", or a fixed order from SELECTION_ORDERS
 					let selectionHighpass = [];
 					let selectionLowpass = [];
 					let bands = []; // { node, type, freq, gain, q }
@@ -346,13 +326,13 @@ import Layout from "../layouts/Layout.astro";
 					// colours the band it is meant to pass and leaks most of what it is meant to
 					// reject. Cascading gives a flat passband and 6 dB/oct per section.
 					//
-					// Order is worth exposing because it is a real trade, not a free win: measured on
-					// a 300-600 Hz band, half an octave outside it, order 4 leaks -12 dB, order 8
-					// -24 dB, order 12 -36 dB -- but ringing after a transient goes 6.6 -> 11.5 ->
-					// 16.4 ms over the same range. You cannot have a sharp edge and a short impulse
-					// response at once. Order 8 is the default compromise.
+					// Fixed at 96 dB/oct. Steepness costs ring-out after a transient, and that cost
+					// is not constant: measured, ring_ms is about 420 * order / lowEdge, so this order
+					// rings 1 ms at 6-12 kHz but 225 ms at 30-60 Hz. Isolating deep bass will
+					// therefore smear transients; that is the accepted trade for rejecting everything
+					// outside the band as hard as a cascade of biquads can.
 					function buildSelectionChain() {
-						const qs = butterworthQs(selectionOrder);
+						const qs = butterworthQs(SELECTION_ORDER);
 						selectionHighpass = qs.map((q) => {
 							const hp = audioContext.createBiquadFilter();
 							hp.type = "highpass";
@@ -371,63 +351,6 @@ import Layout from "../layouts/Layout.astro";
 
 					// Swapping filter nodes mid-stream would click, so mute the wet path across the
 					// rebuild and bring it back once the new cascade is wired and settled.
-					// How long the cascade rings after a transient depends on the order and on where
-					// the band sits: measured, ring_ms is about 420 * order / lowEdge. Up at 6-12 kHz
-					// even 96 dB/oct rings for 1 ms, so there is nothing to trade and the steepest
-					// setting is simply better. Down at 30-60 Hz that same setting rings for 225 ms,
-					// long enough to smear a kick drum into a sustained tone. So rather than pick one
-					// order for the whole spectrum, spend a fixed ring-out budget and take the
-					// steepest filter that fits inside it.
-					function autoOrderFor(lowEdgeHz) {
-						const affordable = (RING_MS_BUDGET * lowEdgeHz) / RING_MS_PER_ORDER_HZ;
-						let best = SELECTION_ORDERS[0];
-						for (const order of SELECTION_ORDERS) if (order <= affordable) best = order;
-						return best;
-					}
-
-					function effectiveOrder() {
-						if (selectionOrderMode !== "auto") return selectionOrderMode;
-						const lowEdge = selectionActive ? selectionRect.startFreq : maxUiFreq();
-						return autoOrderFor(lowEdge);
-					}
-
-					function showEffectiveOrder() {
-						if (isolationEffective) isolationEffective.textContent = `${selectionOrder * 6} dB/oct`;
-					}
-
-					// Swapping filter nodes mid-stream would click, so mute the wet path across the
-					// rebuild and bring it back once the new cascade is wired and settled.
-					function rebuildSelectionCascade(lo, hi, activate) {
-						if (!audioContext) return;
-						setParam(wetGain.gain, 0, XFADE_TC);
-
-						setTimeout(() => {
-							selectionHighpass.forEach((f) => f.disconnect());
-							selectionLowpass.forEach((f) => f.disconnect());
-							buildSelectionChain();
-
-							selectionHighpass.forEach((f) => setParam(f.frequency, lo, 0));
-							selectionLowpass.forEach((f) => setParam(f.frequency, hi, 0));
-							connectAudioNodes();
-
-							if (activate) {
-								setParam(wetGain.gain, 1, XFADE_TC);
-								setParam(dryGain.gain, 0, XFADE_TC);
-							}
-						}, SELECTION_REBUILD_MS);
-					}
-
-					if (selectionOrderSelect) {
-						selectionOrderSelect.addEventListener("change", (e) => {
-							selectionOrderMode = e.target.value === "auto" ? "auto" : parseInt(e.target.value, 10);
-							const wanted = effectiveOrder();
-							if (wanted === selectionOrder) return showEffectiveOrder();
-							selectionOrder = wanted;
-							showEffectiveOrder();
-							rebuildSelectionCascade(selectionRect.startFreq || MIN_FREQ, selectionRect.endFreq || maxUiFreq(), selectionActive);
-						});
-					}
-
 					function connectAudioNodes() {
 						if (!audioContext) return;
 
@@ -1017,18 +940,6 @@ import Layout from "../layouts/Layout.astro";
 						selectionRect.startFreq = lo;
 						selectionRect.endFreq = hi;
 						resetSelectionBtn.classList.remove("hidden");
-
-						// The affordable order depends on where this selection sits, so settle it
-						// before touching the cutoffs.
-						const wanted = selectionOrderMode === "auto" ? autoOrderFor(lo) : selectionOrderMode;
-						if (wanted !== selectionOrder) {
-							selectionOrder = wanted;
-							showEffectiveOrder();
-							rebuildSelectionCascade(lo, hi, true);
-							selectionActive = true;
-							return;
-						}
-						showEffectiveOrder();
 
 						// Already-active selections glide to the new cutoffs; an inactive one is placed
 						// silently and then faded in, so neither case snaps the coefficients.
