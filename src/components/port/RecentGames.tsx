@@ -1,5 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useState } from "react";
+import type { JSX } from "react";
 
 interface StatusData {
 	success: boolean;
@@ -99,7 +100,7 @@ export default function RecentGames({ children }: { children: JSX.Element }) {
 						type="text"
 						id="inputBox"
 						placeholder="Search..."
-						className="w-5/6 flex-grow rounded-lg border px-6 py-4 text-xl focus:border-viola-500 focus:outline-none"
+						className="w-5/6 grow rounded-lg border border-gray-200 px-6 py-4 text-xl focus:border-viola-500 focus:outline-hidden"
 						onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
 						onKeyDown={(e) => e.key === "Enter" && handleInput()}
 					></input>

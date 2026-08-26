@@ -5,6 +5,8 @@ export default {
 	printWidth: 200,
 	trailingComma: "none",
 	plugins: ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+	// Tailwind v4 is configured in CSS, so the class sorter needs the stylesheet entry point.
+	tailwindStylesheet: "./src/styles/global.css",
 	overrides: [
 		{
 			files: "*.astro",
