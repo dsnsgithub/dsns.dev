@@ -57,7 +57,7 @@ omarchy restart shell
 ## Worth It
 
 ### Remove Chrome Managed Policies
-Install Google Chrome (Omarchy Menu, Install > Browser), delete Chromium (Omarchy Menu, Remove > Browser).
+Install Google Chrome (Super + Space, Install > Browser), delete Chromium (Super + Space, Remove > Browser).
 Then clean out any managed policies (creates weird Chrome themes, locks secure DNS for some reason)
 ```bash
 sudo rm -rf /etc/opt/chrome/policies/managed
@@ -65,9 +65,10 @@ sudo rm -rf /etc/opt/chrome/policies/recommended
 ```
 
 ### Change Chrome Font (to make it look good on Linux)
-Add `inter-font` (Omarchy menu, Install > Package)
+
 
 ```bash
+# REMOVE CHROME MANAGED POLICIES + add INTER FONT FIRST!!!:  `inter-font` (Super + Space, Install > Package)
 gsettings set org.gnome.desktop.interface font-name "Inter 10"
 gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font 11"
 pkill -f chrome
@@ -101,7 +102,6 @@ gaze add-face default
 gaze list-faces
 ```
 
-Gaze will automatically work for sudo, but if you want to unlock your computer with it:
 Add to the top of `/etc/pam.d/omarchy-lock-password` (under the comment). 
 ```
 auth       sufficient                  pam_gaze.so
@@ -112,5 +112,5 @@ auth       sufficient                  pam_gaze.so
 ```bash
 omarchy-theme-install https://github.com/dsnsgithub/omarchy-kirby-theme
 ```
-If the Menu Bar is not transparent, toggle Transparency under Omarchy Menu, Style > Menu Bar > Transparency.
+If the Menu Bar is not transparent, toggle Transparency under Super + Space, Style > Menu Bar > Transparency.
 Right click the time in the Menu Bar until it matches the one shown in the picture or the one you prefer.
