@@ -1,7 +1,8 @@
 ---
 import "@fontsource-variable/dm-sans";
+import "../styles/global.css";
 import Nav from "../components/Nav.astro";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import PostHog from "../components/PostHog.astro";
 
 interface Props {
@@ -28,7 +29,7 @@ const { title, description } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		<ViewTransitions />
+		<ClientRouter />
 		<PostHog />
 	</head>
 	<body class="container mx-auto my-10 bg-viola-50">
