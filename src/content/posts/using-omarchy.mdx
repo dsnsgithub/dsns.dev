@@ -77,7 +77,7 @@ Minecraft in versions >=1.13 works essentially perfectly, with any versions belo
 
 My client, Dolphin Client, can run at >3000 FPS in Hypixel 1.8.9 on Omarchy.
 ![Minecraft 1.8.9](/blog/minecraft.png)
-Most of this performance comes purely from optimization within my client, performance in gaming across operating systems is essentially identical in my testing.
+Most of this performance comes purely from optimization within my client, performance in gaming between Linux and Windows is essentially identical in my testing.
 
 ## Should you switch?
 In my opinion, you should switch if you check all of these boxes:
@@ -92,7 +92,7 @@ Regardless, it doesn't hurt to try the OS on a secondary SSD if you have one lyi
 
 I would recommend taking out your old SSD to eliminate the possibility that you accidentally wipe/install to the wrong drive.
 
-If none of these are options for you, you can always try using a virtual machine (through Hyper-V or otherwise), with the caveat that it won't match the smoothness or graphical performance, nor will it allow you to compatibility test your specific hardware/peripherals. I initially used Hyper-V to test out Omarchy before installing it on an external T7 Shield SSD I had.
+If none of these are options for you, you can always try using a virtual machine (through Hyper-V or otherwise), with the caveat that it won't match the smoothness or graphical performance of bare-metal, nor will it allow you to compatibility test your specific hardware/peripherals. I initially used Hyper-V to test out Omarchy before deciding to install it on an external T7 Shield SSD.
 
 ---
 
@@ -123,7 +123,7 @@ sudo rm -rf /etc/opt/chrome/policies/recommended
 
 
 ```bash
-# remove Chrome managed/recommended policies + add INTER FONT FIRST!!!:  `inter-font` (Super + Space, Install > Package)
+# remove Chrome managed/recommended policies + add `inter-font` (Super + Space, Install > Package) FIRST!!!:  
 gsettings set org.gnome.desktop.interface font-name "Inter 10"
 gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font 11"
 pkill -f chrome
