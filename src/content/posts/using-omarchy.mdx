@@ -7,7 +7,7 @@ date: "8/29/2026"
 ![desktop](/blog/desktop.png)
 
 I have been using Omarchy for the last seven days on my main workstation PC, switching from Windows 11. 
-I won't be switching back for the time being.
+I plan to stick with Omarchy for the time being.
 
 ## My Initial Perceptions of "Linux on the Desktop"
 My perception of Linux up until the last two weeks was that it was really only useful for servers, where the stability of the Linux kernel
@@ -15,7 +15,7 @@ is a requirement to keep services up with as high uptime as you can possibly ach
 
 As a desktop operating system, for a computer that I watch YouTube videos and game on, I maintained a pretty pessimistic view.
 
-That isn't to say that I never gave Linux a fair chance. Using virtual machines on Hyper-V, VirtualBox, and whatever virtualization software I can find on Windows, I have used an assortment of distributions including Ubuntu, Fedora, Vanilla Arch, Zorin OS, and Cachy OS across multiple desktop environments including GNOME, KDE Plasma, XFCE, and whatever the hell Zorin uses. **None of them** even got me close to switching to Linux.
+That isn't to say that I never gave Linux a fair chance. Using virtual machines on Hyper-V, VirtualBox, and whatever virtualization software I can find on Windows, I have used an assortment of distributions including Ubuntu, Fedora, Vanilla Arch, Zorin OS, and Cachy OS across multiple desktop environments including GNOME, KDE Plasma, XFCE, and Zorin. **None of them** even got me close to switching to Linux.
 
 Most of the Linux distributions I used always looked like they could be more polished, which I attributed to them not being funded by trillion-dollar companies with enough capital to hire teams of UI designers.
 
@@ -34,14 +34,14 @@ This was before the latest major update to Omarchy Quattro (4). After using the 
 What reminded me of this operating system was [NetworkChuck's video](https://www.youtube.com/watch?v=9SDkU5VDQEQ) about Omarchy 4. The one idea that he mentioned in the video that made me switch was a pretty simple fact about the technology industry in 2026. Here is my rough paraphrased take on it. 
 > AI agents are powerful enough such that you can just ask an AI agent of your choosing to configure the operating system for you. You don't need to spend hundreds of hours configuring your computer anymore.
 
-They cite this as one of the main reasons why 2026 is the "Year of the Linux Desktop" and it does make sense. After using Omarchy for a week, I find that after the initial configuration, I never really needed to use my AI agent for much, since the operating system is polished and put together enough to stand with minimal AI assistance. I appreciate how integrated the AI agents are with the operating system when I need it, as Omarchy has a Claude skill that proves extremely useful when I need it to fix anything with the core operating system itself.
+Many Linux enthusiasts cite this as one of the main reasons why 2026 is the "Year of the Linux Desktop" and it does make sense. After using Omarchy for a week, I find that after the initial configuration, I never really needed to use my AI agent for much, since the operating system is polished and put together enough to stand with minimal AI assistance. I appreciate how integrated the AI agents are with the operating system when I need it, as Omarchy has a Claude skill that proves extremely useful when I need it to fix anything with the core operating system itself.
 
 ## My First Day
 This operating system has a learning curve, with the philosophy being that if you take twenty minutes learning how to use your operating system more efficiently, it will pay dividends over the years using your computer. While Windows and macOS cater to the general public, who don't want to read a manual to simply use their computer, Omarchy is definitely a "power user" distribution, for those who love computers.
 
 There are no desktop icons, there aren't even close/minimize/maximize buttons on windows. You can do pretty much everything using just the keyboard.
 
-Even before Omarchy, I transitioned away from using the mouse or trackpad for most tasks, especially on a laptop, using a trackpad is incredibly slow for my needs. Omarchy felt like an operating system molded around the workflow I already use. I understand that most people don't have the time or care enough to use these shortcuts, but I agree with the general sentiment that twenty minutes learning how to use your computer more efficiently can pay off significantly in both efficiency and (the lack of ) wrist pain.
+Even before Omarchy, I transitioned away from using the mouse or trackpad for most tasks, especially on a laptop, as using a trackpad is incredibly slow for my needs. Omarchy felt like an operating system molded around the workflow I already use. I understand that most people don't have the time nor care enough to use these shortcuts, but I agree with the general sentiment that twenty minutes learning how to use your computer more efficiently can pay off significantly, mainly in the form of reduced wrist pain.
 
 ## The Learning Curve
 Even though I was accustomed to many of the shortcuts, switching to Linux still has a learning curve, from installing apps with the AUR to using a "window manager" instead of a desktop environment.
@@ -53,11 +53,11 @@ I never had to configure my monitors, by complete chance they were configured co
 
 If you ever need to change your monitor configuration (or really configuration related to Omarchy), you must edit a configuration file, in this specific case `~/.config/hypr/monitors.lua`.
 
-To illustrate how this could be annoying for some, in order reposition monitors, you must do math to figure out where the top left corner of each monitor should be (`0x0` for the first, `2560x0`/`1920x0` for the next, etc) while also figuring out the names of each of your monitor inputs with `hyprctl monitors`.
+To illustrate how this could be annoying for some, in order to reposition monitors, you must do math to figure out where the top left corner of each monitor should be (`0x0` for the first, `2560x0`/`1920x0` for the next, etc) while also figuring out the names of each of your monitor inputs with `hyprctl monitors`.
 
 ![monitors.lua](/blog/monitors.png)
 
-I think a basic monitor GUI similar to Windows would be greatly appreciated for many people, especially as it might be their first impression of the operating system.
+There are third-party TUIs that can be installed, but I think a simple built-in monitor GUI similar to Windows would be greatly appreciated for many people, especially as it might be their first impression of the operating system. 
 
 ## Purpose of an Operating System
 In my opinion, an operating system's main purpose is to allow your computer to run your apps and allow them to coordinate together, otherwise getting out of your way.
@@ -68,10 +68,10 @@ Any Chromium-based app (Chrome, Discord, Spotify) works perfectly and is literal
 
 Coding applications are first-class on Linux, with many of the development tools I use such as Claude, Git, Bun, etc. being designed and optimized to run on Linux first (since Linux is so dominant as a server). Btrfs, which I like to call "Butter FS", completely obliterates anything Windows has on the consumer side in terms of filesystem performance, even outperforming macOS's APFS in daily development tasks. Small creature comforts like being able to copy gigabytes of small files instantly due to the "Copy on Write" philosophy make Windows NTFS feel stupid by comparison.
 
-I was surprised to find quite niche applications on the AUR (Arch User Repository), including but not limited to Cisco Packet Tracer and VPN software, so I am pretty impressed. Combined with Claude being able to find and set up the best application for your specific needs, I haven't found any blockers when it comes to productivity applications (as long as they aren't exclusive to a specific OS).
+I was both impressed and surprised to find quite niche applications on the AUR (Arch User Repository), including but not limited to Cisco Packet Tracer and VPN software. Combined with Claude being able to find and set up the best application for your specific needs, I haven't found any blockers when it comes to productivity applications (as long as they aren't exclusive to a specific OS).
 
 ## Gaming on Omarchy
-Gaming is where it gets a bit interesting. If you want to play Fortnite, Overwatch 2, Valorant, or any game with anticheat, **this operating system is not for you**. I am not sure if they will ever allow these games to work due to the security required by these advanced anticheats.
+Gaming is where it gets a bit interesting. If you want to play Fortnite, Overwatch 2, Valorant, or any game with anticheat, **this operating system (and Linux in general) is not for you**. I am not sure if they will ever allow these games to work due to the security required by these anticheats.
 
 Minecraft in versions >=1.13 works essentially perfectly, with any versions below it (including the 1.8.9 version I play) requiring a few tweaks to fix outdated libraries not being optimized for Linux. I have [built my own client](https://github.com/dsnsgithub/DolphinClient) that is compatible with my preferred launcher (Prism Launcher) and fixes these problems. When it comes to even remotely competitive Minecraft, Linux is actually more optimized than macOS (working perfectly with my gaming peripherals, not locking Ctrl + Left Click => Right Click).
 
