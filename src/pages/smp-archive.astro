@@ -15,7 +15,7 @@ import mcDsnsDevPart1 from "../assets/smps/mc-dsns-dev-part-1.png";
 import mcDsnsDevPart2 from "../assets/smps/mc-dsns-dev-part-2.png";
 import deliciousSmp from "../assets/smps/delicious-smp.png";
 import aNewBeginningSmp from "../assets/smps/a-new-beginning.png";
-
+import maxsmp from "../assets/smps/max-smp.png";
 
 const smps = [
 	{
@@ -125,7 +125,15 @@ const smps = [
 		image: aNewBeginningSmp,
 		date: "2025-12-07",
 		size: "419.8 MB"
-	}
+  },
+	{
+		name: "Max's SMP",
+    url: "https://archive.org/details/max-smp",
+		version: "26.2",
+		image: maxsmp,
+		date: "2026-07-14",
+		size: "8.9 GB"
+  }
 ];
 
 const timestamps = smps.map(s => new Date(s.date).getTime());
