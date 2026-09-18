@@ -105,10 +105,18 @@ If you do decide to switch, here are some QOL improvements for Omarchy that migh
 Keep in mind, this is what I found in the week of using Omarchy, I am sure there are many QOL features I have yet to find.
 
 ## Essential
-Fix Sleep/Lock:
+
+1. Fix Sleep/Lock:
 ```bash
 omarchy plugin add https://github.com/dsnsgithub/omarchy-lock-fix
 omarchy restart shell
+```
+
+2. Fix NVIDIA Driver + Chromium Browser [Memory Leak](https://github.com/dsnsgithub/omarchy-lock-fix/issues/7)
+
+Add this to `~/.config/chrome-flags.conf` (edit respective flags if using other Chromium-based browsers)
+```bash
+--disable-gpu-memory-buffer-video-frames
 ```
 
 ## Worth It
