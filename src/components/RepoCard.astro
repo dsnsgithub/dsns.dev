@@ -1,0 +1,36 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	url: string;
+	owner: string;
+	name: string;
+	description: string;
+	stars: number;
+	language?: string;
+}
+
+const { url, owner, name, description, stars, language } = Astro.props;
+---
+
+<a
+	href={url}
+	target="_blank"
+	rel="noopener noreferrer"
+	class="flex flex-col rounded-xl bg-viola-50 p-5 shadow-lg duration-500 hover:scale-[1.01] hover:transition hover:duration-500"
+>
+	<div class="mb-1 flex items-center justify-between gap-2">
+		<p class="truncate font-bold text-viola-700" title={`${owner}/${name}`}>{name}</p>
+		<p class="flex shrink-0 items-center gap-1 text-xs text-gray-500">
+			<Icon name="mdi:star" class="text-xs text-gray-400" />
+			{stars}
+		</p>
+	</div>
+
+	{description && <p class="line-clamp-2 text-sm text-gray-600">{description}</p>}
+
+	<div class="mt-auto flex items-center gap-2 pt-3 text-[10px] sm:text-[11px]">
+		{language && <span class="rounded-lg bg-viola-200 p-1 px-2 font-semibold">{language}</span>}
+		<span class="truncate text-gray-400">{owner}</span>
+	</div>
+</a>
