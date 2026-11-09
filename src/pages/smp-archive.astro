@@ -206,9 +206,9 @@ margins.push(0);
 									href={smp.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="block overflow-hidden rounded-xl bg-viola-100 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+									class="block rounded-xl bg-viola-100 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
 								>
-									<div class="relative aspect-video w-full overflow-hidden bg-viola-200">
+									<div class="relative aspect-video w-full overflow-hidden rounded-t-xl bg-viola-200">
 										{smp.image ? (
 											<Image src={smp.image} alt={smp.name} loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
 										) : (
@@ -233,12 +233,20 @@ margins.push(0);
 										<div class="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-gray-400">
 											{smp.version && <span class="rounded bg-viola-200 px-1.5 py-0.5 text-viola-700">{smp.version}</span>}
 											{smp.players != null && (
-												<span class="group/players relative rounded bg-viola-200 px-1.5 py-0.5 text-viola-700" title={smp.playerNames.join(", ")}>
+												<span
+													class="group/players relative cursor-help rounded bg-viola-200 px-1.5 py-0.5 text-viola-700 outline-none focus-visible:ring-2 focus-visible:ring-viola-400"
+													tabindex={smp.playerNames.length > 0 ? 0 : undefined}
+													aria-label={smp.playerNames.length > 0 ? `Players: ${smp.playerNames.join(", ")}` : undefined}
+												>
 													{smp.players} {smp.players === 1 ? "player" : "players"}
 													{smp.playerNames.length > 0 && (
-														<span class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 max-w-[80vw] -translate-x-1/2 rounded-lg bg-gray-900 p-3 font-sans text-xs font-normal normal-case tracking-normal text-white shadow-xl group-hover/players:block">
-															<span class="mb-1 block font-semibold uppercase tracking-wide text-gray-300">Players</span>
-															<span class="block max-h-48 overflow-y-auto leading-relaxed">{smp.playerNames.join(", ")}</span>
+														<span class="pointer-events-none invisible absolute bottom-full left-0 z-20 mb-2 w-80 max-w-[min(20rem,calc(100vw-2.5rem))] rounded-lg bg-gray-900 p-3 font-sans text-xs font-normal normal-case tracking-normal text-white opacity-0 shadow-xl transition-opacity duration-150 group-focus-within/players:pointer-events-auto group-focus-within/players:visible group-focus-within/players:opacity-100 group-hover/players:pointer-events-auto group-hover/players:visible group-hover/players:opacity-100">
+															<span class="mb-2 block font-semibold uppercase tracking-wide text-gray-300">Players</span>
+															<span class="flex max-h-60 flex-wrap content-start gap-1 overflow-y-auto">
+																{smp.playerNames.map((playerName) => (
+																	<span class="rounded bg-gray-700 px-1.5 py-1 leading-none">{playerName}</span>
+																))}
+															</span>
 														</span>
 													)}
 												</span>
